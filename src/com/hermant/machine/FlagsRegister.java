@@ -41,7 +41,7 @@ public class FlagsRegister {
     public boolean isGreaterOrEqual(){ return isOverflowFlag() == isSignFlag(); }
     public boolean isGreater(){ return isOverflowFlag() == isSignFlag() && !isZeroFlag(); }
     public boolean isLesser(){ return isOverflowFlag() != isSignFlag(); }
-    public boolean isLessOrEqual(){ return isOverflowFlag() == isSignFlag() && !isZeroFlag(); }
+    public boolean isLessOrEqual(){ return isOverflowFlag() != isSignFlag() || isZeroFlag(); }
     public boolean isAbove(){ return !isZeroFlag() && !isCarryFlag(); }
     public boolean isBelow(){ return isCarryFlag(); }
     public boolean isAboveOrEqual(){ return isZeroFlag() || isCarryFlag(); }
