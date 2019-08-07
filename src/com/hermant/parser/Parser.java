@@ -1,8 +1,6 @@
 package com.hermant.parser;
 
-import com.hermant.program.Declaration;
-import com.hermant.program.Instruction;
-import com.hermant.program.Program;
+import com.hermant.program.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -344,43 +342,8 @@ public class Parser {
                     case OUTPUT_BYTE -> loadRegOrMemInstruction(Instruction.OUTPUT_BYTE, Instruction.OUTPUT_REGISTER_BYTE, words, labelMemoryTranslation, program, lineNum);
                     case OUTPUT_CHAR -> loadRegOrMemInstruction(Instruction.OUTPUT_CHAR, Instruction.OUTPUT_REGISTER_CHAR, words, labelMemoryTranslation, program, lineNum);
 
-                    case DECLARE_CONSTANT -> {
-                        if (words.length != 2 || !validateDeclaringConstant(words[1]))
-                            throw new ParseException("illegal declaration parameters", lineNum);
-                        String value = words[1].split("([()])")[1];
-
-                        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
-                                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : None;
-                        if(startsWithPositiveNumber(words[1])){
-                            int count = parseDecInt(words[1].split("\\*")[0]);
-                            switch (type){
-                                case anInteger -> program.addDeclaration(new Declaration(count, parseInt(value)));
-                                case aFloat -> program.addDeclaration(new Declaration(count, parseFloat(value)));
-                                case aByte -> program.addDeclaration(new Declaration(count, (byte)parseInt(value)));
-                                case aChar -> program.addDeclaration(new Declaration(count, processCharValue(value)));
-                            }
-                        } else switch (type) {
-                            case anInteger -> program.addDeclaration(new Declaration(1, parseInt(value)));
-                            case aFloat -> program.addDeclaration(new Declaration(1, parseFloat(value)));
-                            case aByte -> program.addDeclaration(new Declaration(1, (byte)parseInt(value)));
-                            case aChar -> program.addDeclaration(new Declaration(1, processCharValue(value)));
-                        }
-                    }
-                    case DECLARE_SPACE -> {
-                        if (words.length != 2 || !validateDeclaringSpace(words[1]))
-                            throw new ParseException("illegal declaration parameters", lineNum);
-                        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
-                                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : None;
-                        if(startsWithPositiveNumber(words[1])){
-                            switch (type){
-                                case anInteger, aFloat -> program.addDeclaration(new Declaration(parseDecInt(words[1].split("\\*")[0]), (short)4));
-                                case aByte, aChar -> program.addDeclaration(new Declaration(parseDecInt(words[1].split("\\*")[0]), (short)1));
-                            }
-                        } else switch (type){
-                            case anInteger, aFloat -> program.addDeclaration(new Declaration(1, (short)4));
-                            case aByte, aChar -> program.addDeclaration(new Declaration(1, (short)1));
-                        }
-                    }
+                    case DECLARE_CONSTANT -> declareConstant(words, program, lineNum);
+                    case DECLARE_SPACE -> declareSpace(words, program, lineNum);
                     default -> throw new ParseException("unknown token", lineNum);
                 }
             }
@@ -392,6 +355,48 @@ public class Parser {
         }
 
         return program;
+    }
+
+    private static void declareConstant(String[] words, Program program, int lineNum) throws ParseException {
+        if (words.length != 2 || !validateDeclaringConstant(words[1]))
+            throw new ParseException("illegal declaration parameters", lineNum);
+        String value = words[1].split("([()])")[1];
+        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
+                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
+        if(startsWithPositiveNumber(words[1])){
+            int count = parseDecInt(words[1].split("\\*")[0]);
+            switch (type){
+                case anInteger -> program.addDeclaration(new IntegerDeclaration(count, parseInt(value)));
+                case aFloat -> program.addDeclaration(new FloatDeclaration(count, parseFloat(value)));
+                case aByte -> program.addDeclaration(new ByteDeclaration(count, (byte)parseInt(value)));
+                case aChar -> program.addDeclaration(new CharDeclaration(count, processCharValue(value)));
+            }
+        } else switch (type) {
+            case anInteger -> program.addDeclaration(new IntegerDeclaration(1, parseInt(value)));
+            case aFloat -> program.addDeclaration(new FloatDeclaration(1, parseFloat(value)));
+            case aByte -> program.addDeclaration(new ByteDeclaration(1, (byte)parseInt(value)));
+            case aChar -> program.addDeclaration(new CharDeclaration(1, processCharValue(value)));
+        }
+    }
+
+    private static void declareSpace(String[] words, Program program, int lineNum) throws ParseException {
+        if (words.length != 2 || !validateDeclaringSpace(words[1]))
+            throw new ParseException("illegal declaration parameters", lineNum);
+        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
+                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
+        if(startsWithPositiveNumber(words[1])){
+            switch (type){
+                case anInteger-> program.addDeclaration(new IntegerDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
+                case aFloat -> program.addDeclaration(new FloatDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
+                case aByte -> program.addDeclaration(new ByteDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
+                case aChar -> program.addDeclaration(new CharDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
+            }
+        } else switch (type){
+            case anInteger -> program.addDeclaration(new IntegerDeclaration(1, null));
+            case aFloat -> program.addDeclaration(new FloatDeclaration(1, null));
+            case aByte -> program.addDeclaration(new ByteDeclaration(1, null));
+            case aChar -> program.addDeclaration(new CharDeclaration(1, null));
+        }
     }
 
     private static void loadNoParametersInstruction(byte code, String[] words, Program program, int lineNum) throws ParseException {
