@@ -8,15 +8,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.hermant.machine.Register.DATA_SECTION;
 import static com.hermant.machine.Register.PROGRAM_SECTION;
-import static com.hermant.program.Declaration.Type.aFloat;
-import static com.hermant.program.Declaration.Type.anInteger;
+import static com.hermant.program.Declaration.Type.*;
 
 public class Parser {
 
@@ -33,6 +31,8 @@ public class Parser {
     private static final String STORE_FLOAT = "FST";
     private static final String LOAD_ADDRESS = "LDA";
     private static final String OUTPUT = "OUT";
+    private static final String OUTPUT_BYTE = "BOUT";
+    private static final String OUTPUT_CHAR = "COUT";
     private static final String OUTPUT_SIGNED = "IOUT";
     private static final String OUTPUT_FLOAT = "FOUT";
     private static final String NO_OPERATION = "NOP";
@@ -123,6 +123,8 @@ public class Parser {
     private static final String DECLARE_SPACE = "DS";
     private static final String INTEGER = "INTEGER";
     private static final String FLOAT = "FLOAT";
+    private static final String BYTE = "BYTE";
+    private static final String CHAR = "CHAR";
 
     private static final int MAX_SECTION_SIZE = 65536;
 
@@ -178,8 +180,8 @@ public class Parser {
                             JUMP_LESS_OR_EQUAL, JUMP_NOT_GREATER, JUMP_ABOVE, JUMP_NOT_BELOW_OR_EQUAL,
                             JUMP_ABOVE_OR_EQUAL, JUMP_NOT_BELOW, JUMP_NOT_CARRY, JUMP_BELOW, JUMP_CARRY,
                             JUMP_NOT_ABOVE_OR_EQUAL, JUMP_BELOW_OR_EQUAL, JUMP_NOT_ABOVE, JUMP_OVERFLOW,
-                            JUMP_NOT_OVERFLOW, JUMP_SIGNED, JUMP_NOT_SIGNED, JUMP_PARITY, JUMP_NOT_PARITY,
-                            LOOP, CALL, OUTPUT, OUTPUT_FLOAT, OUTPUT_SIGNED, NEGATE, INCREMENT, DECREMENT,
+                            JUMP_NOT_OVERFLOW, JUMP_SIGNED, JUMP_NOT_SIGNED, JUMP_PARITY, JUMP_NOT_PARITY, LOOP, CALL,
+                            OUTPUT, OUTPUT_FLOAT, OUTPUT_SIGNED, OUTPUT_BYTE, OUTPUT_CHAR, NEGATE, INCREMENT, DECREMENT,
                             PUSH, PUSH_FLOAT, POP, POP_FLOAT, PUSH_FLAGS, POP_FLAGS, EXCHANGE, EXCHANGE_FLOAT,
                             LOAD_BYTE, LOAD_BYTE_UNSIGNED, STORE_BYTE, SQUARE_ROOT_FLOAT, ABSOLUTE_FLOAT, SINE_FLOAT,
                             COSINE_FLOAT, TANGENT_FLOAT, LOAD_INTEGER_AS_FLOAT, STORE_FLOAT_AS_INTEGER, RANDOM,
@@ -200,8 +202,8 @@ public class Parser {
                                     JUMP_NOT_SIGNED, JUMP_PARITY, JUMP_NOT_PARITY, LOOP, CALL, LOAD_BYTE,
                                     LOAD_BYTE_UNSIGNED, STORE_BYTE, LOAD_INTEGER_AS_FLOAT, STORE_FLOAT_AS_INTEGER
                                     -> programSection+=4;
-                            case OUTPUT, OUTPUT_FLOAT, OUTPUT_SIGNED, NOT, NEGATE, INCREMENT, DECREMENT, PUSH,
-                                    PUSH_FLOAT, POP, POP_FLOAT, RANDOM, EXAMINE_FLOAT, TEST_FLOAT
+                            case OUTPUT, OUTPUT_FLOAT, OUTPUT_SIGNED, OUTPUT_BYTE, OUTPUT_CHAR, NOT, NEGATE, INCREMENT,
+                                    DECREMENT, PUSH, PUSH_FLOAT, POP, POP_FLOAT, RANDOM, EXAMINE_FLOAT, TEST_FLOAT
                                     ->{ if(validateRegister(words[1]))programSection +=2; else programSection+=4;}
                             default -> {
                                 if(words[2].matches("\\d+"))programSection+=2;
@@ -218,9 +220,11 @@ public class Parser {
                             labelMemoryTranslation.put(labels.pop(), DATA_SECTION + "(" + dataSection + ")");
                         }
                         if(words[1].startsWith(INTEGER) || words[1].startsWith(FLOAT))dataSection+=4;
+                        else if(words[1].startsWith(BYTE) || words[1].startsWith(CHAR))dataSection+=1;
                         else{
                             String num = words[1].replaceFirst("\\*.*", "");
-                            dataSection += parseDecInt(num) * 4;
+                            if(words[1].contains(INTEGER) || words[1].contains(FLOAT))dataSection+=parseDecInt(num) * 4;
+                            else if(words[1].contains(BYTE) || words[1].contains(CHAR))dataSection+=parseDecInt(num);
                         }
                         if(dataSection > MAX_SECTION_SIZE) throw new IllegalStateException("exceeded maximum data section size");
                     }
@@ -337,29 +341,45 @@ public class Parser {
                     case OUTPUT -> loadRegOrMemInstruction(Instruction.OUTPUT, Instruction.OUTPUT_REGISTER, words, labelMemoryTranslation, program, lineNum);
                     case OUTPUT_SIGNED -> loadRegOrMemInstruction(Instruction.OUTPUT_SIGNED, Instruction.OUTPUT_REGISTER_SIGNED, words, labelMemoryTranslation, program, lineNum);
                     case OUTPUT_FLOAT -> loadRegOrMemInstruction(Instruction.OUTPUT_FLOAT, Instruction.OUTPUT_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
+                    case OUTPUT_BYTE -> loadRegOrMemInstruction(Instruction.OUTPUT_BYTE, Instruction.OUTPUT_REGISTER_BYTE, words, labelMemoryTranslation, program, lineNum);
+                    case OUTPUT_CHAR -> loadRegOrMemInstruction(Instruction.OUTPUT_CHAR, Instruction.OUTPUT_REGISTER_CHAR, words, labelMemoryTranslation, program, lineNum);
 
                     case DECLARE_CONSTANT -> {
                         if (words.length != 2 || !validateDeclaringConstant(words[1]))
                             throw new ParseException("illegal declaration parameters", lineNum);
                         String value = words[1].split("([()])")[1];
-                        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : aFloat;
+
+                        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
+                                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : None;
                         if(startsWithPositiveNumber(words[1])){
                             int count = parseDecInt(words[1].split("\\*")[0]);
                             switch (type){
                                 case anInteger -> program.addDeclaration(new Declaration(count, parseInt(value)));
                                 case aFloat -> program.addDeclaration(new Declaration(count, parseFloat(value)));
+                                case aByte -> program.addDeclaration(new Declaration(count, (byte)parseInt(value)));
+                                case aChar -> program.addDeclaration(new Declaration(count, processCharValue(value)));
                             }
                         } else switch (type) {
                             case anInteger -> program.addDeclaration(new Declaration(1, parseInt(value)));
                             case aFloat -> program.addDeclaration(new Declaration(1, parseFloat(value)));
+                            case aByte -> program.addDeclaration(new Declaration(1, (byte)parseInt(value)));
+                            case aChar -> program.addDeclaration(new Declaration(1, processCharValue(value)));
                         }
                     }
                     case DECLARE_SPACE -> {
                         if (words.length != 2 || !validateDeclaringSpace(words[1]))
                             throw new ParseException("illegal declaration parameters", lineNum);
+                        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
+                                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : None;
                         if(startsWithPositiveNumber(words[1])){
-                            program.addDeclaration(new Declaration(parseDecInt(words[1].split("\\*")[0])));
-                        } else program.addDeclaration(new Declaration(1));
+                            switch (type){
+                                case anInteger, aFloat -> program.addDeclaration(new Declaration(parseDecInt(words[1].split("\\*")[0]), (short)4));
+                                case aByte, aChar -> program.addDeclaration(new Declaration(parseDecInt(words[1].split("\\*")[0]), (short)1));
+                            }
+                        } else switch (type){
+                            case anInteger, aFloat -> program.addDeclaration(new Declaration(1, (short)4));
+                            case aByte, aChar -> program.addDeclaration(new Declaration(1, (short)1));
+                        }
                     }
                     default -> throw new ParseException("unknown token", lineNum);
                 }
@@ -458,8 +478,14 @@ public class Parser {
         throw new ParseException("illegal arguments", lineNum);
     }
 
-    //some regex one-liners:
-    private static String[] splitByWhiteSpaces(String s){ return s.trim().split("\\s+"); }
+    //some regex and string processing:
+    private static String[] splitByWhiteSpaces(String s){
+        Pattern pat = Pattern.compile("(\"[^\"]*\"|'[^']*'|[\\S])+");
+        Matcher mat = pat.matcher(s.trim());
+        ArrayList<String> list = new ArrayList<>();
+        while (mat.find()) list.add(mat.group());
+        return list.toArray(new String[0]);
+    }
     private static String removeComment(String s){return s.replaceFirst(COMMENT + ".*", "").trim();}
     private static boolean hasLabel(String s){ return s.contains(":"); }
     private static String label(String s){ if(s.contains(":")) return s.trim().replaceFirst(":.*", "").trim(); else return "";}
@@ -468,11 +494,14 @@ public class Parser {
     private static boolean validateRegister(String s){ return s.matches("^(1[0-5]|[0-9])$"); }
     private static boolean validateLabel(String s){ return s.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"); }
     private static boolean validateMemoryAddress(String s) { return s.matches("^(1[0-5]|[0-9])\\(([+-]?[1-9]\\d*|[+-]?0)\\)$"); }
-    private static boolean validateDeclaringSpace(String s) { return s.matches("^([1-9]\\d*\\*)?(INTEGER|FLOAT)$"); }
-    private static boolean validateDeclaringConstant(String s) { return s.matches("^([1-9]\\d*\\*)?(INTEGER|FLOAT)\\((([+-]?[1-9]\\d*|[+-]?0)(\\.\\d*)?|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)$"); }
+    private static boolean validateDeclaringSpace(String s) { return s.matches("^([1-9]\\d*\\*)?(INTEGER|FLOAT|BYTE|CHAR)$"); }
+    //TODO:REWRITE VALIDATE DECLARING CONSTANT REGEX
+    private static boolean validateDeclaringConstant(String s) { return s.matches("^([1-9]\\d*\\*)?((INTEGER|FLOAT|BYTE)\\((([+-]?[1-9]\\d*|[+-]?0)(\\.\\d*)?|[+-]?\\.\\d+|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|CHAR\\(('([\\x00-\\x7F]|\\\\n|\\\\t|\\\\')'|[1-9]\\d*|0)\\))$"); }
     private static boolean startsWithPositiveNumber(String s){ return s.matches("^[1-9]\\d*.*");}
     private static int parseInt(String s){return s.startsWith("0x") ? (Integer.parseUnsignedInt(s.substring(2), 16)) : s.startsWith("0b") ? (Integer.parseUnsignedInt(s.substring(2), 2)) : parseDecInt(s);}
     private static float parseFloat(String s){return s.startsWith("0x") ? (Float.intBitsToFloat(Integer.parseUnsignedInt(s.substring(2), 16))) : s.startsWith("0b") ? Float.intBitsToFloat((Integer.parseUnsignedInt(s.substring(2), 2))) : Float.parseFloat(s);}
     private static boolean validateCommandWithComma(String s){return s.matches("^\\s*[A-Z]+\\s+[0-9]+\\s*,\\s*[A-Za-z0-9()_]+\\s*$");}
     private static int parseDecInt(String s){return new BigInteger(s).intValue();}
+    private static char processCharValue(String s){if(s.startsWith("\'"))return processStringValue(s).charAt(1); else return (char)parseInt(s);}
+    private static String processStringValue(String s){return s.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t").replaceAll("\\\\'", "'");}
 }

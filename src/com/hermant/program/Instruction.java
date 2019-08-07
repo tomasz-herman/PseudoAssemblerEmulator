@@ -29,25 +29,29 @@ public class Instruction {
     public static final byte OUTPUT_REGISTER_SIGNED = (byte)0b00001011;
     public static final byte OUTPUT_FLOAT = (byte)0b10001100;
     public static final byte OUTPUT_REGISTER_FLOAT = (byte)0b00001100;
-    public static final byte PUSH = (byte)0b10001101;
-    public static final byte PUSH_REGISTER = (byte)0b00001101;
-    public static final byte PUSH_REGISTER_FLOAT = (byte)0b00001110;
-    public static final byte PUSH_FLAGS = (byte)0b00001111;
-    public static final byte POP = (byte)0b10010000;
-    public static final byte POP_REGISTER = (byte)0b00010000;
-    public static final byte POP_REGISTER_FLOAT = (byte)0b00010001;
-    public static final byte POP_FLAGS = (byte)0b00010010;
-    public static final byte EXCHANGE = (byte)0b10010011;
-    public static final byte EXCHANGE_REGISTER = (byte)0b00010011;
-    public static final byte EXCHANGE_FLOAT = (byte)0b10010100;
-    public static final byte EXCHANGE_REGISTER_FLOAT = (byte)0b00010100;
-    public static final byte NO_OPERATION = (byte)0b00010101;
-    public static final byte STORE_FLOAT_AS_INTEGER = (byte)0b10010110;
-    public static final byte LOAD_INTEGER_AS_FLOAT = (byte)0b10010111;
-    public static final byte RANDOM = (byte)0b10011000;
-    public static final byte RANDOM_REGISTER = (byte)0b00011000;
-    public static final byte ENTER = (byte)0b00011001;
-    public static final byte LEAVE = (byte)0b00011010;
+    public static final byte OUTPUT_CHAR = (byte)0b10001101;
+    public static final byte OUTPUT_REGISTER_CHAR = (byte)0b00001101;
+    public static final byte OUTPUT_BYTE = (byte)0b10001110;
+    public static final byte OUTPUT_REGISTER_BYTE = (byte)0b00001110;
+    public static final byte PUSH = (byte)0b10001111;
+    public static final byte PUSH_REGISTER = (byte)0b00001111;
+    public static final byte PUSH_REGISTER_FLOAT = (byte)0b00010000;
+    public static final byte PUSH_FLAGS = (byte)0b00010001;
+    public static final byte POP = (byte)0b10010010;
+    public static final byte POP_REGISTER = (byte)0b00010010;
+    public static final byte POP_REGISTER_FLOAT = (byte)0b00010011;
+    public static final byte POP_FLAGS = (byte)0b00010100;
+    public static final byte EXCHANGE = (byte)0b10010101;
+    public static final byte EXCHANGE_REGISTER = (byte)0b00010101;
+    public static final byte EXCHANGE_FLOAT = (byte)0b10010110;
+    public static final byte EXCHANGE_REGISTER_FLOAT = (byte)0b00010110;
+    public static final byte NO_OPERATION = (byte)0b00010111;
+    public static final byte STORE_FLOAT_AS_INTEGER = (byte)0b10011000;
+    public static final byte LOAD_INTEGER_AS_FLOAT = (byte)0b10011001;
+    public static final byte RANDOM = (byte)0b10011010;
+    public static final byte RANDOM_REGISTER = (byte)0b00011010;
+    public static final byte ENTER = (byte)0b00011011;
+    public static final byte LEAVE = (byte)0b00011100;
 
     public static final byte ADD = (byte)0b10100000;
     public static final byte ADD_REGISTER = (byte)0b00100000;
@@ -217,9 +221,13 @@ public class Instruction {
             case OUTPUT -> output(Integer.toUnsignedString(ram.getInteger(ramAddress)));
             case OUTPUT_SIGNED -> output(Integer.toString(ram.getInteger(ramAddress)));
             case OUTPUT_FLOAT ->output(Float.toString(ram.getFloat(ramAddress)));
+            case OUTPUT_BYTE -> output(Integer.toString(ram.getByte(ramAddress)));
+            case OUTPUT_CHAR -> output("" + (char)(byte)ram.getByte(ramAddress));
             case OUTPUT_REGISTER -> output(Integer.toUnsignedString(reg.getInteger(reg1)));
             case OUTPUT_REGISTER_SIGNED -> output(Integer.toString(reg.getInteger(reg1)));
             case OUTPUT_REGISTER_FLOAT -> output(Float.toString(fpr.getFloat(reg1)));
+            case OUTPUT_REGISTER_BYTE -> output(Integer.toString(reg.getInteger(reg1) & 0xFF));
+            case OUTPUT_REGISTER_CHAR -> output("" + (char)(byte)reg.getInteger(reg1));
             case NO_OPERATION -> {}
 
             case PUSH -> stack.push(ram.getInteger(ramAddress));
@@ -320,8 +328,9 @@ public class Instruction {
     }
 
     private void debug(Register reg){
-        if(code != OUTPUT && code != OUTPUT_FLOAT && code != OUTPUT_REGISTER
-                && code != OUTPUT_REGISTER_FLOAT && code != OUTPUT_SIGNED && code != OUTPUT_REGISTER_SIGNED)
+        if(code != OUTPUT && code != OUTPUT_FLOAT && code != OUTPUT_REGISTER && code != OUTPUT_REGISTER_FLOAT
+                && code != OUTPUT_SIGNED && code != OUTPUT_REGISTER_SIGNED && code != OUTPUT_BYTE
+                && code != OUTPUT_CHAR  && code != OUTPUT_REGISTER_BYTE  && code != OUTPUT_REGISTER_CHAR)
             System.out.println(String.format("%1$08X",reg.getInteger(INSTRUCTION_POINTER)) + " | " + this);
         else
             System.out.print(String.format("%1$08X",reg.getInteger(INSTRUCTION_POINTER)) + " | " + this);
@@ -655,9 +664,13 @@ public class Instruction {
             case OUTPUT -> instCode = "OUTPUT";
             case OUTPUT_SIGNED -> instCode = "OUTPUT_SIGNED";
             case OUTPUT_FLOAT -> instCode = "OUTPUT_FLOAT";
+            case OUTPUT_BYTE -> instCode = "OUTPUT_BYTE";
+            case OUTPUT_CHAR -> instCode = "OUTPUT_CHAR";
             case OUTPUT_REGISTER -> instCode = "OUTPUT_REGISTER";
             case OUTPUT_REGISTER_SIGNED -> instCode = "OUTPUT_REGISTER_SIGNED";
             case OUTPUT_REGISTER_FLOAT -> instCode = "OUTPUT_REGISTER_FLOAT";
+            case OUTPUT_REGISTER_BYTE -> instCode = "OUTPUT_REGISTER_BYTE";
+            case OUTPUT_REGISTER_CHAR -> instCode = "OUTPUT_REGISTER_CHAR";
             case RETURN -> instCode = "RETURN";
             case NO_OPERATION -> instCode = "NO_OPERATION";
             default -> instCode = "UNKNOWN";
