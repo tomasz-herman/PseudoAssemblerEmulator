@@ -15,7 +15,7 @@ public class Machine {
     private FlagsRegister flagsRegister;
     private RandomAccessMemory ram;
     private Stack stack;
-    private static final int SECTION_SIZE = 65536;
+    public static final int SECTION_SIZE = 65536;
     private boolean debug;
 
     public Machine(boolean debug){
