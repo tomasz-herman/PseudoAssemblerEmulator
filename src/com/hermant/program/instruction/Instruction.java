@@ -1,15 +1,12 @@
-package com.hermant.program;
+package com.hermant.program.instruction;
 
-import com.hermant.machine.RandomAccessMemory;
-import com.hermant.machine.Register;
-import com.hermant.machine.FlagsRegister;
-import com.hermant.machine.Stack;
+import com.hermant.machine.*;
 
 import java.util.function.BiFunction;
 
 import static com.hermant.machine.Register.*;
 
-public class Instruction {
+public abstract class Instruction {
     //instruction codes
     public static final byte RETURN = (byte)0b00000001;
 
@@ -136,8 +133,8 @@ public class Instruction {
     public static final byte CALL = (byte)0b11110010;
 
     private Byte code;
-    private Byte reg1;
-    private Byte reg2;
+    Byte reg1;
+    Byte reg2;
     private Integer ramOffset;
 
     public Instruction(RandomAccessMemory ram, Register reg){ this(ram, reg.getInteger(INSTRUCTION_POINTER)); }
@@ -164,10 +161,6 @@ public class Instruction {
         return address + length;
     }
 
-    public void loadFromMemory(RandomAccessMemory ram, Register reg){
-        loadFromMemory(ram, reg.getInteger(INSTRUCTION_POINTER));
-    }
-
     private void loadFromMemory(RandomAccessMemory ram, int address){
         code = (byte)ram.getByte(address);
         reg1 = (byte)((ram.getByte(address+1)&0xf0)>>4);
@@ -188,142 +181,155 @@ public class Instruction {
         this.ramOffset = ramAddress;
     }
 
-    private int getMemoryAddress(Register reg){ return (code & 0x10000000) != 0 ? reg.getInteger(reg2) + ramOffset : 0; }
-
-    public boolean execute(RandomAccessMemory ram, Register reg, Register fpr, FlagsRegister flags, Stack stack, boolean debug){
-        if(debug) debug(reg);
-
-        setInstructionPointer(reg);
-        int ramAddress = getMemoryAddress(reg);
-
+    //Factory method
+    public static Instruction fetchNextInstruction(RandomAccessMemory ram, Register reg){
+        int address = reg.getInteger(INSTRUCTION_POINTER);
+        byte code = (byte)ram.getByte(address);
+        byte reg1 = (byte)((ram.getByte(address+1)&0xf0)>>4);
+        byte reg2 = (byte)(ram.getByte(address+1)&0xf);
+        Integer ramOffset = null;
+        if ((code & 0x10000000)!=0)
+        switch(ram.endianness){
+            case LittleEndian, MiddleEndian ->
+                    ramOffset = (ram.getByte(address+3)<<8) + ram.getByte(address + 2);
+            case BigEndian ->
+                    ramOffset = (ram.getByte(address+2)<<8) + ram.getByte(address + 3);
+        }
         switch(code) {
-            case RETURN -> { return ret(reg, stack); }
-            case LOAD -> reg.setInteger(reg1, ram.getInteger(ramAddress));
-            case LOAD_REGISTER -> reg.setInteger(reg1, reg.getInteger(reg2));
-            case STORE -> ram.setInteger(ramAddress, reg.getInteger(reg1));
-            case LOAD_FLOAT -> fpr.setInteger(reg1, ram.getInteger(ramAddress));
-            case LOAD_REGISTER_FLOAT -> fpr.setInteger(reg1, fpr.getInteger(reg2));
-            case STORE_FLOAT -> ram.setInteger(ramAddress, fpr.getInteger(reg1));
-            case LOAD_ADDRESS -> reg.setInteger(reg1, ramAddress);
-            case EXCHANGE -> exchangeRegMem(reg, ram, ramAddress);
-            case EXCHANGE_REGISTER -> exchangeRegReg(reg);
-            case EXCHANGE_FLOAT -> exchangeRegMem(fpr, ram, ramAddress);
-            case EXCHANGE_REGISTER_FLOAT -> exchangeRegReg(fpr);
-            case STORE_BYTE -> ram.setByte(ramAddress, (byte)reg.getInteger(reg1));
-            case LOAD_BYTE_UNSIGNED -> reg.setInteger(reg1, ram.getByte(ramAddress));
-            case LOAD_BYTE -> reg.setInteger(reg1, (byte)ram.getByte(ramAddress));
-            case LOAD_INTEGER_AS_FLOAT -> fpr.setFloat(reg1, ram.getInteger(ramAddress));
-            case STORE_FLOAT_AS_INTEGER -> ram.setInteger(ramAddress, (int)fpr.getFloat(reg1));
-            case RANDOM -> ram.setInteger(ramAddress, ram.random.nextInt());
-            case RANDOM_REGISTER -> reg.setInteger(reg1, ram.random.nextInt());
-            case ENTER -> enter(stack, reg);
-            case LEAVE -> leave(stack, reg);
-            case OUTPUT -> output(Integer.toUnsignedString(ram.getInteger(ramAddress)));
-            case OUTPUT_SIGNED -> output(Integer.toString(ram.getInteger(ramAddress)));
-            case OUTPUT_FLOAT ->output(Float.toString(ram.getFloat(ramAddress)));
-            case OUTPUT_BYTE -> output(Integer.toString(ram.getByte(ramAddress)));
-            case OUTPUT_CHAR -> output("" + (char)(byte)ram.getByte(ramAddress));
-            case OUTPUT_REGISTER -> output(Integer.toUnsignedString(reg.getInteger(reg1)));
-            case OUTPUT_REGISTER_SIGNED -> output(Integer.toString(reg.getInteger(reg1)));
-            case OUTPUT_REGISTER_FLOAT -> output(Float.toString(fpr.getFloat(reg1)));
-            case OUTPUT_REGISTER_BYTE -> output(Integer.toString(reg.getInteger(reg1) & 0xFF));
-            case OUTPUT_REGISTER_CHAR -> output("" + (char)(byte)reg.getInteger(reg1));
-            case NO_OPERATION -> {}
+            case RETURN -> {return new ReturnInstruction(reg1, reg2, ramOffset);}
+            case LOAD -> {return new LoadInstruction(reg1, reg2, ramOffset);}
+            case LOAD_REGISTER -> {return new LoadRegisterInstruction(reg1, reg2, ramOffset);}
+            case STORE -> {return new StoreInstruction(reg1, reg2, ramOffset);}
+            case LOAD_FLOAT -> {return new LoadFloatInstruction(reg1, reg2, ramOffset);}
+            case LOAD_REGISTER_FLOAT -> {return new LoadRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case STORE_FLOAT -> {return new StoreFloatInstruction(reg1, reg2, ramOffset);}
+            case LOAD_ADDRESS -> {return new LoadAddressInstruction(reg1, reg2, ramOffset);}
+            case EXCHANGE -> {return new ExchangeInstruction(reg1, reg2, ramOffset);}
+            case EXCHANGE_REGISTER -> {return new ExchangeRegisterInstruction(reg1, reg2, ramOffset);}
+            case EXCHANGE_FLOAT -> {return new ExchangeFloatInstruction(reg1, reg2, ramOffset);}
+            case EXCHANGE_REGISTER_FLOAT ->{return new ExchangeRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case STORE_BYTE -> {return new StoreByteInstruction(reg1, reg2, ramOffset);}
+            case LOAD_BYTE_UNSIGNED -> {return new LoadByteUnsignedInstruction(reg1, reg2, ramOffset);}
+            case LOAD_BYTE -> {return new LoadByteInstruction(reg1, reg2, ramOffset);}
+            case LOAD_INTEGER_AS_FLOAT -> {return new LoadIntegerAsFloatInstruction(reg1, reg2, ramOffset);}
+            case STORE_FLOAT_AS_INTEGER -> {return new StoreFloatAsIntegerInstruction(reg1, reg2, ramOffset);}
+            case RANDOM -> {return new RandomInstruction(reg1, reg2, ramOffset);}
+            case RANDOM_REGISTER -> {return new RandomRegisterInstruction(reg1, reg2, ramOffset);}
+            case ENTER -> {return new EnterInstruction(reg1, reg2, ramOffset);}
+            case LEAVE -> {return new LeaveInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT -> {return new OutputInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_SIGNED -> {return new OutputSignedInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_FLOAT -> {return new OutputFloatInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_BYTE -> {return new OutputByteInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_CHAR -> {return new OutputCharInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_REGISTER -> {return new OutputRegisterInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_REGISTER_SIGNED -> {return new OutputRegisterSignedInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_REGISTER_FLOAT -> {return new OutputRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_REGISTER_BYTE -> {return new OutputRegisterByteInstruction(reg1, reg2, ramOffset);}
+            case OUTPUT_REGISTER_CHAR -> {return new OutputRegisterCharInstruction(reg1, reg2, ramOffset);}
+            case NO_OPERATION -> {return new NoOperationInstruction(reg1, reg2, ramOffset);}
 
-            case PUSH -> stack.push(ram.getInteger(ramAddress));
-            case PUSH_REGISTER -> stack.push(reg.getInteger(reg1));
-            case PUSH_REGISTER_FLOAT -> stack.push(fpr.getInteger(reg1));
-            case PUSH_FLAGS -> stack.push(flags.getFlags());
-            case POP -> ram.setInteger(ramAddress, stack.pop());
-            case POP_REGISTER -> reg.setInteger(reg1, stack.pop());
-            case POP_REGISTER_FLOAT -> fpr.setInteger(reg1, stack.pop());
-            case POP_FLAGS -> flags.setFlags(stack.pop());
+            case PUSH -> {return new PushInstruction(reg1, reg2, ramOffset);}
+            case PUSH_REGISTER -> {return new PushRegisterInstruction(reg1, reg2, ramOffset);}
+            case PUSH_REGISTER_FLOAT -> {return new PushRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case PUSH_FLAGS -> {return new PushFlagsInstruction(reg1, reg2, ramOffset);}
+            case POP -> {return new PopInstruction(reg1, reg2, ramOffset);}
+            case POP_REGISTER -> {return new PopRegisterInstruction(reg1, reg2, ramOffset);}
+            case POP_REGISTER_FLOAT -> {return new PopRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case POP_FLAGS -> {return new PopFlagsInstruction(reg1, reg2, ramOffset);}
 
-            case ADD -> addAndSetFlags(ram.getInteger(ramAddress), reg, flags);
-            case ADD_REGISTER -> addAndSetFlags(reg.getInteger(reg2), reg, flags);
-            case SUBTRACT -> subAndSetFlags(ram.getInteger(ramAddress), reg, flags);
-            case SUBTRACT_REGISTER -> subAndSetFlags(reg.getInteger(reg2), reg, flags);
-            case MULTIPLY -> multiplyAndSetFlags(ram.getInteger(ramAddress), reg, flags);
-            case MULTIPLY_REGISTER -> multiplyAndSetFlags(reg.getInteger(reg2), reg, flags);
-            case DIVIDE -> divideUnsignedAndSetFlags(ram.getInteger(ramAddress), reg, flags);
-            case DIVIDE_REGISTER -> divideUnsignedAndSetFlags(reg.getInteger(reg2), reg, flags);
-            case DIVIDE_SIGNED -> divideAndSetFlags(ram.getInteger(ramAddress), reg, flags);
-            case DIVIDE_SIGNED_REGISTER -> divideAndSetFlags(reg.getInteger(reg2), reg, flags);
-            case COMPARE -> compare(reg.getInteger(reg1), ram.getInteger(ramAddress), flags, (a, b) -> a - b);
-            case COMPARE_REGISTER -> compare(reg.getInteger(reg1), reg.getInteger(reg2), flags, (a, b) -> a - b);
+            case ADD -> {return new AddInstruction(reg1, reg2, ramOffset);}
+            case ADD_REGISTER -> {return new AddRegisterInstruction(reg1, reg2, ramOffset);}
+            case SUBTRACT -> {return new SubtractInstruction(reg1, reg2, ramOffset);}
+            case SUBTRACT_REGISTER -> {return new SubtractRegisterInstruction(reg1, reg2, ramOffset);}
+            case MULTIPLY -> {return new MultiplyInstruction(reg1, reg2, ramOffset);}
+            case MULTIPLY_REGISTER -> {return new MultiplyRegisterInstruction(reg1, reg2, ramOffset);}
+            case DIVIDE -> {return new DivideInstruction(reg1, reg2, ramOffset);}
+            case DIVIDE_REGISTER -> {return new DivideRegisterInstruction(reg1, reg2, ramOffset);}
+            case DIVIDE_SIGNED -> {return new DivideSignedInstruction(reg1, reg2, ramOffset);}
+            case DIVIDE_SIGNED_REGISTER -> {return new DivideSignedRegisterInstruction(reg1, reg2, ramOffset);}
+            case COMPARE -> {return new CompareInstruction(reg1, reg2, ramOffset);}
+            case COMPARE_REGISTER -> {return new CompareRegisterInstruction(reg1, reg2, ramOffset);}
 
-            case COMPARE_FLOAT -> compareFloat(fpr.getFloat(reg1), ram.getFloat(ramAddress), flags);
-            case COMPARE_REGISTER_FLOAT -> compareFloat(fpr.getFloat(reg1), fpr.getFloat(reg2), flags);
+            case COMPARE_FLOAT -> {return new CompareFloatInstruction(reg1, reg2, ramOffset);}
+            case COMPARE_REGISTER_FLOAT -> {return new CompareRegisterFloatInstruction(reg1, reg2, ramOffset);}
 
-            case ADD_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) + ram.getFloat(ramAddress));
-            case ADD_REGISTER_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) + fpr.getFloat(reg2));
-            case SUBTRACT_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) - ram.getFloat(ramAddress));
-            case SUBTRACT_REGISTER_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) - fpr.getFloat(reg2));
-            case MULTIPLY_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) * ram.getFloat(ramAddress));
-            case MULTIPLY_REGISTER_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) * fpr.getFloat(reg2));
-            case DIVIDE_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) / ram.getFloat(ramAddress));
-            case DIVIDE_REGISTER_FLOAT -> fpr.setFloat(reg1, fpr.getFloat(reg1) / fpr.getFloat(reg2));
-            case SQUARE_ROOT_FLOAT -> fpr.setFloat(reg1, (float)Math.sqrt(fpr.getFloat(reg1)));
-            case ABSOLUTE_FLOAT -> fpr.setFloat(reg1, Math.abs(fpr.getFloat(reg1)));
-            case SINE_FLOAT -> fpr.setFloat(reg1, (float)Math.sin(fpr.getFloat(reg1)));
-            case COSINE_FLOAT -> fpr.setFloat(reg1, (float)Math.cos(fpr.getFloat(reg1)));
-            case TANGENT_FLOAT -> fpr.setFloat(reg1, (float)Math.tan(fpr.getFloat(reg1)));
-            case EXAMINE_FLOAT -> examineFloat(ram.getFloat(ramAddress), flags);
-            case EXAMINE_FLOAT_REGISTER -> examineFloat(fpr.getFloat(reg1), flags);
-            case TEST_FLOAT -> compareFloat(ram.getFloat(ramAddress), 0f, flags);
-            case TEST_FLOAT_REGISTER -> compareFloat(fpr.getFloat(reg1), 0f, flags);
+            case ADD_FLOAT -> {return new AddFloatInstruction(reg1, reg2, ramOffset);}
+            case ADD_REGISTER_FLOAT -> {return new AddRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case SUBTRACT_FLOAT -> {return new SubtractFloatInstruction(reg1, reg2, ramOffset);}
+            case SUBTRACT_REGISTER_FLOAT -> {return new SubtractRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case MULTIPLY_FLOAT -> {return new MultiplyFloatInstruction(reg1, reg2, ramOffset);}
+            case MULTIPLY_REGISTER_FLOAT -> {return new MultiplyRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case DIVIDE_FLOAT -> {return new DivideFloatInstruction(reg1, reg2, ramOffset);}
+            case DIVIDE_REGISTER_FLOAT -> {return new DivideRegisterFloatInstruction(reg1, reg2, ramOffset);}
+            case SQUARE_ROOT_FLOAT -> {return new SquareRootFloatInstruction(reg1, reg2, ramOffset);}
+            case ABSOLUTE_FLOAT -> {return new AbsoluteFloatInstruction(reg1, reg2, ramOffset);}
+            case SINE_FLOAT -> {return new SineFloatInstruction(reg1, reg2, ramOffset);}
+            case COSINE_FLOAT -> {return new CosineFloatInstruction(reg1, reg2, ramOffset);}
+            case TANGENT_FLOAT -> {return new TangentFloatInstruction(reg1, reg2, ramOffset);}
+            case EXAMINE_FLOAT -> {return new ExamineFloatInstruction(reg1, reg2, ramOffset);}
+            case EXAMINE_FLOAT_REGISTER -> {return new ExamineFloatRegisterInstruction(reg1, reg2, ramOffset);}
+            case TEST_FLOAT -> {return new TestFloatInstruction(reg1, reg2, ramOffset);}
+            case TEST_FLOAT_REGISTER -> {return new TestFloatRegisterInstruction(reg1, reg2, ramOffset);}
 
-            case NEGATE -> ram.setInteger(ramAddress, negateAndSetFlags(ram.getInteger(ramAddress), flags));
-            case NEGATE_REGISTER -> reg.setInteger(reg1, negateAndSetFlags(reg.getInteger(reg1), flags));
-            case INCREMENT -> ram.setInteger(ramAddress, incrementAndSetFlags(ram.getInteger(ramAddress), flags));
-            case INCREMENT_REGISTER -> reg.setInteger(reg1, incrementAndSetFlags(reg.getInteger(reg1), flags));
-            case DECREMENT -> ram.setInteger(ramAddress, decrementAndSetFlags(ram.getInteger(ramAddress), flags));
-            case DECREMENT_REGISTER -> reg.setInteger(reg1, decrementAndSetFlags(reg.getInteger(reg1), flags));
+            case NEGATE -> {return new NegateInstruction(reg1, reg2, ramOffset);}
+            case NEGATE_REGISTER -> {return new NegateRegisterInstruction(reg1, reg2, ramOffset);}
+            case INCREMENT -> {return new IncrementInstruction(reg1, reg2, ramOffset);}
+            case INCREMENT_REGISTER -> {return new IncrementRegisterInstruction(reg1, reg2, ramOffset);}
+            case DECREMENT -> {return new DecrementInstruction(reg1, reg2, ramOffset);}
+            case DECREMENT_REGISTER -> {return new DecrementRegisterInstruction(reg1, reg2, ramOffset);}
 
-            case TEST -> setFlagsAfterLogicalOp(reg.getInteger(reg1) & ram.getInteger(ramAddress), flags);
-            case TEST_REGISTER -> setFlagsAfterLogicalOp(reg.getInteger(reg1) & reg.getInteger(reg2), flags);
-            case AND -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) & ram.getInteger(ramAddress), flags));
-            case AND_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) & reg.getInteger(reg2), flags));
-            case OR -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) | ram.getInteger(ramAddress), flags));
-            case OR_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) | reg.getInteger(reg2), flags));
-            case XOR -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) ^ ram.getInteger(ramAddress), flags));
-            case XOR_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) ^ reg.getInteger(reg2), flags));
-            case RIGHT_SHIFT_LOGICAL -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) >>> ram.getInteger(ramAddress), flags));
-            case LEFT_SHIFT_LOGICAL -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) << ram.getInteger(ramAddress), flags));
-            case RIGHT_SHIFT_LOGICAL_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) >>> reg.getInteger(reg2), flags));
-            case LEFT_SHIFT_LOGICAL_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) << reg.getInteger(reg2), flags));
-            case RIGHT_SHIFT_ARITHMETIC -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) >> ram.getInteger(ramAddress), flags));
-            case RIGHT_SHIFT_ARITHMETIC_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(reg.getInteger(reg1) >> reg.getInteger(reg2), flags));
-            case RIGHT_ROTATE -> reg.setInteger(reg1, setFlagsAfterLogicalOp(Integer.rotateRight(reg.getInteger(reg1), ram.getInteger(ramAddress)), flags));
-            case LEFT_ROTATE -> reg.setInteger(reg1, setFlagsAfterLogicalOp(Integer.rotateLeft(reg.getInteger(reg1), ram.getInteger(ramAddress)), flags));
-            case RIGHT_ROTATE_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(Integer.rotateRight(reg.getInteger(reg1), reg.getInteger(reg2)), flags));
-            case LEFT_ROTATE_REGISTER -> reg.setInteger(reg1, setFlagsAfterLogicalOp(Integer.rotateLeft(reg.getInteger(reg1), reg.getInteger(reg2)), flags));
+            case TEST -> {return new TestInstruction(reg1, reg2, ramOffset);}
+            case TEST_REGISTER -> {return new TestRegisterInstruction(reg1, reg2, ramOffset);}
+            case AND -> {return new AndInstruction(reg1, reg2, ramOffset);}
+            case AND_REGISTER -> {return new AndRegisterInstruction(reg1, reg2, ramOffset);}
+            case OR -> {return new OrInstruction(reg1, reg2, ramOffset);}
+            case OR_REGISTER -> {return new OrRegisterInstruction(reg1, reg2, ramOffset);}
+            case XOR -> {return new XorInstruction(reg1, reg2, ramOffset);}
+            case XOR_REGISTER -> {return new XorRegisterInstruction(reg1, reg2, ramOffset);}
+            case RIGHT_SHIFT_LOGICAL -> {return new RightShiftLogicalInstruction(reg1, reg2, ramOffset);}
+            case LEFT_SHIFT_LOGICAL -> {return new LeftShiftLogicalInstruction(reg1, reg2, ramOffset);}
+            case RIGHT_SHIFT_LOGICAL_REGISTER -> {return new RightShiftLogicalRegisterInstruction(reg1, reg2, ramOffset);}
+            case LEFT_SHIFT_LOGICAL_REGISTER -> {return new LeftShiftLogicalRegisterInstruction(reg1, reg2, ramOffset);}
+            case RIGHT_SHIFT_ARITHMETIC -> {return new RightShiftArithmeticInstruction(reg1, reg2, ramOffset);}
+            case RIGHT_SHIFT_ARITHMETIC_REGISTER -> {return new RightShiftArithmeticRegisterInstruction(reg1, reg2, ramOffset);}
+            case RIGHT_ROTATE -> {return new RightRotateInstruction(reg1, reg2, ramOffset);}
+            case LEFT_ROTATE -> {return new LeftRotateInstruction(reg1, reg2, ramOffset);}
+            case RIGHT_ROTATE_REGISTER -> {return new RightRotateRegisterInstruction(reg1, reg2, ramOffset);}
+            case LEFT_ROTATE_REGISTER -> {return new LeftRotateRegisterInstruction(reg1, reg2, ramOffset);}
 
-            case NOT_REGISTER -> reg.setInteger(reg1, ~reg.getInteger(reg1));
-            case NOT -> ram.setInteger(ramAddress, ~ram.getInteger(ramAddress));
+            case NOT_REGISTER -> {return new NotRegisterInstruction(reg1, reg2, ramOffset);}
+            case NOT -> {return new NotInstruction(reg1, reg2, ramOffset);}
 
-            case JUMP -> jump(reg, ramAddress);
-            case JUMP_EQUAL -> { if(flags.isEqual()) jump(reg, ramAddress); }
-            case JUMP_NOT_EQUAL -> { if(flags.isNotEqual()) jump(reg, ramAddress); }
-            case JUMP_GREATER -> { if(flags.isGreater()) jump(reg, ramAddress); }
-            case JUMP_GREATER_OR_EQUAL -> { if(flags.isGreaterOrEqual()) jump(reg, ramAddress); }
-            case JUMP_LESSER -> { if(flags.isLesser()) jump(reg, ramAddress); }
-            case JUMP_LESS_OR_EQUAL -> { if(flags.isLessOrEqual()) jump(reg, ramAddress); }
-            case JUMP_ABOVE -> { if(flags.isAbove()) jump(reg, ramAddress); }
-            case JUMP_ABOVE_OR_EQUAL -> { if(flags.isAboveOrEqual()) jump(reg, ramAddress); }
-            case JUMP_BELOW -> { if(flags.isBelow()) jump(reg, ramAddress); }
-            case JUMP_BELOW_OR_EQUAL -> { if(flags.isBelowOrEqual()) jump(reg, ramAddress); }
-            case JUMP_OVERFLOW -> { if(flags.isOverflow()) jump(reg, ramAddress); }
-            case JUMP_NOT_OVERFLOW -> { if(flags.isNotOverflow()) jump(reg, ramAddress); }
-            case JUMP_SIGNED -> { if(flags.isSigned()) jump(reg, ramAddress); }
-            case JUMP_NOT_SIGNED -> { if(flags.isNotSigned()) jump(reg, ramAddress); }
-            case JUMP_PARITY -> { if(flags.isParityEven()) jump(reg, ramAddress); }
-            case JUMP_NOT_PARITY -> { if(flags.isParityOdd()) jump(reg, ramAddress); }
-            case LOOP -> { if(loop(reg)) jump(reg, ramAddress); }
-            case CALL -> { stack.push(reg.getInteger(INSTRUCTION_POINTER)); jump(reg, ramAddress); }
+            case JUMP -> {return new JumpInstruction(reg1, reg2, ramOffset);}
+            case JUMP_EQUAL -> {return new JumpEqualInstruction(reg1, reg2, ramOffset);}
+            case JUMP_NOT_EQUAL -> {return new JumpNotEqualInstruction(reg1, reg2, ramOffset);}
+            case JUMP_GREATER -> {return new JumpGreaterInstruction(reg1, reg2, ramOffset);}
+            case JUMP_GREATER_OR_EQUAL -> {return new JumpGreaterOrEqualInstruction(reg1, reg2, ramOffset);}
+            case JUMP_LESSER -> {return new JumpLesserInstruction(reg1, reg2, ramOffset);}
+            case JUMP_LESS_OR_EQUAL -> {return new JumpLessOrEqualInstruction(reg1, reg2, ramOffset);}
+            case JUMP_ABOVE -> {return new JumpAboveInstruction(reg1, reg2, ramOffset);}
+            case JUMP_ABOVE_OR_EQUAL -> {return new JumpAboveOrEqualInstruction(reg1, reg2, ramOffset);}
+            case JUMP_BELOW -> {return new JumpBelowInstruction(reg1, reg2, ramOffset);}
+            case JUMP_BELOW_OR_EQUAL -> {return new JumpBelowOrEqualInstruction(reg1, reg2, ramOffset);}
+            case JUMP_OVERFLOW ->{return new JumpOverflowInstruction(reg1, reg2, ramOffset);}
+            case JUMP_NOT_OVERFLOW -> {return new JumpNotOverflowInstruction(reg1, reg2, ramOffset);}
+            case JUMP_SIGNED -> {return new JumpSignedInstruction(reg1, reg2, ramOffset);}
+            case JUMP_NOT_SIGNED -> {return new JumpNotSignedInstruction(reg1, reg2, ramOffset);}
+            case JUMP_PARITY -> {return new JumpParityInstruction(reg1, reg2, ramOffset);}
+            case JUMP_NOT_PARITY -> {return new JumpNotParityInstruction(reg1, reg2, ramOffset);}
+            case LOOP -> {return new LoopInstruction(reg1, reg2, ramOffset);}
+            case CALL -> {return new CallInstruction(reg1, reg2, ramOffset);}
 
             default -> throw new IllegalStateException("Unrecognizable instruction code " + String.format("%1$02X",code));
         }
+    }
+
+    int getMemoryAddress(Register reg){ return (code & 0x10000000) != 0 ? reg.getInteger(reg2) + ramOffset : 0; }
+
+    public boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getRegister());
+        setInstructionPointer(m.getRegister());
         return true;
     }
 
@@ -337,46 +343,28 @@ public class Instruction {
 
     }
 
-    private void enter(Stack stack, Register reg){
-        stack.push(reg.getInteger(STACK_FRAME_POINTER));
-        reg.setInteger(STACK_FRAME_POINTER, reg.getInteger(STACK_POINTER));
-    }
-
-    private void leave(Stack stack, Register reg){
-        reg.setInteger(STACK_POINTER, reg.getInteger(STACK_FRAME_POINTER));
-        reg.setInteger(STACK_FRAME_POINTER, stack.pop());
-    }
-
-    private boolean ret(Register reg, Stack stack){
-        if(stack.empty()) return false;
-        else {
-            reg.setInteger(INSTRUCTION_POINTER, stack.pop());
-            return true;
-        }
-    }
-
     private void setInstructionPointer(Register reg){
         int instructionLength = (code & 0x10000000) == 0 ? 2 : 4;
         reg.setInteger(INSTRUCTION_POINTER, reg.getInteger(INSTRUCTION_POINTER) + instructionLength);
     }
 
-    private void jump(Register reg, int ramAddress){
+    void jump(Register reg, int ramAddress){
         reg.setInteger(INSTRUCTION_POINTER, ramAddress);
     }
 
-    private void exchangeRegReg(Register reg){
+    void exchangeRegReg(Register reg){
         int temp = reg.getInteger(reg1);
         reg.setInteger(reg1, reg.getInteger(reg2));
         reg.setInteger(reg2, temp);
     }
 
-    private void exchangeRegMem(Register reg, RandomAccessMemory ram, int memAddr){
+    void exchangeRegMem(Register reg, RandomAccessMemory ram, int memAddr){
         int temp = reg.getInteger(reg1);
         reg.setInteger(reg1, ram.getInteger(memAddr));
         ram.setInteger(memAddr, temp);
     }
 
-    private int setFlagsAfterLogicalOp(int result, FlagsRegister flags){
+    int setFlagsAfterLogicalOp(int result, FlagsRegister flags){
         if((result & 0x80000000) != 0)flags.setSignFlag();
         else flags.resetSignFlag();
         if(result == 0)flags.setZeroFlag();
@@ -388,109 +376,7 @@ public class Instruction {
         return result;
     }
 
-    private int negateAndSetFlags(int a, FlagsRegister flags){
-        int result = -a;
-        if(a == 0){
-            flags.setCarryFlag();
-            flags.setZeroFlag();
-        }else {
-            flags.resetCarryFlag();
-            flags.resetZeroFlag();
-        }
-        if(a == Integer.MIN_VALUE) flags.setOverflowFlag();
-        else flags.resetOverflowFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
-        else flags.resetParityFlag();
-        return result;
-    }
-
-    private int decrementAndSetFlags(int a, FlagsRegister flags){
-        int result = a-1;
-        if(result == 0) flags.setZeroFlag();
-        else flags.resetZeroFlag();
-        if(a == Integer.MIN_VALUE) flags.setOverflowFlag();
-        else flags.resetOverflowFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
-        else flags.resetParityFlag();
-        return result;
-    }
-
-    private int incrementAndSetFlags(int a, FlagsRegister flags){
-        int result = a+1;
-        if(result == 0) flags.setZeroFlag();
-        else flags.resetZeroFlag();
-        if(a == Integer.MAX_VALUE) flags.setOverflowFlag();
-        else flags.resetOverflowFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
-        else flags.resetParityFlag();
-        return result;
-    }
-
-    private void divideAndSetFlags(int b, Register reg, FlagsRegister flags){
-        if(b == 0){
-            flags.setOverflowFlag();
-            flags.setCarryFlag();
-            reg.setInteger(reg1, 0);
-            reg.setInteger(REMAINDER, 0);
-            return;
-        }
-        flags.resetOverflowFlag();
-        flags.resetCarryFlag();
-        int a = reg.getInteger(reg1);
-        int result = a / b;
-        int remainder = a % b;
-        reg.setInteger(reg1, result);
-        reg.setInteger(REMAINDER, remainder);
-    }
-
-    private void divideUnsignedAndSetFlags(int b, Register reg, FlagsRegister flags){
-        if(b == 0){
-            flags.setOverflowFlag();
-            flags.setCarryFlag();
-            reg.setInteger(reg1, 0);
-            reg.setInteger(REMAINDER, 0);
-            return;
-        }
-        flags.resetOverflowFlag();
-        flags.resetCarryFlag();
-        int a = reg.getInteger(reg1);
-        int result = Integer.divideUnsigned(a, b);
-        int remainder = Integer.remainderUnsigned(a, b);
-        reg.setInteger(reg1, result);
-        reg.setInteger(REMAINDER, remainder);
-    }
-
-    private void multiplyAndSetFlags(int b, Register reg, FlagsRegister flags){
-        int a = reg.getInteger(reg1);
-        int result = a * b;
-        if(result != ((long)a * (long)b)){
-            flags.setOverflowFlag();
-            flags.setCarryFlag();
-        }else {
-            flags.resetOverflowFlag();
-            flags.resetCarryFlag();
-        }
-        reg.setInteger(reg1, result);
-    }
-
-    private void addAndSetFlags(int b, Register reg, FlagsRegister flags){
-        compare(reg.getInteger(reg1), b, flags, Long::sum);
-        reg.setInteger(reg1, reg.getInteger(reg1) + b);
-    }
-
-    private void subAndSetFlags(int b, Register reg, FlagsRegister flags){
-        compare(reg.getInteger(reg1), b, flags, (x, y) -> x - y);
-        reg.setInteger(reg1, reg.getInteger(reg1) - b);
-    }
-
-    private boolean loop(Register reg){
-        reg.setInteger(reg1, reg.getInteger(reg1) - 1);
-        return reg.getInteger(reg1)!=0;
-    }
-
-    private void output(String s){ System.out.println(s); }
-
-    private void compare(int a, int b, FlagsRegister flags, BiFunction<Long, Long, Long> bi){
+    void compare(int a, int b, FlagsRegister flags, BiFunction<Long, Long, Long> bi){
         long signed = bi.apply((long)a, (long)b);
         long unsigned = bi.apply(Integer.toUnsignedLong(a), Integer.toUnsignedLong(b));
         if((signed & 0x80000000) != 0)flags.setSignFlag();
@@ -505,7 +391,7 @@ public class Instruction {
         else flags.resetParityFlag();
     }
 
-    private void compareFloat(float a, float b, FlagsRegister flags){
+    void compareFloat(float a, float b, FlagsRegister flags){
         flags.resetSignFlag();
         if(a > b){
             flags.resetZeroFlag();
@@ -526,7 +412,7 @@ public class Instruction {
         }
     }
 
-    private void examineFloat(float f, FlagsRegister flags){
+    void examineFloat(float f, FlagsRegister flags){
         int bytes = Float.floatToIntBits(f);
         if((bytes & 0x80000000) != 0)flags.setSignFlag();
         else flags.resetSignFlag();

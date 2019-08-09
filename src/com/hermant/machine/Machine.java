@@ -1,6 +1,6 @@
 package com.hermant.machine;
 
-import com.hermant.program.Instruction;
+import com.hermant.program.instruction.Instruction;
 import com.hermant.program.Program;
 
 import java.util.Random;
@@ -54,9 +54,8 @@ public class Machine {
     }
 
     public void runProgram(){
-        Instruction instruction = new Instruction(ram, register);
-        while(instruction.execute(ram, register, floatingPointRegister, flagsRegister, stack, debug))
-            instruction.loadFromMemory(ram, register);
+        //noinspection StatementWithEmptyBody
+        while(Instruction.fetchNextInstruction(ram, register).execute(this, debug));
     }
 
     @SuppressWarnings("unused")
@@ -66,6 +65,26 @@ public class Machine {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public Register getRegister() {
+        return register;
+    }
+
+    public Register getFPR() {
+        return floatingPointRegister;
+    }
+
+    public FlagsRegister getFlagsRegister() {
+        return flagsRegister;
+    }
+
+    public RandomAccessMemory getRam() {
+        return ram;
+    }
+
+    public Stack getStack() {
+        return stack;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.hermant.program;
+package com.hermant.program.declaration;
 
 import com.hermant.machine.RandomAccessMemory;
 

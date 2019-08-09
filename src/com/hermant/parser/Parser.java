@@ -1,6 +1,9 @@
 package com.hermant.parser;
 
 import com.hermant.program.*;
+import com.hermant.program.declaration.*;
+import com.hermant.program.instruction.DummyInstruction;
+import com.hermant.program.instruction.Instruction;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,7 +16,7 @@ import java.util.regex.Pattern;
 import static com.hermant.machine.Machine.SECTION_SIZE;
 import static com.hermant.machine.Register.DATA_SECTION;
 import static com.hermant.machine.Register.PROGRAM_SECTION;
-import static com.hermant.program.Declaration.Type.*;
+import static com.hermant.program.declaration.Declaration.Type.*;
 
 public class Parser {
 
@@ -128,33 +131,24 @@ public class Parser {
     public static Program parse(String path){
         Program program = new Program();
         try {
-            LinkedHashMap<String, String> labelMemoryTranslation = analyzeLabels(path);
-            program = parse(path, labelMemoryTranslation);
+            program = parse(path, analyzeLabels(path));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             System.exit(1);
         }
-
         return program;
     }
 
     private static Program parse(String path, Map<String, String> labelMemoryTranslation) throws ParseException, IOException {
         Program program = new Program();
-
         int lineNum = 0;
         String line;
-
         BufferedReader reader = new BufferedReader(new FileReader(path));
         while ((line = reader.readLine()) != null) {
             lineNum++;
             line = removeLabels(removeComment(line));
             if(line.isBlank())continue;
-
-            line = line.replace(",", " ");
-
-            var words = splitByWhiteSpaces(line);
-
-            words[0] = words[0].toUpperCase(Locale.ROOT);
+            var words = extractWords(line, lineNum);
             switch (words[0]){
                 case RETURN -> loadNoParametersInstruction(Instruction.RETURN, words, program, lineNum);
                 case NO_OPERATION -> loadNoParametersInstruction(Instruction.NO_OPERATION, words, program, lineNum);
@@ -254,26 +248,18 @@ public class Parser {
     private static LinkedHashMap<String, String> analyzeLabels(String path) throws ParseException, IOException{
         //Linked Hash Map to preserve insertion order
         LinkedHashMap<String, String> labelMemoryTranslation = new LinkedHashMap<>();
-
         Stack<String> labels = new Stack<>();
-
         int programSection = 0;
         int dataSection = 0;
-
-        //open file
         BufferedReader reader = new BufferedReader(new FileReader(path));
         int lineNum = 0;
         String line;
-
         while ((line = reader.readLine()) != null) {
             lineNum++;
             line = removeComment(line);
-
             line = processLabels(line, labels, lineNum);
             if(line.isBlank())continue;
-
             String[] words = extractWords(line, lineNum);
-
             switch (words[0]){
                 case DECLARE_CONSTANT, DECLARE_SPACE ->
                         {
@@ -325,20 +311,18 @@ public class Parser {
         }
         reader.close();
         printLabelsInfo(labelMemoryTranslation, programSection, dataSection);
-
         return labelMemoryTranslation;
     }
 
-    //write info about labels and memory usage
-    private static void printLabelsInfo(Map<String, String> labelMemoryTranslation, int programSection, int dataSection){
+    private static void printLabelsInfo(Map<String, String> labelMemoryTranslation, int programSectionSize, int dataSectionSize){
         System.out.println();
         System.out.println("Labels: ");
         for(var entry : labelMemoryTranslation.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue());
         }
         System.out.println();
-        System.out.println("Program section: " + programSection + " bytes");
-        System.out.println("Data section: " + dataSection + " bytes");
+        System.out.println("Program section: " + programSectionSize + " bytes");
+        System.out.println("Data section: " + dataSectionSize + " bytes");
         System.out.println();
     }
 
@@ -430,14 +414,14 @@ public class Parser {
 
     private static void loadNoParametersInstruction(byte code, String[] words, Program program, int lineNum) throws ParseException {
         if(words.length != 1)throw new ParseException("illegal parameters number", lineNum);
-        program.addInstruction(new Instruction(code, (byte)0, (byte)0, null));
+        program.addInstruction(new DummyInstruction(code, (byte)0, (byte)0, null));
     }
 
     private static void loadRegOrMemInstruction(byte codeMem, byte codeReg, String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException {
         if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
-            program.addInstruction(new Instruction(codeReg, (byte)reg, (byte)0, null));
+            program.addInstruction(new DummyInstruction(codeReg, (byte)reg, (byte)0, null));
         } else loadMemInstruction(codeMem, words, labels, program, lineNum);
     }
 
@@ -445,7 +429,7 @@ public class Parser {
         if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
-            program.addInstruction(new Instruction(code, (byte)reg, (byte)0, null));
+            program.addInstruction(new DummyInstruction(code, (byte)reg, (byte)0, null));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -463,7 +447,7 @@ public class Parser {
             var numbers = words[1].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new Instruction(code, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new DummyInstruction(code, (byte)reg1, (byte)reg2, mem));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -482,7 +466,7 @@ public class Parser {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new Instruction(code, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new DummyInstruction(code, (byte)reg1, (byte)reg2, mem));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -501,12 +485,12 @@ public class Parser {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new Instruction(codeRegMem, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new DummyInstruction(codeRegMem, (byte)reg1, (byte)reg2, mem));
             return;
         }
         if(validateRegister(words[2])){
             reg2 = Integer.parseInt(words[2]);
-            program.addInstruction(new Instruction(codeRegReg, (byte)reg1, (byte)reg2, null));
+            program.addInstruction(new DummyInstruction(codeRegReg, (byte)reg1, (byte)reg2, null));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
