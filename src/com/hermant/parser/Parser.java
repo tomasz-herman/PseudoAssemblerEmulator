@@ -398,11 +398,12 @@ public class Parser {
         Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
                 aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
         if(startsWithPositiveNumber(words[1])){
+            int count = parseDecInt(words[1].split("\\*")[0]);
             switch (type){
-                case anInteger-> program.addDeclaration(new IntegerDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
-                case aFloat -> program.addDeclaration(new FloatDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
-                case aByte -> program.addDeclaration(new ByteDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
-                case aChar -> program.addDeclaration(new CharDeclaration(parseDecInt(words[1].split("\\*")[0]), null));
+                case anInteger-> program.addDeclaration(new IntegerDeclaration(count, null));
+                case aFloat -> program.addDeclaration(new FloatDeclaration(count, null));
+                case aByte -> program.addDeclaration(new ByteDeclaration(count, null));
+                case aChar -> program.addDeclaration(new CharDeclaration(count, null));
             }
         } else switch (type){
             case anInteger -> program.addDeclaration(new IntegerDeclaration(1, null));
