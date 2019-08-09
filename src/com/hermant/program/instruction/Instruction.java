@@ -2,11 +2,12 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
 
+import java.io.Serializable;
 import java.util.function.BiFunction;
 
 import static com.hermant.machine.Register.*;
 
-public abstract class Instruction {
+public abstract class Instruction implements Serializable {
     //instruction codes
     public static final byte RETURN = (byte)0b00000001;
 

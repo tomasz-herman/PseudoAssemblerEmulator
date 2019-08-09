@@ -2,7 +2,9 @@ package com.hermant.program.declaration;
 
 import com.hermant.machine.RandomAccessMemory;
 
-public interface Declaration {
+import java.io.Serializable;
+
+public interface Declaration extends Serializable {
 
     enum Type {
         anInteger, aFloat, aByte, aChar, aString
