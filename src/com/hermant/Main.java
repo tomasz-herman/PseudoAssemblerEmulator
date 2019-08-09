@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.22.2 beta");
+        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.22.3 beta");
         if(parseArgsForHelp(args))usage();
         Program program;
         String input = parseArgsForInputFile(args);
@@ -20,6 +20,7 @@ public class Main {
             program = deserializeBinary(input);
         String output = parseArgsForOutputFile(args);
         if(output != null)serializeProgram(program, output);
+        if(parseArgsForAbandon(args))System.exit(0);
         Machine m = new Machine(parseArgsForDebug(args));
         m.loadProgram(program);
         m.runProgram();
@@ -91,6 +92,13 @@ public class Main {
         return false;
     }
 
+    private static boolean parseArgsForAbandon(String[] args){
+        for (String arg : args)
+            if (arg.equals("--abandon"))
+                return true;
+        return false;
+    }
+
     private static boolean parseArgsForHelp(String[] args){
         for (String arg : args)
             if (arg.equals("--help"))
@@ -112,6 +120,7 @@ public class Main {
         System.out.println("--output=FILE\tspecify a file that binary will be saved to(optional)");
         System.out.println("--debug\t\t\tenable debug(optional)");
         System.out.println("--binary\t\tif input file is a binary(optional)");
+        System.out.println("--abandon\t\tdon't run loaded program(optional)");
         System.out.println("--version\t\tdisplay version(optional)");
         System.out.println("--help\t\t\tdisplay this message(optional)");
     }
