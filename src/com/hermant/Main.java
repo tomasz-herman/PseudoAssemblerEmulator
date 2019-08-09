@@ -4,17 +4,61 @@ import com.hermant.machine.Machine;
 import com.hermant.parser.Parser;
 import com.hermant.program.Program;
 
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("PseudoAssembler Emulator version 2.22.0 beta");
-        usage();
-        Program program = Parser.parse(parseArgsForInputFile(args));
+        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.22.2 beta");
+        if(parseArgsForHelp(args))usage();
+        Program program;
+        String input = parseArgsForInputFile(args);
+        if(!parseArgsForBinary(args))
+            program = Parser.parse(input);
+        else
+            program = deserializeBinary(input);
+        String output = parseArgsForOutputFile(args);
+        if(output != null)serializeProgram(program, output);
         Machine m = new Machine(parseArgsForDebug(args));
         m.loadProgram(program);
         m.runProgram();
+    }
+
+    private static Program deserializeBinary(String path){
+        Program program;
+        try
+        {
+            FileInputStream fis = new FileInputStream(path);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            program = (Program) ois.readObject();
+
+            ois.close();
+            fis.close();
+        }
+        catch (IOException | ClassNotFoundException e)
+        {
+            e.printStackTrace();
+            System.exit(1);
+            program = new Program();
+        }
+        return program;
+    }
+
+    private static void serializeProgram(Program program, String path){
+        try
+        {
+            FileOutputStream fos = new FileOutputStream(path);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(program);
+            oos.close();
+            fos.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private static String parseArgsForInputFile(String[] args){
@@ -26,9 +70,37 @@ public class Main {
         return scanner.nextLine();
     }
 
+    private static String parseArgsForOutputFile(String[] args){
+        for (String arg : args)
+            if (arg.startsWith("--output="))
+                return arg.substring(9);
+        return null;
+    }
+
     private static boolean parseArgsForDebug(String[] args){
         for (String arg : args)
             if (arg.equals("--debug"))
+                return true;
+        return false;
+    }
+
+    private static boolean parseArgsForBinary(String[] args){
+        for (String arg : args)
+            if (arg.equals("--binary"))
+                return true;
+        return false;
+    }
+
+    private static boolean parseArgsForHelp(String[] args){
+        for (String arg : args)
+            if (arg.equals("--help"))
+                return true;
+        return false;
+    }
+
+    private static boolean parseArgsForVersion(String[] args){
+        for (String arg : args)
+            if (arg.equals("--version"))
                 return true;
         return false;
     }
@@ -37,6 +109,10 @@ public class Main {
         System.out.println("Usage:\njava --enable-preview -jar PseudoAssemblerEmulator.jar <flags>");
         System.out.println("Flags:");
         System.out.println("--input=FILE\tspecify input file(optional, will ask for it if not specified)");
+        System.out.println("--output=FILE\tspecify a file that binary will be saved to(optional)");
         System.out.println("--debug\t\t\tenable debug(optional)");
+        System.out.println("--binary\t\tif input file is a binary(optional)");
+        System.out.println("--version\t\tdisplay version(optional)");
+        System.out.println("--help\t\t\tdisplay this message(optional)");
     }
 }
