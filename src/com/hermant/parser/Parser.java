@@ -206,6 +206,7 @@ public class Parser {
         tokens.put(JUMP_NOT_BELOW_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE, words, labels, program, lineNum));
         tokens.put(JUMP_ABOVE, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE, words, labels, program, lineNum));
         tokens.put(JUMP_NOT_BELOW, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_ABOVE_OR_EQUAL,(words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE_OR_EQUAL, words, labels, program, lineNum));
         tokens.put(JUMP_NOT_CARRY, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE_OR_EQUAL, words, labels, program, lineNum));
         tokens.put(JUMP_BELOW, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_BELOW, words, labels, program, lineNum));
         tokens.put(JUMP_NOT_ABOVE_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_BELOW, words, labels, program, lineNum));
@@ -305,6 +306,7 @@ public class Parser {
         instruction_types.put(JUMP_NOT_BELOW_OR_EQUAL, instructionType.instruction4Bytes2Words);
         instruction_types.put(JUMP_ABOVE, instructionType.instruction4Bytes2Words);
         instruction_types.put(JUMP_NOT_BELOW, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_ABOVE_OR_EQUAL, instructionType.instruction4Bytes2Words);
         instruction_types.put(JUMP_NOT_CARRY, instructionType.instruction4Bytes2Words);
         instruction_types.put(JUMP_BELOW, instructionType.instruction4Bytes2Words);
         instruction_types.put(JUMP_NOT_ABOVE_OR_EQUAL, instructionType.instruction4Bytes2Words);
@@ -387,33 +389,33 @@ public class Parser {
                     dataSection += getDeclarationSize(words[1], lineNum);
                 }
                 case instruction2Bytes1Word -> {
-                if(words.length != 1)throw new ParseException("illegal declaration parameters", lineNum);
+                    if(words.length != 1)throw new ParseException("illegal instruction parameters", lineNum);
                     storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                     programSection+=2;
                 }
                 case instruction2Bytes2Words -> {
-                    if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
+                    if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
                     storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                     programSection+=2;
                 }
                 case instruction4Bytes2Words -> {
-                    if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
+                    if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
                     storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                     programSection+=4;
                 }
                 case instruction4Bytes3Words -> {
-                    if(words.length != 3)throw new ParseException("illegal declaration parameters", lineNum);
+                    if(words.length != 3)throw new ParseException("illegal instruction parameters", lineNum);
                     storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                     programSection+=4;
                 }
                 case instruction2or4Bytes2Words -> {
-                    if(words.length != 2)throw new ParseException("illegal parameters number",lineNum);
+                    if(words.length != 2)throw new ParseException("illegal instruction parameters",lineNum);
                     storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                     if(validateRegister(words[1]))programSection +=2;
                     else programSection+=4;
                 }
                 case instruction2or4Bytes3Words -> {
-                    if(words.length != 3)throw new ParseException("illegal parameters number",lineNum);
+                    if(words.length != 3)throw new ParseException("illegal instruction parameters",lineNum);
                     storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                     if(validateRegister(words[2]))programSection+=2;
                     else programSection+=4;
