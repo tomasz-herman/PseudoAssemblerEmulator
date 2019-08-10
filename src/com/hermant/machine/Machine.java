@@ -1,6 +1,5 @@
 package com.hermant.machine;
 
-import com.hermant.program.instruction.Instruction;
 import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionFactory;
 

@@ -128,6 +128,213 @@ public class Parser {
     private static final String BYTE = "BYTE";
     private static final String CHAR = "CHAR";
 
+    public interface Slave { void parse(String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException; }
+
+    private static final Map<String, Slave> TOKENS;
+
+    static {
+        final Map<String, Slave> tokens = new HashMap<>();
+        TOKENS = Collections.unmodifiableMap(tokens);
+        tokens.put(RETURN, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.RETURN, words, program, lineNum));
+        tokens.put(NO_OPERATION, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.NO_OPERATION, words, program, lineNum));
+        tokens.put(PUSH_FLAGS, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.PUSH_FLAGS, words, program, lineNum));
+        tokens.put(POP_FLAGS, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.POP_FLAGS, words, program, lineNum));
+        tokens.put(ENTER, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.ENTER, words, program, lineNum));
+        tokens.put(LEAVE, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.LEAVE, words, program, lineNum));
+        tokens.put(LOAD, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LOAD, Instruction.LOAD_REGISTER, words, labels, program, lineNum));
+        tokens.put(LOAD_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LOAD_FLOAT, Instruction.LOAD_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(STORE, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.STORE, words, labels, program, lineNum));
+        tokens.put(STORE_FLOAT, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.STORE_FLOAT, words, labels, program, lineNum));
+        tokens.put(LOAD_ADDRESS, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.LOAD_ADDRESS, words, labels, program, lineNum));
+        tokens.put(EXCHANGE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.EXCHANGE, Instruction.EXCHANGE_REGISTER, words, labels, program, lineNum));
+        tokens.put(EXCHANGE_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.EXCHANGE_FLOAT, Instruction.EXCHANGE_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(PUSH, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.PUSH, Instruction.PUSH_REGISTER, words, labels, program, lineNum));
+        tokens.put(PUSH_FLOAT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.PUSH, Instruction.PUSH_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(POP, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.POP, Instruction.POP_REGISTER, words, labels, program, lineNum));
+        tokens.put(POP_FLOAT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.POP, Instruction.POP_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(LOAD_BYTE, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.LOAD_BYTE, words, labels, program, lineNum));
+        tokens.put(LOAD_BYTE_UNSIGNED, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.LOAD_BYTE_UNSIGNED, words, labels, program, lineNum));
+        tokens.put(STORE_BYTE, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.STORE_BYTE, words, labels, program, lineNum));
+        tokens.put(LOAD_INTEGER_AS_FLOAT, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.LOAD_INTEGER_AS_FLOAT, words, labels, program, lineNum));
+        tokens.put(STORE_FLOAT_AS_INTEGER, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.STORE_FLOAT_AS_INTEGER, words, labels, program, lineNum));
+        tokens.put(RANDOM, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.RANDOM, Instruction.RANDOM_REGISTER, words, labels, program, lineNum));
+        tokens.put(ADD, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.ADD, Instruction.ADD_REGISTER, words, labels, program, lineNum));
+        tokens.put(ADD_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.ADD_FLOAT, Instruction.ADD_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(SUBTRACT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.SUBTRACT, Instruction.SUBTRACT_REGISTER, words, labels, program, lineNum));
+        tokens.put(SUBTRACT_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.SUBTRACT_FLOAT, Instruction.SUBTRACT_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(MULTIPLY, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.MULTIPLY, Instruction.MULTIPLY_REGISTER, words, labels, program, lineNum));
+        tokens.put(MULTIPLY_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.MULTIPLY_FLOAT, Instruction.MULTIPLY_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(DIVIDE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.DIVIDE, Instruction.DIVIDE_REGISTER, words, labels, program, lineNum));
+        tokens.put(DIVIDE_SIGNED, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.DIVIDE_SIGNED, Instruction.DIVIDE_SIGNED_REGISTER, words, labels, program, lineNum));
+        tokens.put(DIVIDE_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.DIVIDE_FLOAT, Instruction.DIVIDE_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(COMPARE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.COMPARE, Instruction.COMPARE_REGISTER, words, labels, program, lineNum));
+        tokens.put(COMPARE_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.COMPARE_FLOAT, Instruction.COMPARE_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(NEGATE, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.NEGATE, Instruction.NEGATE_REGISTER, words, labels, program, lineNum));
+        tokens.put(INCREMENT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.INCREMENT, Instruction.INCREMENT_REGISTER, words, labels, program, lineNum));
+        tokens.put(DECREMENT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.DECREMENT, Instruction.DECREMENT_REGISTER, words, labels, program, lineNum));
+        tokens.put(ABSOLUTE_FLOAT, (words, labels, program, lineNum) -> loadRegInstruction(Instruction.ABSOLUTE_FLOAT, words, program, lineNum));
+        tokens.put(SQUARE_ROOT_FLOAT, (words, labels, program, lineNum) -> loadRegInstruction(Instruction.SQUARE_ROOT_FLOAT, words, program, lineNum));
+        tokens.put(SINE_FLOAT, (words, labels, program, lineNum) -> loadRegInstruction(Instruction.SINE_FLOAT, words, program, lineNum));
+        tokens.put(COSINE_FLOAT, (words, labels, program, lineNum) -> loadRegInstruction(Instruction.COSINE_FLOAT, words, program, lineNum));
+        tokens.put(TANGENT_FLOAT, (words, labels, program, lineNum) -> loadRegInstruction(Instruction.TANGENT_FLOAT, words, program, lineNum));
+        tokens.put(EXAMINE_FLOAT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.EXAMINE_FLOAT, Instruction.EXAMINE_FLOAT_REGISTER, words, labels, program, lineNum));
+        tokens.put(TEST_FLOAT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.TEST_FLOAT, Instruction.TEST_FLOAT_REGISTER, words, labels, program, lineNum));
+        tokens.put(AND, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.AND, Instruction.AND_REGISTER, words, labels, program, lineNum));
+        tokens.put(OR, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.OR, Instruction.OR_REGISTER, words, labels, program, lineNum));
+        tokens.put(XOR, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.XOR, Instruction.XOR_REGISTER, words, labels, program, lineNum));
+        tokens.put(TEST, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.TEST, Instruction.TEST_REGISTER, words, labels, program, lineNum));
+        tokens.put(NOT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.NOT, Instruction.NOT_REGISTER, words, labels, program, lineNum));
+        tokens.put(RIGHT_SHIFT_LOGICAL, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_SHIFT_LOGICAL, Instruction.RIGHT_SHIFT_LOGICAL_REGISTER, words, labels, program, lineNum));
+        tokens.put(LEFT_SHIFT_LOGICAL, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LEFT_SHIFT_LOGICAL, Instruction.LEFT_SHIFT_LOGICAL_REGISTER, words, labels, program, lineNum));
+        tokens.put(RIGHT_SHIFT_ARITHMETIC, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_SHIFT_ARITHMETIC, Instruction.RIGHT_SHIFT_ARITHMETIC_REGISTER, words, labels, program, lineNum));
+        tokens.put(LEFT_SHIFT_ARITHMETIC, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LEFT_SHIFT_ARITHMETIC, Instruction.LEFT_SHIFT_ARITHMETIC_REGISTER, words, labels, program, lineNum));
+        tokens.put(RIGHT_ROTATE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_ROTATE, Instruction.RIGHT_ROTATE_REGISTER, words, labels, program, lineNum));
+        tokens.put(LEFT_ROTATE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LEFT_ROTATE, Instruction.LEFT_ROTATE_REGISTER, words, labels, program, lineNum));
+        tokens.put(JUMP, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP, words, labels, program, lineNum));
+        tokens.put(JUMP_ZERO, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_ZERO, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_NOT_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_NOT_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_LESS_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_GREATER, words, labels, program, lineNum));
+        tokens.put(JUMP_GREATER, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_GREATER, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_LESS, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_GREATER_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_GREATER_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_GREATER_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_GREATER_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_LESSER, words, labels, program, lineNum));
+        tokens.put(JUMP_LESSER, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_LESSER, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_GREATER, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_LESS_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_LESS_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_LESS_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_BELOW_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE, words, labels, program, lineNum));
+        tokens.put(JUMP_ABOVE, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_BELOW, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_CARRY, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_ABOVE_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_BELOW, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_BELOW, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_ABOVE_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_BELOW, words, labels, program, lineNum));
+        tokens.put(JUMP_CARRY, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_BELOW, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_ABOVE, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_BELOW_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_BELOW_OR_EQUAL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_BELOW_OR_EQUAL, words, labels, program, lineNum));
+        tokens.put(JUMP_OVERFLOW, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_OVERFLOW, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_OVERFLOW, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_NOT_OVERFLOW, words, labels, program, lineNum));
+        tokens.put(JUMP_SIGNED, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_SIGNED, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_SIGNED, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_NOT_SIGNED, words, labels, program, lineNum));
+        tokens.put(JUMP_PARITY, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_PARITY, words, labels, program, lineNum));
+        tokens.put(JUMP_NOT_PARITY, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP_NOT_PARITY, words, labels, program, lineNum));
+        tokens.put(LOOP, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.LOOP, words, labels, program, lineNum));
+        tokens.put(CALL, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.CALL, words, labels, program, lineNum));
+        tokens.put(OUTPUT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.OUTPUT, Instruction.OUTPUT_REGISTER, words, labels, program, lineNum));
+        tokens.put(OUTPUT_SIGNED, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.OUTPUT_SIGNED, Instruction.OUTPUT_REGISTER_SIGNED, words, labels, program, lineNum));
+        tokens.put(OUTPUT_FLOAT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.OUTPUT_FLOAT, Instruction.OUTPUT_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(OUTPUT_BYTE, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.OUTPUT_BYTE, Instruction.OUTPUT_REGISTER_BYTE, words, labels, program, lineNum));
+        tokens.put(OUTPUT_CHAR, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.OUTPUT_CHAR, Instruction.OUTPUT_REGISTER_CHAR, words, labels, program, lineNum));
+        tokens.put(DECLARE_CONSTANT, (words, labels, program, lineNum) -> declareConstant(words, program, lineNum));
+        tokens.put(DECLARE_SPACE, (words, labels, program, lineNum) -> declareSpace(words, program, lineNum));
+    }
+
+    private static final Map<String, instructionType> INSTRUCTION_TYPES;
+
+    static {
+        final Map<String, instructionType> instruction_types = new HashMap<>();
+        INSTRUCTION_TYPES = Collections.unmodifiableMap(instruction_types);
+        instruction_types.put(RETURN, instructionType.instruction2Bytes1Word);
+        instruction_types.put(NO_OPERATION, instructionType.instruction2Bytes1Word);
+        instruction_types.put(PUSH_FLAGS, instructionType.instruction2Bytes1Word);
+        instruction_types.put(POP_FLAGS, instructionType.instruction2Bytes1Word);
+        instruction_types.put(ENTER, instructionType.instruction2Bytes1Word);
+        instruction_types.put(LEAVE, instructionType.instruction2Bytes1Word);
+        instruction_types.put(LOAD, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LOAD_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(STORE, instructionType.instruction4Bytes3Words);
+        instruction_types.put(STORE_FLOAT, instructionType.instruction4Bytes3Words);
+        instruction_types.put(LOAD_ADDRESS, instructionType.instruction4Bytes3Words);
+        instruction_types.put(EXCHANGE, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(EXCHANGE_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(PUSH, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(PUSH_FLOAT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(POP, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(POP_FLOAT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(LOAD_BYTE, instructionType.instruction4Bytes3Words);
+        instruction_types.put(LOAD_BYTE_UNSIGNED, instructionType.instruction4Bytes3Words);
+        instruction_types.put(STORE_BYTE, instructionType.instruction4Bytes3Words);
+        instruction_types.put(LOAD_INTEGER_AS_FLOAT, instructionType.instruction4Bytes3Words);
+        instruction_types.put(STORE_FLOAT_AS_INTEGER, instructionType.instruction4Bytes3Words);
+        instruction_types.put(RANDOM, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(ADD, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(ADD_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(SUBTRACT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(SUBTRACT_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(MULTIPLY, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(MULTIPLY_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(DIVIDE, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(DIVIDE_SIGNED, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(DIVIDE_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(COMPARE, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(COMPARE_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(NEGATE, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(INCREMENT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(DECREMENT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(ABSOLUTE_FLOAT, instructionType.instruction2Bytes2Words);
+        instruction_types.put(SQUARE_ROOT_FLOAT, instructionType.instruction2Bytes2Words);
+        instruction_types.put(SINE_FLOAT, instructionType.instruction2Bytes2Words);
+        instruction_types.put(COSINE_FLOAT, instructionType.instruction2Bytes2Words);
+        instruction_types.put(TANGENT_FLOAT, instructionType.instruction2Bytes2Words);
+        instruction_types.put(EXAMINE_FLOAT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(TEST_FLOAT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(AND, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(OR, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(XOR, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(TEST, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(NOT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(RIGHT_SHIFT_LOGICAL, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LEFT_SHIFT_LOGICAL, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(RIGHT_SHIFT_ARITHMETIC, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LEFT_SHIFT_ARITHMETIC, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(RIGHT_ROTATE, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LEFT_ROTATE, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(JUMP, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_ZERO, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_ZERO, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_LESS_OR_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_GREATER, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_LESS, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_GREATER_OR_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_GREATER_OR_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_LESSER, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_GREATER, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_LESS_OR_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_BELOW_OR_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_ABOVE, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_BELOW, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_CARRY, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_BELOW, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_ABOVE_OR_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_CARRY, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_ABOVE, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_BELOW_OR_EQUAL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_OVERFLOW, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_OVERFLOW, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_SIGNED, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_SIGNED, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_PARITY, instructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_PARITY, instructionType.instruction4Bytes2Words);
+        instruction_types.put(LOOP, instructionType.instruction4Bytes3Words);
+        instruction_types.put(CALL, instructionType.instruction4Bytes2Words);
+        instruction_types.put(OUTPUT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_SIGNED, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_FLOAT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_BYTE, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_CHAR, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(DECLARE_CONSTANT, instructionType.declaration);
+        instruction_types.put(DECLARE_SPACE, instructionType.declaration);
+    }
+
+    public enum instructionType {
+        declaration,
+        instruction2or4Bytes2Words, instruction2or4Bytes3Words,
+        instruction2Bytes1Word, instruction2Bytes2Words,
+        instruction4Bytes2Words, instruction4Bytes3Words
+    }
+
     public static Program parse(String path){
         Program program = new Program();
         try {
@@ -149,97 +356,9 @@ public class Parser {
             line = removeLabels(removeComment(line));
             if(line.isBlank())continue;
             var words = extractWords(line, lineNum);
-            switch (words[0]){
-                case RETURN -> loadNoParametersInstruction(Instruction.RETURN, words, program, lineNum);
-                case NO_OPERATION -> loadNoParametersInstruction(Instruction.NO_OPERATION, words, program, lineNum);
-                case PUSH_FLAGS -> loadNoParametersInstruction(Instruction.PUSH_FLAGS, words, program, lineNum);
-                case POP_FLAGS -> loadNoParametersInstruction(Instruction.POP_FLAGS, words, program, lineNum);
-                case ENTER -> loadNoParametersInstruction(Instruction.ENTER, words, program, lineNum);
-                case LEAVE -> loadNoParametersInstruction(Instruction.LEAVE, words, program, lineNum);
-
-                case LOAD -> loadRegMemOrRegRegInstruction(Instruction.LOAD, Instruction.LOAD_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case LOAD_FLOAT -> loadRegMemOrRegRegInstruction(Instruction.LOAD_FLOAT, Instruction.LOAD_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case STORE -> loadRegMemInstruction(Instruction.STORE, words, labelMemoryTranslation, program, lineNum);
-                case STORE_FLOAT -> loadRegMemInstruction(Instruction.STORE_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case LOAD_ADDRESS -> loadRegMemInstruction(Instruction.LOAD_ADDRESS, words, labelMemoryTranslation, program, lineNum);
-                case EXCHANGE -> loadRegMemOrRegRegInstruction(Instruction.EXCHANGE, Instruction.EXCHANGE_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case EXCHANGE_FLOAT -> loadRegMemOrRegRegInstruction(Instruction.EXCHANGE_FLOAT, Instruction.EXCHANGE_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case PUSH -> loadRegOrMemInstruction(Instruction.PUSH, Instruction.PUSH_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case PUSH_FLOAT -> loadRegOrMemInstruction(Instruction.PUSH, Instruction.PUSH_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case POP -> loadRegOrMemInstruction(Instruction.POP, Instruction.POP_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case POP_FLOAT -> loadRegOrMemInstruction(Instruction.POP, Instruction.POP_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case LOAD_BYTE -> loadRegMemInstruction(Instruction.LOAD_BYTE, words, labelMemoryTranslation, program, lineNum);
-                case LOAD_BYTE_UNSIGNED -> loadRegMemInstruction(Instruction.LOAD_BYTE_UNSIGNED, words, labelMemoryTranslation, program, lineNum);
-                case STORE_BYTE -> loadRegMemInstruction(Instruction.STORE_BYTE, words, labelMemoryTranslation, program, lineNum);
-                case LOAD_INTEGER_AS_FLOAT -> loadRegMemInstruction(Instruction.LOAD_INTEGER_AS_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case STORE_FLOAT_AS_INTEGER -> loadRegMemInstruction(Instruction.STORE_FLOAT_AS_INTEGER, words, labelMemoryTranslation, program, lineNum);
-                case RANDOM -> loadRegOrMemInstruction(Instruction.RANDOM, Instruction.RANDOM_REGISTER, words, labelMemoryTranslation, program, lineNum);
-
-                case ADD -> loadRegMemOrRegRegInstruction(Instruction.ADD, Instruction.ADD_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case ADD_FLOAT -> loadRegMemOrRegRegInstruction(Instruction.ADD_FLOAT, Instruction.ADD_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case SUBTRACT -> loadRegMemOrRegRegInstruction(Instruction.SUBTRACT, Instruction.SUBTRACT_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case SUBTRACT_FLOAT -> loadRegMemOrRegRegInstruction(Instruction.SUBTRACT_FLOAT, Instruction.SUBTRACT_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case MULTIPLY -> loadRegMemOrRegRegInstruction(Instruction.MULTIPLY, Instruction.MULTIPLY_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case MULTIPLY_FLOAT -> loadRegMemOrRegRegInstruction(Instruction.MULTIPLY_FLOAT, Instruction.MULTIPLY_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case DIVIDE -> loadRegMemOrRegRegInstruction(Instruction.DIVIDE, Instruction.DIVIDE_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case DIVIDE_SIGNED -> loadRegMemOrRegRegInstruction(Instruction.DIVIDE_SIGNED, Instruction.DIVIDE_SIGNED_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case DIVIDE_FLOAT -> loadRegMemOrRegRegInstruction(Instruction.DIVIDE_FLOAT, Instruction.DIVIDE_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case COMPARE -> loadRegMemOrRegRegInstruction(Instruction.COMPARE, Instruction.COMPARE_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case COMPARE_FLOAT -> loadRegMemOrRegRegInstruction(Instruction.COMPARE_FLOAT, Instruction.COMPARE_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case NEGATE -> loadRegOrMemInstruction(Instruction.NEGATE, Instruction.NEGATE_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case INCREMENT -> loadRegOrMemInstruction(Instruction.INCREMENT, Instruction.INCREMENT_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case DECREMENT -> loadRegOrMemInstruction(Instruction.DECREMENT, Instruction.DECREMENT_REGISTER, words, labelMemoryTranslation, program, lineNum);
-
-                case ABSOLUTE_FLOAT -> loadRegInstruction(Instruction.ABSOLUTE_FLOAT, words, program, lineNum);
-                case SQUARE_ROOT_FLOAT -> loadRegInstruction(Instruction.SQUARE_ROOT_FLOAT, words, program, lineNum);
-                case SINE_FLOAT -> loadRegInstruction(Instruction.SINE_FLOAT, words, program, lineNum);
-                case COSINE_FLOAT -> loadRegInstruction(Instruction.COSINE_FLOAT, words, program, lineNum);
-                case TANGENT_FLOAT -> loadRegInstruction(Instruction.TANGENT_FLOAT, words, program, lineNum);
-                case EXAMINE_FLOAT -> loadRegOrMemInstruction(Instruction.EXAMINE_FLOAT, Instruction.EXAMINE_FLOAT_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case TEST_FLOAT -> loadRegOrMemInstruction(Instruction.TEST_FLOAT, Instruction.TEST_FLOAT_REGISTER, words, labelMemoryTranslation, program, lineNum);
-
-                case AND -> loadRegMemOrRegRegInstruction(Instruction.AND, Instruction.AND_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case OR -> loadRegMemOrRegRegInstruction(Instruction.OR, Instruction.OR_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case XOR -> loadRegMemOrRegRegInstruction(Instruction.XOR, Instruction.XOR_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case TEST -> loadRegMemOrRegRegInstruction(Instruction.TEST, Instruction.TEST_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case NOT -> loadRegOrMemInstruction(Instruction.NOT, Instruction.NOT_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case RIGHT_SHIFT_LOGICAL -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_SHIFT_LOGICAL, Instruction.RIGHT_SHIFT_LOGICAL_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case LEFT_SHIFT_LOGICAL -> loadRegMemOrRegRegInstruction(Instruction.LEFT_SHIFT_LOGICAL, Instruction.LEFT_SHIFT_LOGICAL_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case RIGHT_SHIFT_ARITHMETIC -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_SHIFT_ARITHMETIC, Instruction.RIGHT_SHIFT_ARITHMETIC_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case LEFT_SHIFT_ARITHMETIC -> loadRegMemOrRegRegInstruction(Instruction.LEFT_SHIFT_ARITHMETIC, Instruction.LEFT_SHIFT_ARITHMETIC_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case RIGHT_ROTATE -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_ROTATE, Instruction.RIGHT_ROTATE_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case LEFT_ROTATE -> loadRegMemOrRegRegInstruction(Instruction.LEFT_ROTATE, Instruction.LEFT_ROTATE_REGISTER, words, labelMemoryTranslation, program, lineNum);
-
-                case JUMP -> loadMemInstruction(Instruction.JUMP, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_EQUAL, JUMP_ZERO -> loadMemInstruction(Instruction.JUMP_EQUAL, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_NOT_EQUAL, JUMP_NOT_ZERO -> loadMemInstruction(Instruction.JUMP_NOT_EQUAL, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_GREATER, JUMP_NOT_LESS_OR_EQUAL -> loadMemInstruction(Instruction.JUMP_GREATER, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_GREATER_OR_EQUAL , JUMP_NOT_LESS -> loadMemInstruction(Instruction.JUMP_GREATER_OR_EQUAL, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_LESSER, JUMP_NOT_GREATER_OR_EQUAL -> loadMemInstruction(Instruction.JUMP_LESSER, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_LESS_OR_EQUAL, JUMP_NOT_GREATER -> loadMemInstruction(Instruction.JUMP_LESS_OR_EQUAL, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_ABOVE, JUMP_NOT_BELOW_OR_EQUAL -> loadMemInstruction(Instruction.JUMP_ABOVE, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_ABOVE_OR_EQUAL, JUMP_NOT_BELOW, JUMP_NOT_CARRY -> loadMemInstruction(Instruction.JUMP_ABOVE_OR_EQUAL, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_BELOW, JUMP_NOT_ABOVE_OR_EQUAL, JUMP_CARRY -> loadMemInstruction(Instruction.JUMP_BELOW, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_BELOW_OR_EQUAL, JUMP_NOT_ABOVE -> loadMemInstruction(Instruction.JUMP_BELOW_OR_EQUAL, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_OVERFLOW -> loadMemInstruction(Instruction.JUMP_OVERFLOW, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_NOT_OVERFLOW -> loadMemInstruction(Instruction.JUMP_NOT_OVERFLOW, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_SIGNED -> loadMemInstruction(Instruction.JUMP_SIGNED, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_NOT_SIGNED -> loadMemInstruction(Instruction.JUMP_NOT_SIGNED, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_PARITY -> loadMemInstruction(Instruction.JUMP_PARITY, words, labelMemoryTranslation, program, lineNum);
-                case JUMP_NOT_PARITY -> loadMemInstruction(Instruction.JUMP_NOT_PARITY, words, labelMemoryTranslation, program, lineNum);
-                case LOOP -> loadRegMemInstruction(Instruction.LOOP, words, labelMemoryTranslation, program, lineNum);
-                case CALL -> loadMemInstruction(Instruction.CALL, words, labelMemoryTranslation, program, lineNum);
-
-                case OUTPUT -> loadRegOrMemInstruction(Instruction.OUTPUT, Instruction.OUTPUT_REGISTER, words, labelMemoryTranslation, program, lineNum);
-                case OUTPUT_SIGNED -> loadRegOrMemInstruction(Instruction.OUTPUT_SIGNED, Instruction.OUTPUT_REGISTER_SIGNED, words, labelMemoryTranslation, program, lineNum);
-                case OUTPUT_FLOAT -> loadRegOrMemInstruction(Instruction.OUTPUT_FLOAT, Instruction.OUTPUT_REGISTER_FLOAT, words, labelMemoryTranslation, program, lineNum);
-                case OUTPUT_BYTE -> loadRegOrMemInstruction(Instruction.OUTPUT_BYTE, Instruction.OUTPUT_REGISTER_BYTE, words, labelMemoryTranslation, program, lineNum);
-                case OUTPUT_CHAR -> loadRegOrMemInstruction(Instruction.OUTPUT_CHAR, Instruction.OUTPUT_REGISTER_CHAR, words, labelMemoryTranslation, program, lineNum);
-
-                case DECLARE_CONSTANT -> declareConstant(words, program, lineNum);
-                case DECLARE_SPACE -> declareSpace(words, program, lineNum);
-                default -> throw new ParseException("unknown token", lineNum);
-            }
+            Slave bs = TOKENS.get(words[0]);
+            if(bs==null) throw new ParseException("unknown token", lineNum);
+            bs.parse(words, labelMemoryTranslation, program, lineNum);
         }
         reader.close();
         return program;
@@ -260,50 +379,45 @@ public class Parser {
             line = processLabels(line, labels, lineNum);
             if(line.isBlank())continue;
             String[] words = extractWords(line, lineNum);
-            switch (words[0]){
-                case DECLARE_CONSTANT, DECLARE_SPACE ->
-                        {
-                            if(programSection>0)throw new ParseException("illegal declaration after instructions" ,lineNum);
-                            if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
-                            storeLabels(labels, labelMemoryTranslation, DATA_SECTION, dataSection, lineNum);
-                            dataSection += getDeclarationSize(words[1], lineNum);
-                        }
-                case RETURN, NO_OPERATION, PUSH_FLAGS, POP_FLAGS, SQUARE_ROOT_FLOAT, ABSOLUTE_FLOAT,
-                        SINE_FLOAT, COSINE_FLOAT, TANGENT_FLOAT, ENTER, LEAVE ->
-                        {
-                            storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                            programSection+=2;
-                        }
-                case STORE, STORE_FLOAT, LOAD_ADDRESS, JUMP, JUMP_EQUAL, JUMP_ZERO, JUMP_NOT_EQUAL,
-                        JUMP_NOT_ZERO, JUMP_GREATER, JUMP_NOT_LESS_OR_EQUAL, JUMP_GREATER_OR_EQUAL,
-                        JUMP_NOT_LESS, JUMP_LESSER, JUMP_NOT_GREATER_OR_EQUAL, JUMP_LESS_OR_EQUAL,
-                        JUMP_NOT_GREATER, JUMP_ABOVE, JUMP_NOT_BELOW_OR_EQUAL, JUMP_ABOVE_OR_EQUAL,
-                        JUMP_NOT_BELOW, JUMP_NOT_CARRY, JUMP_BELOW, JUMP_CARRY, JUMP_NOT_ABOVE_OR_EQUAL,
-                        JUMP_BELOW_OR_EQUAL, JUMP_NOT_ABOVE, JUMP_OVERFLOW, JUMP_NOT_OVERFLOW, JUMP_SIGNED,
-                        JUMP_NOT_SIGNED, JUMP_PARITY, JUMP_NOT_PARITY, LOOP, CALL, LOAD_BYTE,
-                        LOAD_BYTE_UNSIGNED, STORE_BYTE, LOAD_INTEGER_AS_FLOAT, STORE_FLOAT_AS_INTEGER ->
-                        {
-                            storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                            programSection+=4;
-                        }
-                case OUTPUT, OUTPUT_FLOAT, OUTPUT_SIGNED, OUTPUT_BYTE, OUTPUT_CHAR, NOT, NEGATE, INCREMENT,
-                        DECREMENT, PUSH, PUSH_FLOAT, POP, POP_FLOAT, RANDOM, EXAMINE_FLOAT, TEST_FLOAT ->
-                        {
-                            if(words.length != 2)throw new ParseException("illegal parameters number",lineNum);
-                            storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                            if(validateRegister(words[1]))programSection +=2;
-                            else programSection+=4;
-                        }
-                case LOAD, LOAD_FLOAT, ADD, ADD_FLOAT, SUBTRACT,
-                        SUBTRACT_FLOAT, MULTIPLY, MULTIPLY_FLOAT, DIVIDE, DIVIDE_SIGNED, DIVIDE_FLOAT, COMPARE,
-                        COMPARE_FLOAT, AND, OR, XOR, TEST, RIGHT_SHIFT_LOGICAL, LEFT_SHIFT_LOGICAL,
-                        RIGHT_SHIFT_ARITHMETIC, LEFT_SHIFT_ARITHMETIC, RIGHT_ROTATE, LEFT_ROTATE, EXCHANGE, EXCHANGE_FLOAT ->
-                        {
-                            if(words.length != 3)throw new ParseException("illegal parameters number",lineNum);
-                            storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                            if(validateRegister(words[2]))programSection+=2;
-                            else programSection+=4;
-                        }
+            switch (INSTRUCTION_TYPES.get(words[0])){
+                case declaration -> {
+                    if(programSection>0)throw new ParseException("illegal declaration after instructions" ,lineNum);
+                    if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
+                    storeLabels(labels, labelMemoryTranslation, DATA_SECTION, dataSection, lineNum);
+                    dataSection += getDeclarationSize(words[1], lineNum);
+                }
+                case instruction2Bytes1Word -> {
+                if(words.length != 1)throw new ParseException("illegal declaration parameters", lineNum);
+                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                    programSection+=2;
+                }
+                case instruction2Bytes2Words -> {
+                    if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
+                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                    programSection+=2;
+                }
+                case instruction4Bytes2Words -> {
+                    if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
+                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                    programSection+=4;
+                }
+                case instruction4Bytes3Words -> {
+                    if(words.length != 3)throw new ParseException("illegal declaration parameters", lineNum);
+                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                    programSection+=4;
+                }
+                case instruction2or4Bytes2Words -> {
+                    if(words.length != 2)throw new ParseException("illegal parameters number",lineNum);
+                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                    if(validateRegister(words[1]))programSection +=2;
+                    else programSection+=4;
+                }
+                case instruction2or4Bytes3Words -> {
+                    if(words.length != 3)throw new ParseException("illegal parameters number",lineNum);
+                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                    if(validateRegister(words[2]))programSection+=2;
+                    else programSection+=4;
+                }
                 default -> throw new ParseException("Unrecognizable OP code", lineNum);
             }
             if(dataSection > SECTION_SIZE) throw new IllegalStateException("exceeded maximum data section size");
