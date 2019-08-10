@@ -2,7 +2,7 @@ package com.hermant.parser;
 
 import com.hermant.program.*;
 import com.hermant.program.declaration.*;
-import com.hermant.program.instruction.DummyInstruction;
+import com.hermant.program.instruction.LoadableInstruction;
 import com.hermant.program.instruction.Instruction;
 
 import java.io.BufferedReader;
@@ -415,14 +415,14 @@ public class Parser {
 
     private static void loadNoParametersInstruction(byte code, String[] words, Program program, int lineNum) throws ParseException {
         if(words.length != 1)throw new ParseException("illegal parameters number", lineNum);
-        program.addInstruction(new DummyInstruction(code, (byte)0, (byte)0, null));
+        program.addInstruction(new LoadableInstruction(code, (byte)0, (byte)0, null));
     }
 
     private static void loadRegOrMemInstruction(byte codeMem, byte codeReg, String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException {
         if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
-            program.addInstruction(new DummyInstruction(codeReg, (byte)reg, (byte)0, null));
+            program.addInstruction(new LoadableInstruction(codeReg, (byte)reg, (byte)0, null));
         } else loadMemInstruction(codeMem, words, labels, program, lineNum);
     }
 
@@ -430,7 +430,7 @@ public class Parser {
         if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
-            program.addInstruction(new DummyInstruction(code, (byte)reg, (byte)0, null));
+            program.addInstruction(new LoadableInstruction(code, (byte)reg, (byte)0, null));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -448,7 +448,7 @@ public class Parser {
             var numbers = words[1].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new DummyInstruction(code, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, mem));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -467,7 +467,7 @@ public class Parser {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new DummyInstruction(code, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, mem));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -486,12 +486,12 @@ public class Parser {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new DummyInstruction(codeRegMem, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new LoadableInstruction(codeRegMem, (byte)reg1, (byte)reg2, mem));
             return;
         }
         if(validateRegister(words[2])){
             reg2 = Integer.parseInt(words[2]);
-            program.addInstruction(new DummyInstruction(codeRegReg, (byte)reg1, (byte)reg2, null));
+            program.addInstruction(new LoadableInstruction(codeRegReg, (byte)reg1, (byte)reg2, null));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);

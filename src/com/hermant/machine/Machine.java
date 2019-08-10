@@ -2,6 +2,7 @@ package com.hermant.machine;
 
 import com.hermant.program.instruction.Instruction;
 import com.hermant.program.Program;
+import com.hermant.program.instruction.InstructionFactory;
 
 import java.util.Random;
 
@@ -55,7 +56,7 @@ public class Machine {
 
     public void runProgram(){
         //noinspection StatementWithEmptyBody
-        while(Instruction.fetchNextInstruction(ram, register).execute(this, debug));
+        while(InstructionFactory.fetchNextInstruction(ram, register).execute(this, debug));
     }
 
     @SuppressWarnings("unused")
