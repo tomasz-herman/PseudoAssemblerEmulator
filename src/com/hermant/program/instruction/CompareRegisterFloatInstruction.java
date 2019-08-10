@@ -14,4 +14,9 @@ public class CompareRegisterFloatInstruction extends Instruction {
         compareFloat(m.getFPR().getFloat(reg1), m.getFPR().getFloat(reg2), m.getFlagsRegister());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "COMPARE_REGISTER_FLOAT";
+    }
 }

@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class OrRegisterInstruction extends Instruction {
+public class OrRegisterInstruction extends Instruction implements LogicalOperation {
 
     OrRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
         super(Instruction.OR_REGISTER, reg1, reg2, ramAddress);
@@ -13,5 +13,10 @@ public class OrRegisterInstruction extends Instruction {
         super.execute(m, debug);
         m.getRegister().setInteger(reg1, setFlagsAfterLogicalOp(m.getRegister().getInteger(reg1) | m.getRegister().getInteger(reg2), m.getFlagsRegister()));
         return true;
+    }
+
+    @Override
+    public String instCode() {
+        return "OR_REGISTER";
     }
 }

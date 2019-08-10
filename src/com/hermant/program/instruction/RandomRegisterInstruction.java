@@ -14,4 +14,9 @@ public class RandomRegisterInstruction extends Instruction {
         m.getRegister().setInteger(reg1, m.getRam().random.nextInt());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "RANDOM_REGISTER";
+    }
 }

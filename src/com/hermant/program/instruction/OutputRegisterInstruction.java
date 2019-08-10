@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class OutputRegisterInstruction extends Instruction {
+public class OutputRegisterInstruction extends OutputOperation {
 
     OutputRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
         super(Instruction.OUTPUT_REGISTER, reg1, reg2, ramAddress);
@@ -13,5 +13,10 @@ public class OutputRegisterInstruction extends Instruction {
         super.execute(m, debug);
         System.out.println(Integer.toUnsignedString(m.getRegister().getInteger(reg1)));
         return true;
+    }
+
+    @Override
+    public String instCode() {
+        return "OUTPUT_REGISTER";
     }
 }

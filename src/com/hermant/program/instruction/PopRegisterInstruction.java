@@ -14,4 +14,9 @@ public class PopRegisterInstruction extends Instruction {
         m.getRegister().setInteger(reg1, m.getStack().pop());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "POP_REGISTER";
+    }
 }

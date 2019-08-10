@@ -15,4 +15,9 @@ public class LoadByteInstruction extends Instruction {
         m.getRam().setByte(ramAddress, (byte)m.getRegister().getInteger(reg1));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD_BYTE";
+    }
 }

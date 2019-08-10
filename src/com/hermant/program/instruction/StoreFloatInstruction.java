@@ -15,4 +15,9 @@ public class StoreFloatInstruction extends Instruction {
         m.getRam().setInteger(ramAddress, m.getFPR().getInteger(reg1));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "STORE_FLOAT";
+    }
 }

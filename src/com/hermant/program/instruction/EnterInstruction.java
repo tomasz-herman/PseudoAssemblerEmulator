@@ -18,4 +18,9 @@ public class EnterInstruction extends Instruction {
         m.getRegister().setInteger(STACK_FRAME_POINTER, m.getRegister().getInteger(STACK_POINTER));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "ENTER";
+    }
 }

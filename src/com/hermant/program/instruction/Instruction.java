@@ -334,47 +334,13 @@ public abstract class Instruction implements Serializable {
         return true;
     }
 
-    private void debug(Register reg){
-        if(code != OUTPUT && code != OUTPUT_FLOAT && code != OUTPUT_REGISTER && code != OUTPUT_REGISTER_FLOAT
-                && code != OUTPUT_SIGNED && code != OUTPUT_REGISTER_SIGNED && code != OUTPUT_BYTE
-                && code != OUTPUT_CHAR  && code != OUTPUT_REGISTER_BYTE  && code != OUTPUT_REGISTER_CHAR)
-            System.out.println(String.format("%1$08X",reg.getInteger(INSTRUCTION_POINTER)) + " | " + this);
-        else
-            System.out.print(String.format("%1$08X",reg.getInteger(INSTRUCTION_POINTER)) + " | " + this);
-
+    public void debug(Register reg){
+        System.out.println(String.format("%1$08X",reg.getInteger(INSTRUCTION_POINTER)) + " | " + this);
     }
 
     private void setInstructionPointer(Register reg){
         int instructionLength = (code & 0x10000000) == 0 ? 2 : 4;
         reg.setInteger(INSTRUCTION_POINTER, reg.getInteger(INSTRUCTION_POINTER) + instructionLength);
-    }
-
-    void jump(Register reg, int ramAddress){
-        reg.setInteger(INSTRUCTION_POINTER, ramAddress);
-    }
-
-    void exchangeRegReg(Register reg){
-        int temp = reg.getInteger(reg1);
-        reg.setInteger(reg1, reg.getInteger(reg2));
-        reg.setInteger(reg2, temp);
-    }
-
-    void exchangeRegMem(Register reg, RandomAccessMemory ram, int memAddr){
-        int temp = reg.getInteger(reg1);
-        reg.setInteger(reg1, ram.getInteger(memAddr));
-        ram.setInteger(memAddr, temp);
-    }
-
-    int setFlagsAfterLogicalOp(int result, FlagsRegister flags){
-        if((result & 0x80000000) != 0)flags.setSignFlag();
-        else flags.resetSignFlag();
-        if(result == 0)flags.setZeroFlag();
-        else flags.resetZeroFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
-        else flags.resetParityFlag();
-        flags.resetOverflowFlag();
-        flags.resetCarryFlag();
-        return result;
     }
 
     void compare(int a, int b, FlagsRegister flags, BiFunction<Long, Long, Long> bi){
@@ -444,124 +410,11 @@ public abstract class Instruction implements Serializable {
         }
     }
 
+    public abstract String instCode();
+
     @Override
     public String toString() {
-        String instCode;
-        switch(code) {
-            case LOAD -> instCode = "LOAD";
-            case LOAD_REGISTER -> instCode = "LOAD_REGISTER";
-            case STORE_BYTE -> instCode = "STORE_BYTE";
-            case LOAD_BYTE_UNSIGNED -> instCode = "LOAD_BYTE_UNSIGNED";
-            case LOAD_BYTE -> instCode = "LOAD_BYTE";
-            case STORE -> instCode = "STORE";
-            case LOAD_FLOAT -> instCode = "LOAD_FLOAT";
-            case LOAD_REGISTER_FLOAT -> instCode = "LOAD_REGISTER_FLOAT";
-            case STORE_FLOAT -> instCode = "STORE_FLOAT";
-            case LOAD_ADDRESS -> instCode = "LOAD_ADDRESS";
-            case EXCHANGE -> instCode = "EXCHANGE";
-            case EXCHANGE_REGISTER -> instCode = "EXCHANGE_REGISTER";
-            case EXCHANGE_FLOAT -> instCode = "EXCHANGE_FLOAT";
-            case EXCHANGE_REGISTER_FLOAT -> instCode = "EXCHANGE_REGISTER_FLOAT";
-            case LOAD_INTEGER_AS_FLOAT -> instCode = "LOAD_INTEGER_AS_FLOAT";
-            case STORE_FLOAT_AS_INTEGER -> instCode = "STORE_FLOAT_AS_INTEGER";
-            case RANDOM -> instCode = "RANDOM";
-            case RANDOM_REGISTER -> instCode = "RANDOM_REGISTER";
-            case ENTER -> instCode = "ENTER";
-            case LEAVE -> instCode = "LEAVE";
-            case PUSH -> instCode = "PUSH";
-            case PUSH_REGISTER -> instCode = "PUSH_REGISTER";
-            case PUSH_REGISTER_FLOAT -> instCode = "PUSH_REGISTER_FLOAT";
-            case PUSH_FLAGS -> instCode = "PUSH_FLAGS";
-            case POP -> instCode = "POP";
-            case POP_REGISTER -> instCode = "POP_REGISTER";
-            case POP_REGISTER_FLOAT -> instCode = "POP_REGISTER_FLOAT";
-            case POP_FLAGS -> instCode = "POP_FLAGS";
-            case ADD -> instCode = "ADD";
-            case ADD_REGISTER -> instCode = "ADD_REGISTER";
-            case SUBTRACT -> instCode = "SUBTRACT";
-            case SUBTRACT_REGISTER -> instCode = "SUBTRACT_REGISTER";
-            case MULTIPLY -> instCode = "MULTIPLY";
-            case MULTIPLY_REGISTER -> instCode = "MULTIPLY_REGISTER";
-            case DIVIDE -> instCode = "DIVIDE";
-            case DIVIDE_REGISTER -> instCode = "DIVIDE_REGISTER";
-            case DIVIDE_SIGNED -> instCode = "DIVIDE_SIGNED";
-            case DIVIDE_SIGNED_REGISTER -> instCode = "DIVIDE_SIGNED_REGISTER";
-            case COMPARE -> instCode = "COMPARE";
-            case COMPARE_REGISTER -> instCode = "COMPARE_REGISTER";
-            case COMPARE_FLOAT -> instCode = "COMPARE_FLOAT";
-            case COMPARE_REGISTER_FLOAT -> instCode = "COMPARE_REGISTER_FLOAT";
-            case TEST -> instCode = "TEST";
-            case TEST_REGISTER -> instCode = "TEST_REGISTER";
-            case ADD_FLOAT -> instCode = "ADD_FLOAT";
-            case ADD_REGISTER_FLOAT -> instCode = "ADD_REGISTER_FLOAT";
-            case SUBTRACT_FLOAT -> instCode = "SUBTRACT_FLOAT";
-            case SUBTRACT_REGISTER_FLOAT ->  instCode = "SUBTRACT_REGISTER_FLOAT";
-            case MULTIPLY_FLOAT -> instCode = "MULTIPLY_FLOAT";
-            case MULTIPLY_REGISTER_FLOAT -> instCode = "MULTIPLY_REGISTER_FLOAT";
-            case DIVIDE_FLOAT -> instCode = "DIVIDE_FLOAT";
-            case DIVIDE_REGISTER_FLOAT -> instCode = "DIVIDE_REGISTER_FLOAT";
-            case SQUARE_ROOT_FLOAT -> instCode = "SQUARE_ROOT_FLOAT";
-            case ABSOLUTE_FLOAT -> instCode = "ABSOLUTE_FLOAT";
-            case SINE_FLOAT -> instCode = "SINE_FLOAT";
-            case COSINE_FLOAT -> instCode = "COSINE_FLOAT";
-            case TANGENT_FLOAT -> instCode = "TANGENT_FLOAT";
-            case NEGATE -> instCode = "NEGATE";
-            case NEGATE_REGISTER -> instCode = "NEGATE_REGISTER";
-            case INCREMENT -> instCode = "INCREMENT";
-            case INCREMENT_REGISTER -> instCode = "INCREMENT_REGISTER";
-            case DECREMENT -> instCode = "DECREMENT";
-            case DECREMENT_REGISTER -> instCode = "DECREMENT_REGISTER";
-            case AND -> instCode = "AND";
-            case AND_REGISTER -> instCode = "AND_REGISTER";
-            case OR -> instCode = "OR";
-            case OR_REGISTER -> instCode = "OR_REGISTER";
-            case XOR -> instCode = "XOR";
-            case XOR_REGISTER -> instCode = "XOR_REGISTER";
-            case RIGHT_SHIFT_LOGICAL -> instCode = "RIGHT_SHIFT_LOGICAL";
-            case LEFT_SHIFT_LOGICAL -> instCode = "LEFT_SHIFT_LOGICAL";
-            case RIGHT_SHIFT_LOGICAL_REGISTER -> instCode = "RIGHT_SHIFT_LOGICAL_REGISTER";
-            case LEFT_SHIFT_LOGICAL_REGISTER -> instCode = "LEFT_SHIFT_LOGICAL_REGISTER";
-            case RIGHT_SHIFT_ARITHMETIC -> instCode = "RIGHT_SHIFT_ARITHMETIC";
-            case RIGHT_SHIFT_ARITHMETIC_REGISTER -> instCode = "RIGHT_SHIFT_ARITHMETIC_REGISTER";
-            case RIGHT_ROTATE -> instCode = "RIGHT_ROTATE";
-            case LEFT_ROTATE -> instCode = "LEFT_ROTATE";
-            case RIGHT_ROTATE_REGISTER -> instCode = "RIGHT_ROTATE_REGISTER";
-            case LEFT_ROTATE_REGISTER -> instCode = "LEFT_ROTATE_REGISTER";
-            case NOT -> instCode = "NOT";
-            case NOT_REGISTER -> instCode = "NOT_REGISTER";
-            case JUMP -> instCode = "JUMP";
-            case JUMP_EQUAL -> instCode = "JUMP_EQUAL";
-            case JUMP_NOT_EQUAL -> instCode = "JUMP_NOT_EQUAL";
-            case JUMP_GREATER -> instCode = "JUMP_GREATER";
-            case JUMP_GREATER_OR_EQUAL -> instCode = "JUMP_GREATER_OR_EQUAL";
-            case JUMP_LESSER -> instCode = "JUMP_LESSER";
-            case JUMP_LESS_OR_EQUAL -> instCode = "JUMP_LESS_OR_EQUAL";
-            case JUMP_ABOVE -> instCode = "JUMP_ABOVE";
-            case JUMP_ABOVE_OR_EQUAL -> instCode = "JUMP_ABOVE_OR_EQUAL";
-            case JUMP_BELOW -> instCode = "JUMP_BELOW";
-            case JUMP_BELOW_OR_EQUAL -> instCode = "JUMP_BELOW_OR_EQUAL";
-            case JUMP_OVERFLOW -> instCode = "JUMP_OVERFLOW";
-            case JUMP_NOT_OVERFLOW -> instCode = "JUMP_NOT_OVERFLOW";
-            case JUMP_SIGNED -> instCode = "JUMP_SIGNED";
-            case JUMP_NOT_SIGNED -> instCode = "JUMP_NOT_SIGNED";
-            case JUMP_PARITY -> instCode = "JUMP_PARITY";
-            case JUMP_NOT_PARITY -> instCode = "JUMP_NOT_PARITY";
-            case LOOP -> instCode = "LOOP";
-            case CALL -> instCode = "CALL";
-            case OUTPUT -> instCode = "OUTPUT";
-            case OUTPUT_SIGNED -> instCode = "OUTPUT_SIGNED";
-            case OUTPUT_FLOAT -> instCode = "OUTPUT_FLOAT";
-            case OUTPUT_BYTE -> instCode = "OUTPUT_BYTE";
-            case OUTPUT_CHAR -> instCode = "OUTPUT_CHAR";
-            case OUTPUT_REGISTER -> instCode = "OUTPUT_REGISTER";
-            case OUTPUT_REGISTER_SIGNED -> instCode = "OUTPUT_REGISTER_SIGNED";
-            case OUTPUT_REGISTER_FLOAT -> instCode = "OUTPUT_REGISTER_FLOAT";
-            case OUTPUT_REGISTER_BYTE -> instCode = "OUTPUT_REGISTER_BYTE";
-            case OUTPUT_REGISTER_CHAR -> instCode = "OUTPUT_REGISTER_CHAR";
-            case RETURN -> instCode = "RETURN";
-            case NO_OPERATION -> instCode = "NO_OPERATION";
-            default -> instCode = "UNKNOWN";
-        }
+        String instCode = instCode();
         String hexCode = String.format("%1$02X",code);
         String r1Hex = String.format("%1$01X",reg1);
         String r2Hex = String.format("%1$01X",reg2);

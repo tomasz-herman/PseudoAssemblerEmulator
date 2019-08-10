@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class OutputByteInstruction extends Instruction {
+public class OutputByteInstruction extends OutputOperation {
 
     OutputByteInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
         super(Instruction.OUTPUT_BYTE, reg1, reg2, ramAddress);
@@ -14,5 +14,10 @@ public class OutputByteInstruction extends Instruction {
         int ramAddress = getMemoryAddress(m.getRegister());
         System.out.println(m.getRam().getByte(ramAddress));
         return true;
+    }
+
+    @Override
+    public String instCode() {
+        return "OUTPUT_BYTE";
     }
 }

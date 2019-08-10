@@ -17,4 +17,9 @@ public class ReturnInstruction extends Instruction {
         else m.getRegister().setInteger(INSTRUCTION_POINTER, m.getStack().pop());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "RETURN";
+    }
 }

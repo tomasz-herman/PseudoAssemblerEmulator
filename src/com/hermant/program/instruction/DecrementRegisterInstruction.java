@@ -22,4 +22,9 @@ public class DecrementRegisterInstruction extends Instruction {
         m.getRegister().setInteger(reg1, result);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "DECREMENT_REGISTER";
+    }
 }

@@ -15,4 +15,9 @@ public class LoadAddressInstruction extends Instruction {
         m.getRegister().setInteger(reg1, ramAddress);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD_ADDRESS";
+    }
 }

@@ -15,4 +15,9 @@ public class PushInstruction extends Instruction {
         m.getStack().push(m.getRam().getInteger(ramAddress));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "PUSH";
+    }
 }

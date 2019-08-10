@@ -15,4 +15,9 @@ public class LoadInstruction extends Instruction {
         m.getRegister().setInteger(reg1, m.getRam().getInteger(ramAddress));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD";
+    }
 }

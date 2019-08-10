@@ -14,4 +14,9 @@ public class LoadRegisterInstruction extends Instruction {
         m.getRegister().setInteger(reg1, m.getRegister().getInteger(reg2));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD_REGISTER";
+    }
 }

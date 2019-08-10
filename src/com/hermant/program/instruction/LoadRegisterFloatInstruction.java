@@ -14,4 +14,9 @@ public class LoadRegisterFloatInstruction extends Instruction {
         m.getFPR().setInteger(reg1, m.getFPR().getInteger(reg2));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD_REGISTER_FLOAT";
+    }
 }

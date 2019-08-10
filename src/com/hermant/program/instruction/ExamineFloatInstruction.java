@@ -15,4 +15,9 @@ public class ExamineFloatInstruction extends Instruction {
         examineFloat(m.getRam().getFloat(ramAddress), m.getFlagsRegister());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "EXAMINE_FLOAT";
+    }
 }

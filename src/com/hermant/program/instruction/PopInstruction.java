@@ -15,4 +15,9 @@ public class PopInstruction extends Instruction {
         m.getRam().setInteger(ramAddress, m.getStack().pop());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "POP";
+    }
 }

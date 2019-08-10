@@ -12,4 +12,9 @@ public class DummyInstruction extends Instruction {
     public boolean execute(Machine m, boolean debug){
         throw new IllegalStateException("Can't execute dummy instruction");
     }
+
+    @Override
+    public String instCode() {
+        return "DUMMY";
+    }
 }

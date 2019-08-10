@@ -14,4 +14,9 @@ public class SquareRootFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, (float)Math.sqrt(m.getFPR().getFloat(reg1)));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "SQUARE_ROOT_FLOAT";
+    }
 }

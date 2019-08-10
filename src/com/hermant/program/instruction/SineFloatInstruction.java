@@ -14,4 +14,9 @@ public class SineFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, (float)Math.sin(m.getFPR().getFloat(reg1)));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "SINE_FLOAT";
+    }
 }

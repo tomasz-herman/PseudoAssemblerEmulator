@@ -14,4 +14,9 @@ public class AbsoluteFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, Math.abs(m.getFPR().getFloat(reg1)));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "ABSOLUTE_FLOAT";
+    }
 }

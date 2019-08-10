@@ -30,4 +30,9 @@ public class DivideRegisterInstruction extends Instruction {
         m.getRegister().setInteger(REMAINDER, remainder);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "DIVIDE_REGISTER";
+    }
 }

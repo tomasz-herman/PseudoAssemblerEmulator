@@ -14,4 +14,9 @@ public class PopRegisterFloatInstruction extends Instruction {
         m.getFPR().setInteger(reg1, m.getStack().pop());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "POP_REGISTER_FLOAT";
+    }
 }

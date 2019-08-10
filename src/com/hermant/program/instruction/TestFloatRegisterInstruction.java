@@ -14,4 +14,9 @@ public class TestFloatRegisterInstruction extends Instruction {
         compareFloat(m.getFPR().getFloat(reg1), 0f, m.getFlagsRegister());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "TEST_FLOAT_REGISTER";
+    }
 }

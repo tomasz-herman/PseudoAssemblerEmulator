@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class AndInstruction extends Instruction {
+public class AndInstruction extends Instruction implements LogicalOperation {
 
     AndInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
         super(Instruction.AND, reg1, reg2, ramAddress);
@@ -14,5 +14,10 @@ public class AndInstruction extends Instruction {
         int ramAddress = getMemoryAddress(m.getRegister());
         m.getRegister().setInteger(reg1, setFlagsAfterLogicalOp(m.getRegister().getInteger(reg1) & m.getRam().getInteger(ramAddress), m.getFlagsRegister()));
         return true;
+    }
+
+    @Override
+    public String instCode() {
+        return "AND";
     }
 }

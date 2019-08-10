@@ -15,4 +15,9 @@ public class RandomInstruction extends Instruction {
         m.getRam().setInteger(ramAddress, m.getRam().random.nextInt());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "RANDOM";
+    }
 }

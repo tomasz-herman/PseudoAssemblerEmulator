@@ -14,4 +14,9 @@ public class PushRegisterInstruction extends Instruction {
         m.getStack().push(m.getRegister().getInteger(reg1));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "PUSH_REGISTER";
+    }
 }

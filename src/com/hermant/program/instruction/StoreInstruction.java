@@ -15,4 +15,9 @@ public class StoreInstruction extends Instruction {
         m.getRam().setInteger(ramAddress, m.getRegister().getInteger(reg1));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "STORE";
+    }
 }

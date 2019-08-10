@@ -18,4 +18,9 @@ public class LeaveInstruction extends Instruction {
         m.getRegister().setInteger(STACK_FRAME_POINTER, m.getStack().pop());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LEAVE";
+    }
 }

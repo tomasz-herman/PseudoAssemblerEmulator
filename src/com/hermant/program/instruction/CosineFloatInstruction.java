@@ -14,4 +14,9 @@ public class CosineFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, (float)Math.cos(m.getFPR().getFloat(reg1)));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "COSINE_FLOAT";
+    }
 }

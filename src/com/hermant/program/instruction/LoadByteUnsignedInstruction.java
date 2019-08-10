@@ -15,4 +15,9 @@ public class LoadByteUnsignedInstruction extends Instruction {
         m.getRegister().setInteger(reg1, m.getRam().getByte(ramAddress));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD_BYTE_UNSIGNED";
+    }
 }

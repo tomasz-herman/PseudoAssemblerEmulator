@@ -15,4 +15,9 @@ public class LoadFloatInstruction extends Instruction {
         m.getFPR().setInteger(reg1, m.getRam().getInteger(ramAddress));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD_FLOAT";
+    }
 }

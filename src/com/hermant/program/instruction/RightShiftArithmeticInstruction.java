@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class RightShiftArithmeticInstruction extends Instruction {
+public class RightShiftArithmeticInstruction extends Instruction implements LogicalOperation {
 
     RightShiftArithmeticInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
         super(Instruction.RIGHT_SHIFT_ARITHMETIC, reg1, reg2, ramAddress);
@@ -14,5 +14,10 @@ public class RightShiftArithmeticInstruction extends Instruction {
         int ramAddress = getMemoryAddress(m.getRegister());
         m.getRegister().setInteger(reg1, setFlagsAfterLogicalOp(m.getRegister().getInteger(reg1) >> m.getRam().getInteger(ramAddress), m.getFlagsRegister()));
         return true;
+    }
+
+    @Override
+    public String instCode() {
+        return "RIGHT_SHIFT_ARITHMETIC";
     }
 }

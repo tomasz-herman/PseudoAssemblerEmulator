@@ -15,4 +15,9 @@ public class TestFloatInstruction extends Instruction {
         compareFloat(m.getRam().getFloat(ramAddress), 0f, m.getFlagsRegister());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "TEST_FLOAT";
+    }
 }

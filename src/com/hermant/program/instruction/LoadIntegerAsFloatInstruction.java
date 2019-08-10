@@ -15,4 +15,9 @@ public class LoadIntegerAsFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, m.getRam().getInteger(ramAddress));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "LOAD_INTEGER_AS_FLOAT";
+    }
 }

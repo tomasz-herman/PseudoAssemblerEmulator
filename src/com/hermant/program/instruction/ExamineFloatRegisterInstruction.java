@@ -14,4 +14,9 @@ public class ExamineFloatRegisterInstruction extends Instruction {
         examineFloat(m.getFPR().getFloat(reg1), m.getFlagsRegister());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "EXAMINE_FLOAT_REGISTER";
+    }
 }

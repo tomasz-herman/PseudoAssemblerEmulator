@@ -15,4 +15,9 @@ public class SubtractFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, m.getFPR().getFloat(reg1) - m.getRam().getFloat(ramAddress));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "SUBTRACT_FLOAT";
+    }
 }

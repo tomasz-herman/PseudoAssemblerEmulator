@@ -14,4 +14,9 @@ public class NotRegisterInstruction extends Instruction {
         m.getRegister().setInteger(reg1, ~m.getRegister().getInteger(reg1));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "NOT_REGISTER";
+    }
 }

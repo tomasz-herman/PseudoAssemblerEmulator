@@ -13,4 +13,9 @@ public class NoOperationInstruction extends Instruction {
         super.execute(m, debug);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "NO_OPERATION";
+    }
 }

@@ -14,4 +14,9 @@ public class TangentFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, (float)Math.tan(m.getFPR().getFloat(reg1)));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "TANGENT_FLOAT";
+    }
 }

@@ -14,4 +14,9 @@ public class PopFlagsInstruction extends Instruction {
         m.getFlagsRegister().setFlags(m.getStack().pop());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "POP_FLAGS";
+    }
 }

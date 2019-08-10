@@ -14,4 +14,9 @@ public class SubtractRegisterFloatInstruction extends Instruction {
         m.getFPR().setFloat(reg1, m.getFPR().getFloat(reg1) - m.getFPR().getFloat(reg2));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "SUBTRACT_REGISTER_FLOAT";
+    }
 }

@@ -16,4 +16,9 @@ public class CompareRegisterInstruction extends Instruction {
         compare(a, b, m.getFlagsRegister(), (x, y) -> x - y);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "COMPARE_REGISTER";
+    }
 }

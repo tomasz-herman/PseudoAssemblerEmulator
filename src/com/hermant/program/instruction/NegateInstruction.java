@@ -28,4 +28,9 @@ public class NegateInstruction extends Instruction {
         m.getRam().setInteger(ramAddress, result);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "NEGATE";
+    }
 }

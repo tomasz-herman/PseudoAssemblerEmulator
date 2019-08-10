@@ -14,4 +14,9 @@ public class PushFlagsInstruction extends Instruction {
         m.getStack().push(m.getFlagsRegister().getFlags());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "PUSH_FLAGS";
+    }
 }

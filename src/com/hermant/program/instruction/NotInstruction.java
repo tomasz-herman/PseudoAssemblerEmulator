@@ -15,4 +15,9 @@ public class NotInstruction extends Instruction {
         m.getRam().setInteger(ramAddress, ~m.getRam().getInteger(ramAddress));
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "NOT";
+    }
 }

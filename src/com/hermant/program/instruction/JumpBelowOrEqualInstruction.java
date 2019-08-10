@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class JumpBelowOrEqualInstruction extends Instruction {
+public class JumpBelowOrEqualInstruction extends Instruction implements JumpOperation {
 
     JumpBelowOrEqualInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
         super(Instruction.JUMP_BELOW_OR_EQUAL, reg1, reg2, ramAddress);
@@ -14,5 +14,10 @@ public class JumpBelowOrEqualInstruction extends Instruction {
         int ramAddress = getMemoryAddress(m.getRegister());
         if(m.getFlagsRegister().isBelowOrEqual()) jump(m.getRegister(), ramAddress);
         return true;
+    }
+
+    @Override
+    public String instCode() {
+        return "JUMP_BELOW_OR_EQUAL";
     }
 }

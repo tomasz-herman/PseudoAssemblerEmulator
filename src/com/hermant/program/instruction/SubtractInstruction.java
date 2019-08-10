@@ -18,4 +18,9 @@ public class SubtractInstruction extends Instruction {
         m.getRegister().setInteger(reg1, a - b);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "SUBTRACT";
+    }
 }

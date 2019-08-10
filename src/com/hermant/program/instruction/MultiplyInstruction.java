@@ -25,4 +25,9 @@ public class MultiplyInstruction extends Instruction {
         m.getRegister().setInteger(reg1, result);
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "MULTIPLY";
+    }
 }

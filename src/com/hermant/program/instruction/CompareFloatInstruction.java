@@ -15,4 +15,9 @@ public class CompareFloatInstruction extends Instruction {
         compareFloat(m.getFPR().getFloat(reg1), m.getRam().getFloat(ramAddress), m.getFlagsRegister());
         return true;
     }
+
+    @Override
+    public String instCode() {
+        return "COMPARE_FLOAT";
+    }
 }
