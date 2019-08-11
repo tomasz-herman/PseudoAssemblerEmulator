@@ -2,11 +2,12 @@ package com.hermant.machine.ram;
 
 import java.util.Random;
 
-public class ArrayRAM implements RandomAccessMemory{
+public class ArrayRAM extends RandomAccessMemory{
 
     private byte[] memory;
 
-    public ArrayRAM(int size){
+    public ArrayRAM(Endianness endianness, int size){
+        super(endianness);
         memory = new byte[size];
         Random random = new Random();
         for (int i = 0; i < memory.length; i++) {

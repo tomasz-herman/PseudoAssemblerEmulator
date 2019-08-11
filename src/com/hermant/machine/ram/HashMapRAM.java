@@ -3,12 +3,13 @@ package com.hermant.machine.ram;
 import java.util.HashMap;
 import java.util.Random;
 
-public class HashMapRAM implements RandomAccessMemory{
+public class HashMapRAM extends RandomAccessMemory{
 
     private Random random;
     private HashMap<Integer, Byte> memory;
 
-    public HashMapRAM(){
+    public HashMapRAM(Endianness endianness){
+        super(endianness);
         random = new Random();
         memory = new HashMap<>();
     }

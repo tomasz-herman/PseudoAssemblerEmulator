@@ -5,6 +5,8 @@ import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionFactory;
 
 import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static com.hermant.machine.Register.*;
 
@@ -25,7 +27,7 @@ public class Machine {
         register = new Register();
         floatingPointRegister = new Register();
         flagsRegister = new FlagsRegister();
-        ram = new LittleEndian(new ArrayRAM(RAM_SIZE));
+        ram = new ArrayRAM(new LittleEndian(), RAM_SIZE);
         rng = new RandomNumberGenerator();
         stack = new Stack(ram, register);
         this.debug = debug;

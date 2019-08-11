@@ -1,17 +1,23 @@
 package com.hermant.machine.ram;
 
-public interface RandomAccessMemory {
+public abstract class RandomAccessMemory {
 
-    void setByte(int address, byte value);
+    private Endianness endianness;
 
-    int getByte(int address);
+    RandomAccessMemory(Endianness endianness){
+        this.endianness = endianness;
+    }
 
-    default void setInteger(int address, int value){throw new IllegalStateException("Bytes interpretation not set");}
+    public abstract void setByte(int address, byte value);
 
-    default int getInteger(int address){throw new IllegalStateException("Bytes interpretation not set");}
+    public abstract int getByte(int address);
 
-    default void setFloat(int address, Float value){throw new IllegalStateException("Bytes interpretation not set");}
+    public void setInteger(int address, int value){ endianness.setInteger(this::setByte, address, value); }
 
-    default float getFloat(int address){throw new IllegalStateException("Bytes interpretation not set");}
+    public int getInteger(int address){ return endianness.getInteger(this::getByte, address); }
+
+    public void setFloat(int address, Float value){ endianness.setFloat(this::setByte, address, value); }
+
+    public float getFloat(int address){ return endianness.getFloat(this::getByte, address); }
 
 }

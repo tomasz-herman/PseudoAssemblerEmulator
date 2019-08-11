@@ -1,19 +1,20 @@
 package com.hermant.machine.ram;
 
-public class MiddleEndian extends Endianness {
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
-    public MiddleEndian(RandomAccessMemory ram) {
-        super(ram);
+public class MiddleEndian implements Endianness {
+
+    @Override
+    public void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
+        setByte.accept(address++, (byte)((value & 0x00ff0000)>>16));
+        setByte.accept(address++, (byte)((value & 0xff000000)>>24));
+        setByte.accept(address++, (byte)((value & 0x000000ff)));
+        setByte.accept(address, (byte)((value & 0x0000ff00)>>8));
     }
 
-    public void setInteger(int address, int value) {
-        ram.setByte(address++, (byte)((value & 0x00ff0000)>>16));
-        ram.setByte(address++, (byte)((value & 0xff000000)>>24));
-        ram.setByte(address++, (byte)((value & 0x000000ff)));
-        ram.setByte(address, (byte)((value & 0x0000ff00)>>8));
-    }
-
-    public int getInteger(int address){
-        return (ram.getByte(address++)<<16)|(ram.getByte(address++)<<24)|(ram.getByte(address++))|(ram.getByte(address)<<8);
+    @Override
+    public int getInteger(Function<Integer, Integer> getByte, int address) {
+        return (getByte.apply(address++)<<16)|(getByte.apply(address++)<<24)|(getByte.apply(address++))|(getByte.apply(address)<<8);
     }
 }
