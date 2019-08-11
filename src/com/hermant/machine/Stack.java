@@ -1,5 +1,7 @@
 package com.hermant.machine;
 
+import com.hermant.machine.ram.RandomAccessMemory;
+
 import static com.hermant.machine.Register.STACK_POINTER;
 import static com.hermant.machine.Register.STACK_SECTION;
 

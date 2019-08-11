@@ -1,11 +1,11 @@
 package com.hermant.machine;
 
+import com.hermant.machine.ram.*;
 import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionFactory;
 
 import java.util.Random;
 
-import static com.hermant.machine.RandomAccessMemory.Endianness.*;
 import static com.hermant.machine.Register.*;
 
 public class Machine {
@@ -25,7 +25,7 @@ public class Machine {
         register = new Register();
         floatingPointRegister = new Register();
         flagsRegister = new FlagsRegister();
-        ram = new ArrayRAM(LittleEndian, RAM_SIZE);
+        ram = new LittleEndian(new ArrayRAM(RAM_SIZE));
         rng = new RandomNumberGenerator();
         stack = new Stack(ram, register);
         this.debug = debug;
@@ -59,7 +59,7 @@ public class Machine {
 
     public void runProgram(){
         //noinspection StatementWithEmptyBody
-        while(InstructionFactory.fetchNextInstruction(ram, register).execute(this, debug));
+        while(InstructionFactory.fetchNextInstruction(ram, register).execute(this, false));
     }
 
     @SuppressWarnings("unused")

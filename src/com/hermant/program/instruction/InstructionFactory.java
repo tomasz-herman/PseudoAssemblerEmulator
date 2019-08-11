@@ -1,6 +1,6 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.RandomAccessMemory;
+import com.hermant.machine.ram.RandomAccessMemory;
 import com.hermant.machine.Register;
 
 import static com.hermant.machine.Register.INSTRUCTION_POINTER;
@@ -140,12 +140,8 @@ public abstract class InstructionFactory {
         byte reg2 = (byte)(ram.getByte(address+1)&0xf);
         Integer ramOffset = null;
         if ((code & 0x10000000)!=0)
-            switch(ram.getEndianness()){
-                case LittleEndian, MiddleEndian ->
-                        ramOffset = (ram.getByte(address+3)<<8) + ram.getByte(address + 2);
-                case BigEndian ->
-                        ramOffset = (ram.getByte(address+2)<<8) + ram.getByte(address + 3);
-            }
+            ramOffset = (ram.getByte(address+2)<<8) + ram.getByte(address + 3);//BigEndian
+            //ramOffset = (ram.getByte(address+3)<<8) + ram.getByte(address + 2);
         InstructionConstructor constructor = INSTRUCTION_CONSTRUCTORS[128 + code];
         if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
         return constructor.create(reg1, reg2, ramOffset);

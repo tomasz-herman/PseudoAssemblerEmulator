@@ -1,24 +1,17 @@
-package com.hermant.machine;
+package com.hermant.machine.ram;
 
 import java.util.Random;
 
 public class ArrayRAM implements RandomAccessMemory{
 
-    private RandomAccessMemory.Endianness endianness;
     private byte[] memory;
 
-    ArrayRAM(RandomAccessMemory.Endianness endianness, int size){
-        this.endianness = endianness;
+    public ArrayRAM(int size){
         memory = new byte[size];
         Random random = new Random();
         for (int i = 0; i < memory.length; i++) {
             memory[i] = (byte)random.nextInt();
         }
-    }
-
-    @Override
-    public Endianness getEndianness() {
-        return endianness;
     }
 
     @Override

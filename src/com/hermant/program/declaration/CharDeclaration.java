@@ -1,6 +1,6 @@
 package com.hermant.program.declaration;
 
-import com.hermant.machine.RandomAccessMemory;
+import com.hermant.machine.ram.RandomAccessMemory;
 
 public class CharDeclaration implements Declaration{
 

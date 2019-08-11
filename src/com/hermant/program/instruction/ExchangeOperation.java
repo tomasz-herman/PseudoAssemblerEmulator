@@ -1,6 +1,6 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.RandomAccessMemory;
+import com.hermant.machine.ram.RandomAccessMemory;
 import com.hermant.machine.Register;
 
 public interface ExchangeOperation {

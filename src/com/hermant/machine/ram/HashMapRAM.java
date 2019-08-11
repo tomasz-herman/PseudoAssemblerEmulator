@@ -1,23 +1,16 @@
-package com.hermant.machine;
+package com.hermant.machine.ram;
 
 import java.util.HashMap;
 import java.util.Random;
 
 public class HashMapRAM implements RandomAccessMemory{
 
-    private RandomAccessMemory.Endianness endianness;
     private Random random;
     private HashMap<Integer, Byte> memory;
 
-    HashMapRAM(RandomAccessMemory.Endianness endianness){
-        this.endianness = endianness;
+    public HashMapRAM(){
         random = new Random();
         memory = new HashMap<>();
-    }
-
-    @Override
-    public Endianness getEndianness() {
-        return endianness;
     }
 
     @Override
