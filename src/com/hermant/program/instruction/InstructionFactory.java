@@ -13,12 +13,12 @@ import static com.hermant.program.instruction.Instruction.*;
 public abstract class InstructionFactory {
 
     //command design pattern
-    public interface ChineseWorker { Instruction create(Byte reg1, Byte reg2, Integer ramAddress); }
+    public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Integer ramAddress); }
 
-    private static final Map<Byte, ChineseWorker> INSTRUCTIONS;
+    private static final Map<Byte, InstructionConstructor> INSTRUCTIONS;
 
     static {
-        final Map<Byte, ChineseWorker> instructions = new HashMap<>();
+        final Map<Byte, InstructionConstructor> instructions = new HashMap<>();
         INSTRUCTIONS = Collections.unmodifiableMap(instructions);
         //116 chinese workers:
         instructions.put(RETURN, ReturnInstruction::new);
@@ -152,8 +152,8 @@ public abstract class InstructionFactory {
                 case BigEndian ->
                         ramOffset = (ram.getByte(address+2)<<8) + ram.getByte(address + 3);
             }
-        ChineseWorker worker = INSTRUCTIONS.get(code);
-        if(worker == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
-        return worker.create(reg1, reg2, ramOffset);
+        InstructionConstructor constructor = INSTRUCTIONS.get(code);
+        if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
+        return constructor.create(reg1, reg2, ramOffset);
     }
 }

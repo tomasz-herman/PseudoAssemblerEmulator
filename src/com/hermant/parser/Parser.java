@@ -128,12 +128,12 @@ public class Parser {
     private static final String BYTE = "BYTE";
     private static final String CHAR = "CHAR";
 
-    public interface Slave { void parse(String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException; }
+    public interface ParseMethod { void parse(String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException; }
 
-    private static final Map<String, Slave> TOKENS;
+    private static final Map<String, ParseMethod> TOKENS;
 
     static {
-        final Map<String, Slave> tokens = new HashMap<>();
+        final Map<String, ParseMethod> tokens = new HashMap<>();
         TOKENS = Collections.unmodifiableMap(tokens);
         tokens.put(RETURN, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.RETURN, words, program, lineNum));
         tokens.put(NO_OPERATION, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.NO_OPERATION, words, program, lineNum));
@@ -358,9 +358,9 @@ public class Parser {
             line = removeLabels(removeComment(line));
             if(line.isBlank())continue;
             var words = extractWords(line, lineNum);
-            Slave bs = TOKENS.get(words[0]);
-            if(bs==null) throw new ParseException("unknown token", lineNum);
-            bs.parse(words, labelMemoryTranslation, program, lineNum);
+            ParseMethod method = TOKENS.get(words[0]);
+            if(method==null) throw new ParseException("unknown token", lineNum);
+            method.parse(words, labelMemoryTranslation, program, lineNum);
         }
         reader.close();
         return program;
