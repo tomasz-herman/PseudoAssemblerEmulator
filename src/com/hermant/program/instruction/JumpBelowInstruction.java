@@ -12,7 +12,7 @@ public class JumpBelowInstruction extends Instruction implements JumpOperation {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        if(m.getFlagsRegister().isBelow()) jump(m.getRegister(), ramAddress);
+        if(m.getFlagsRegister().isBelow()) jump(m.getInstructionPointer(), ramAddress);
         return true;
     }
 

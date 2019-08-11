@@ -1,6 +1,6 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.Register;
+import com.hermant.machine.register.Register;
 
 public interface MemoryOperation {
 

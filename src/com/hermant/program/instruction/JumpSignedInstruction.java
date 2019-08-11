@@ -12,7 +12,7 @@ public class JumpSignedInstruction extends Instruction implements JumpOperation 
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        if(m.getFlagsRegister().isSigned()) jump(m.getRegister(), ramAddress);
+        if(m.getFlagsRegister().isSigned()) jump(m.getInstructionPointer(), ramAddress);
         return true;
     }
 

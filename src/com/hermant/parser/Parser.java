@@ -14,8 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.hermant.machine.Machine.SECTION_SIZE;
-import static com.hermant.machine.Register.DATA_SECTION;
-import static com.hermant.machine.Register.PROGRAM_SECTION;
+import static com.hermant.machine.register.Register.DATA_SECTION;
+import static com.hermant.machine.register.Register.PROGRAM_SECTION;
 import static com.hermant.program.declaration.Declaration.Type.*;
 
 public class Parser {

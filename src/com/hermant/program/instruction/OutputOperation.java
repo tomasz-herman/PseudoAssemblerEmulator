@@ -1,8 +1,6 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.Register;
-
-import static com.hermant.machine.Register.INSTRUCTION_POINTER;
+import com.hermant.machine.register.InstructionPointer;
 
 public abstract class OutputOperation extends Instruction{
 
@@ -11,7 +9,7 @@ public abstract class OutputOperation extends Instruction{
     }
 
     @Override
-    public void debug(Register reg){
-        System.out.print(String.format("%1$08X",reg.getInteger(INSTRUCTION_POINTER)) + " | " + this);
+    public void debug(InstructionPointer instructionPointer){
+        System.out.print(String.format("%1$08X",instructionPointer.get()) + " | " + this);
     }
 }

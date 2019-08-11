@@ -1,11 +1,12 @@
 package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
+import com.hermant.machine.register.FlagsRegister;
+import com.hermant.machine.register.InstructionPointer;
+import com.hermant.machine.register.Register;
 
 import java.io.Serializable;
 import java.util.function.BiFunction;
-
-import static com.hermant.machine.Register.*;
 
 public abstract class Instruction implements Serializable {
     //instruction codes
@@ -148,18 +149,18 @@ public abstract class Instruction implements Serializable {
     int getMemoryAddress(Register reg){ return (code & 0x10000000) != 0 ? reg.getInteger(reg2) + ramOffset : 0; }
 
     public boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getRegister());
-        setInstructionPointer(m.getRegister());
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         return true;
     }
 
-    public void debug(Register reg){
-        System.out.println(String.format("%1$08X",reg.getInteger(INSTRUCTION_POINTER)) + " | " + this);
+    public void debug(InstructionPointer instructionPointer){
+        System.out.println(String.format("%1$08X",instructionPointer.get()) + " | " + this);
     }
 
-    private void setInstructionPointer(Register reg){
+    private void setInstructionPointer(InstructionPointer instructionPointer){
         int instructionLength = (code & 0x10000000) == 0 ? 2 : 4;
-        reg.setInteger(INSTRUCTION_POINTER, reg.getInteger(INSTRUCTION_POINTER) + instructionLength);
+        instructionPointer.set(instructionPointer.get() + instructionLength);
     }
 
     void compare(int a, int b, FlagsRegister flags, BiFunction<Long, Long, Long> bi){

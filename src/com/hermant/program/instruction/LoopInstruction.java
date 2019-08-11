@@ -13,7 +13,7 @@ public class LoopInstruction extends Instruction implements JumpOperation {
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
         m.getRegister().setInteger(reg1, m.getRegister().getInteger(reg1) - 1);
-        if(m.getRegister().getInteger(reg1)!=0) jump(m.getRegister(), ramAddress);
+        if(m.getRegister().getInteger(reg1)!=0) jump(m.getInstructionPointer(), ramAddress);
         return true;
     }
 

@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-import static com.hermant.machine.Register.REMAINDER;
+import static com.hermant.machine.register.Register.REMAINDER;
 
 public class DivideInstruction extends Instruction {
 

@@ -2,8 +2,6 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-import static com.hermant.machine.Register.INSTRUCTION_POINTER;
-
 public class CallInstruction extends Instruction implements JumpOperation {
 
     CallInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
@@ -14,8 +12,8 @@ public class CallInstruction extends Instruction implements JumpOperation {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        m.getStack().push(m.getRegister().getInteger(INSTRUCTION_POINTER));
-        jump(m.getRegister(), ramAddress);
+        m.getStack().push(m.getInstructionPointer().get());
+        jump(m.getInstructionPointer(), ramAddress);
         return true;
     }
 

@@ -1,9 +1,10 @@
 package com.hermant.machine;
 
 import com.hermant.machine.ram.RandomAccessMemory;
+import com.hermant.machine.register.Register;
 
-import static com.hermant.machine.Register.STACK_POINTER;
-import static com.hermant.machine.Register.STACK_SECTION;
+import static com.hermant.machine.register.Register.STACK_POINTER;
+import static com.hermant.machine.register.Register.STACK_SECTION;
 
 public class Stack {
 
@@ -11,7 +12,7 @@ public class Stack {
     private Register reg;
     private static final int MAX_SIZE = 65536;
 
-    public Stack(RandomAccessMemory ram, Register reg){
+    Stack(RandomAccessMemory ram, Register reg){
         this.ram = ram;
         this.reg = reg;
     }

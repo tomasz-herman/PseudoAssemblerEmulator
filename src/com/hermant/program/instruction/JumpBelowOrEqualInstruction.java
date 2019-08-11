@@ -12,7 +12,7 @@ public class JumpBelowOrEqualInstruction extends Instruction implements JumpOper
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        if(m.getFlagsRegister().isBelowOrEqual()) jump(m.getRegister(), ramAddress);
+        if(m.getFlagsRegister().isBelowOrEqual()) jump(m.getInstructionPointer(), ramAddress);
         return true;
     }
 

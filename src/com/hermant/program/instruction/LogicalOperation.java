@@ -1,6 +1,6 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.FlagsRegister;
+import com.hermant.machine.register.FlagsRegister;
 
 public interface LogicalOperation {
 

@@ -24,7 +24,7 @@ public enum Endianness{
     MiddleEndian {
 
         @Override
-        public void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
+        void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
             setByte.accept(address++, (byte)((value & 0x00ff0000)>>16));
             setByte.accept(address++, (byte)((value & 0xff000000)>>24));
             setByte.accept(address++, (byte)((value & 0x000000ff)));

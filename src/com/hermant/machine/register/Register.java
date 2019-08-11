@@ -1,4 +1,4 @@
-package com.hermant.machine;
+package com.hermant.machine.register;
 
 import java.util.Random;
 
@@ -6,17 +6,17 @@ public class Register{
 
     private static final int REGISTER_SIZE = 16;
     public static final int REMAINDER = 8;
-    public static final int INSTRUCTION_POINTER = 9;
+    public static final int RESERVED = 9;
     public static final int STACK_FRAME_POINTER = 10;
     public static final int STACK_POINTER = 11;
-    static final int STACK_SECTION = 12;
-    static final int EXTRA_DATA_SECTION = 13;
+    public static final int STACK_SECTION = 12;
+    public static final int EXTRA_DATA_SECTION = 13;
     public static final int DATA_SECTION = 14;
     public static final int PROGRAM_SECTION = 15;
 
     private int[] values;
 
-    Register(){
+    public Register(){
         values = new int[REGISTER_SIZE];
         Random rand = new Random();
         for (int i = 0; i < REGISTER_SIZE; i++) {

@@ -2,8 +2,8 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-import static com.hermant.machine.Register.STACK_FRAME_POINTER;
-import static com.hermant.machine.Register.STACK_POINTER;
+import static com.hermant.machine.register.Register.STACK_FRAME_POINTER;
+import static com.hermant.machine.register.Register.STACK_POINTER;
 
 public class EnterInstruction extends Instruction {
 

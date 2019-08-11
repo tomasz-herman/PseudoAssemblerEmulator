@@ -1,9 +1,8 @@
 package com.hermant.program.instruction;
 
+import com.hermant.machine.register.InstructionPointer;
 import com.hermant.machine.ram.RandomAccessMemory;
-import com.hermant.machine.Register;
 
-import static com.hermant.machine.Register.INSTRUCTION_POINTER;
 import static com.hermant.program.instruction.Instruction.*;
 
 public abstract class InstructionFactory {
@@ -133,15 +132,15 @@ public abstract class InstructionFactory {
         INSTRUCTION_CONSTRUCTORS[128 + CALL] = CallInstruction::new;
     }
 
-    public static Instruction fetchNextInstruction(RandomAccessMemory ram, Register reg){
-        int address = reg.getInteger(INSTRUCTION_POINTER);
+    public static Instruction fetchNextInstruction(RandomAccessMemory ram, InstructionPointer instructionPointer){
+        int address = instructionPointer.get();
         byte code = (byte)ram.getByte(address);
         byte reg1 = (byte)((ram.getByte(address+1)&0xf0)>>4);
         byte reg2 = (byte)(ram.getByte(address+1)&0xf);
         Integer ramOffset = null;
         if ((code & 0x10000000)!=0)
-            ramOffset = (ram.getByte(address+2)<<8) + ram.getByte(address + 3);//BigEndian
-            //ramOffset = (ram.getByte(address+3)<<8) + ram.getByte(address + 2);
+            ramOffset = (ram.getByte(address + 2) << 8) + ram.getByte(address + 3);//BigEndian
+            //ramOffset = (ram.getByte(address + 3) << 8) + ram.getByte(address + 2);
         InstructionConstructor constructor = INSTRUCTION_CONSTRUCTORS[128 + code];
         if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
         return constructor.create(reg1, reg2, ramOffset);

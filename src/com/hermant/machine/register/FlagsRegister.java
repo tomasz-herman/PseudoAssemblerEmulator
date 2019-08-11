@@ -1,4 +1,4 @@
-package com.hermant.machine;
+package com.hermant.machine.register;
 
 public class FlagsRegister {
 

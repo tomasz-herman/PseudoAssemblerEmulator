@@ -1,13 +1,11 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.Register;
-
-import static com.hermant.machine.Register.INSTRUCTION_POINTER;
+import com.hermant.machine.register.InstructionPointer;
 
 public interface JumpOperation {
 
-    default  void jump(Register reg, int ramAddress){
-        reg.setInteger(INSTRUCTION_POINTER, ramAddress);
+    default  void jump(InstructionPointer instructionPointer, int ramAddress){
+        instructionPointer.set(ramAddress);
     }
 
 }

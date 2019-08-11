@@ -12,7 +12,7 @@ public class JumpNotOverflowInstruction extends Instruction implements JumpOpera
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        if(m.getFlagsRegister().isNotOverflow()) jump(m.getRegister(), ramAddress);
+        if(m.getFlagsRegister().isNotOverflow()) jump(m.getInstructionPointer(), ramAddress);
         return true;
     }
 

@@ -2,8 +2,6 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
 
-import static com.hermant.machine.Register.INSTRUCTION_POINTER;
-
 public class ReturnInstruction extends Instruction {
 
     ReturnInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
@@ -14,7 +12,7 @@ public class ReturnInstruction extends Instruction {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         if(m.getStack().empty()) return false;
-        else m.getRegister().setInteger(INSTRUCTION_POINTER, m.getStack().pop());
+        else m.getInstructionPointer().set(m.getStack().pop());
         return true;
     }
 
