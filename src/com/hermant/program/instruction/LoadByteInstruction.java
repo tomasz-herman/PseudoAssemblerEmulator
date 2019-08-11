@@ -12,7 +12,7 @@ public class LoadByteInstruction extends Instruction {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        m.getRam().setByte(ramAddress, (byte)m.getRegister().getInteger(reg1));
+        m.getRegister().setInteger(reg1, (byte)m.getRam().getByte(ramAddress));
         return true;
     }
 
