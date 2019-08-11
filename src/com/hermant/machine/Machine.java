@@ -14,15 +14,19 @@ public class Machine {
     private Register floatingPointRegister;
     private FlagsRegister flagsRegister;
     private RandomAccessMemory ram;
+
+    private RandomNumberGenerator rng;
     private Stack stack;
     public static final int SECTION_SIZE = 65536;
+    private static final int RAM_SIZE = SECTION_SIZE * 64;
     private boolean debug;
 
     public Machine(boolean debug){
         register = new Register();
         floatingPointRegister = new Register();
         flagsRegister = new FlagsRegister();
-        ram = new RandomAccessMemory(LittleEndian);
+        ram = new ArrayRAM(LittleEndian, RAM_SIZE);
+        rng = new RandomNumberGenerator();
         stack = new Stack(ram, register);
         this.debug = debug;
         setupRegisterAddresses();
@@ -81,6 +85,10 @@ public class Machine {
 
     public RandomAccessMemory getRam() {
         return ram;
+    }
+
+    public RandomNumberGenerator getRng() {
+        return rng;
     }
 
     public Stack getStack() {

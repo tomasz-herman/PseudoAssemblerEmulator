@@ -11,7 +11,7 @@ public class RandomRegisterInstruction extends Instruction {
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        m.getRegister().setInteger(reg1, m.getRam().random.nextInt());
+        m.getRegister().setInteger(reg1, m.getRng().getNext());
         return true;
     }
 

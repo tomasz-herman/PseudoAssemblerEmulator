@@ -1,30 +1,21 @@
 package com.hermant.machine;
 
-import java.util.HashMap;
-import java.util.Random;
+public interface RandomAccessMemory {
 
-public class RandomAccessMemory {
 
-    public enum Endianness{
+    enum Endianness{
         BigEndian, LittleEndian, MiddleEndian
+
     }
+    
+    Endianness getEndianness();
 
-    public Endianness endianness;
-    public Random random;
-    private HashMap<Integer, Byte> memory;
+    void setByte(int address, byte value);
 
-    RandomAccessMemory(Endianness endianness){
-        this.endianness = endianness;
-        random = new Random();
-        memory = new HashMap<>();
-    }
+    int getByte(int address);
 
-    public void setByte(int address, byte value){
-        memory.put(address, value);
-    }
-
-    public void setInteger(int address, int value){
-        switch(endianness){
+    default void setInteger(int address, int value) {
+        switch(getEndianness()){
             case BigEndian -> {
                 setByte(address++, (byte)((value & 0xff000000)>>24));
                 setByte(address++, (byte)((value & 0x00ff0000)>>16));
@@ -44,20 +35,14 @@ public class RandomAccessMemory {
                 setByte(address, (byte)((value & 0x0000ff00)>>8));
             }
         }
-
     }
 
-    public void setFloat(int address, Float value){
+    default void setFloat(int address, Float value){
         setInteger(address, Float.floatToIntBits(value));
     }
 
-    public int getByte(int address){
-        if (!memory.containsKey(address)) memory.put(address, (byte) random.nextInt());
-        return Byte.toUnsignedInt(memory.get(address));
-    }
-
-    public int getInteger(int address){
-        switch (endianness){
+    default int getInteger(int address){
+        switch (getEndianness()){
             case BigEndian ->
                     { return (getByte(address++)<<24)|(getByte(address++)<<16)|(getByte(address++)<<8)|(getByte(address));}
             case LittleEndian ->
@@ -68,7 +53,7 @@ public class RandomAccessMemory {
         return 69420;
     }
 
-    public float getFloat(int address){
+    default float getFloat(int address){
         return Float.intBitsToFloat(getInteger(address));
     }
 

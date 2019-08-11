@@ -12,7 +12,7 @@ public class RandomInstruction extends Instruction {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        m.getRam().setInteger(ramAddress, m.getRam().random.nextInt());
+        m.getRam().setInteger(ramAddress, m.getRng().getNext());
         return true;
     }
 

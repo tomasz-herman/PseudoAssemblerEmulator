@@ -3,10 +3,6 @@ package com.hermant.program.instruction;
 import com.hermant.machine.RandomAccessMemory;
 import com.hermant.machine.Register;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.hermant.machine.Register.INSTRUCTION_POINTER;
 import static com.hermant.program.instruction.Instruction.*;
 
@@ -144,7 +140,7 @@ public abstract class InstructionFactory {
         byte reg2 = (byte)(ram.getByte(address+1)&0xf);
         Integer ramOffset = null;
         if ((code & 0x10000000)!=0)
-            switch(ram.endianness){
+            switch(ram.getEndianness()){
                 case LittleEndian, MiddleEndian ->
                         ramOffset = (ram.getByte(address+3)<<8) + ram.getByte(address + 2);
                 case BigEndian ->

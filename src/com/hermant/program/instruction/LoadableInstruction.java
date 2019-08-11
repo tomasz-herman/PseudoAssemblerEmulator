@@ -13,7 +13,7 @@ public class LoadableInstruction extends Instruction {
         ram.setByte(address + 1, (byte)(((reg1 & 0xf)<<4) | (reg2 & 0xf)));
         int length = (code & 0x10000000) == 0 ? 2 : 4;
         if(length == 2) return address + length;
-        switch(ram.endianness){
+        switch(ram.getEndianness()){
             case LittleEndian, MiddleEndian -> {
                 ram.setByte(address + 3, (byte)((ramOffset & 0xff00)>>8));
                 ram.setByte(address + 2, (byte)(ramOffset & 0xff));
