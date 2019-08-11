@@ -27,7 +27,7 @@ public class Machine {
         register = new Register();
         floatingPointRegister = new Register();
         flagsRegister = new FlagsRegister();
-        ram = new ArrayRAM(new LittleEndian(), RAM_SIZE);
+        ram = new ArrayRAM(Endianness.LittleEndian, RAM_SIZE);
         rng = new RandomNumberGenerator();
         stack = new Stack(ram, register);
         this.debug = debug;
@@ -61,7 +61,7 @@ public class Machine {
 
     public void runProgram(){
         //noinspection StatementWithEmptyBody
-        while(InstructionFactory.fetchNextInstruction(ram, register).execute(this, false));
+        while(InstructionFactory.fetchNextInstruction(ram, register).execute(this, debug));
     }
 
     @SuppressWarnings("unused")

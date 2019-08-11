@@ -16,8 +16,8 @@ public abstract class RandomAccessMemory {
 
     public int getInteger(int address){ return endianness.getInteger(this::getByte, address); }
 
-    public void setFloat(int address, Float value){ endianness.setFloat(this::setByte, address, value); }
+    public void setFloat(int address, Float value){ setInteger(address, Float.floatToIntBits(value)); }
 
-    public float getFloat(int address){ return endianness.getFloat(this::getByte, address); }
+    public float getFloat(int address){ return Float.intBitsToFloat(getInteger(address)); }
 
 }
