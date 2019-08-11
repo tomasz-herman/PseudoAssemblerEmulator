@@ -16,8 +16,9 @@ public enum Endianness{
         }
 
         @Override
-        int getInteger(Function<Integer, Integer> getByte, int address) {
-            return (getByte.apply(address++)|(getByte.apply(address++)<<8)|(getByte.apply(address++)<<16)|(getByte.apply(address)<<24));
+        int getInteger(Function<Integer, Byte> getByte, int address) {
+            return (getByte.apply(address++)&0xff)|((getByte.apply(address++)<<8)&0xff00)|
+                    ((getByte.apply(address++)<<16)&0xff0000)|(getByte.apply(address)<<24);
         }
 
     },
@@ -32,8 +33,9 @@ public enum Endianness{
         }
 
         @Override
-        int getInteger(Function<Integer, Integer> getByte, int address) {
-            return (getByte.apply(address++)<<16)|(getByte.apply(address++)<<24)|(getByte.apply(address++))|(getByte.apply(address)<<8);
+        int getInteger(Function<Integer, Byte> getByte, int address) {
+            return ((getByte.apply(address++)<<16)&0xff0000)|(getByte.apply(address++)<<24)|
+                    (getByte.apply(address++)&0xff)|((getByte.apply(address)<<8)&0xff00);
         }
 
     },
@@ -48,14 +50,15 @@ public enum Endianness{
         }
 
         @Override
-        int getInteger(Function<Integer, Integer> getByte, int address) {
-            return (getByte.apply(address++)<<24)|(getByte.apply(address++)<<16)|(getByte.apply(address++)<<8)|(getByte.apply(address));
+        int getInteger(Function<Integer, Byte> getByte, int address) {
+            return (getByte.apply(address++)<<24)|((getByte.apply(address++)<<16)&0xff0000)|
+            ((getByte.apply(address++)<<8)&0xff00)|(getByte.apply(address)&0xff);
         }
 
     };
 
     abstract void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value);
 
-    abstract int getInteger(Function<Integer, Integer> getByte, int address);
+    abstract int getInteger(Function<Integer, Byte> getByte, int address);
 
 }

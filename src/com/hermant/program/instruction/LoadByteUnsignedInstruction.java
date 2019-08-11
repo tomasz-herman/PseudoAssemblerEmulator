@@ -12,7 +12,7 @@ public class LoadByteUnsignedInstruction extends Instruction {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        m.getRegister().setInteger(reg1, m.getRam().getByte(ramAddress));
+        m.getRegister().setInteger(reg1, Byte.toUnsignedInt(m.getRam().getByte(ramAddress)));
         return true;
     }
 

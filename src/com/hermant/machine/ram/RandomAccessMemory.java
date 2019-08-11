@@ -10,7 +10,7 @@ public abstract class RandomAccessMemory {
 
     public abstract void setByte(int address, byte value);
 
-    public abstract int getByte(int address);
+    public abstract byte getByte(int address);
 
     public void setInteger(int address, int value){ endianness.setInteger(this::setByte, address, value); }
 

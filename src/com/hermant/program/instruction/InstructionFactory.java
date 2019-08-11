@@ -134,13 +134,13 @@ public abstract class InstructionFactory {
 
     public static Instruction fetchNextInstruction(RandomAccessMemory ram, InstructionPointer instructionPointer){
         int address = instructionPointer.get();
-        byte code = (byte)ram.getByte(address);
-        byte reg1 = (byte)((ram.getByte(address+1)&0xf0)>>4);
+        byte code = ram.getByte(address);
+        byte reg1 = (byte)((ram.getByte(address+1)>>4)&0xf);
         byte reg2 = (byte)(ram.getByte(address+1)&0xf);
         Integer ramOffset = null;
         if ((code & 0x10000000)!=0)
-            ramOffset = (ram.getByte(address + 2) << 8) + ram.getByte(address + 3);//BigEndian
-            //ramOffset = (ram.getByte(address + 3) << 8) + ram.getByte(address + 2);
+            ramOffset = (Byte.toUnsignedInt(ram.getByte(address + 2)) << 8) | Byte.toUnsignedInt(ram.getByte(address + 3));//BigEndian
+            //ramOffset = (ram.getByte(address + 3) << 8) + ram.getByte(address + 2);//LittleEndian/MiddleEndian
         InstructionConstructor constructor = INSTRUCTION_CONSTRUCTORS[128 + code];
         if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
         return constructor.create(reg1, reg2, ramOffset);

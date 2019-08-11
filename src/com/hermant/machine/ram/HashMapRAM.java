@@ -20,9 +20,9 @@ public class HashMapRAM extends RandomAccessMemory{
     }
 
     @Override
-    public int getByte(int address){
+    public byte getByte(int address){
         if (!memory.containsKey(address)) memory.put(address, (byte) random.nextInt());
-        return Byte.toUnsignedInt(memory.get(address));
+        return memory.get(address);
     }
 
 }

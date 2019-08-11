@@ -12,7 +12,7 @@ public class OutputCharInstruction extends OutputOperation {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        System.out.println((char)(byte)m.getRam().getByte(ramAddress));
+        System.out.println((char)m.getRam().getByte(ramAddress));
         return true;
     }
 

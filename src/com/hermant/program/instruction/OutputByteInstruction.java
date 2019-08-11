@@ -12,7 +12,7 @@ public class OutputByteInstruction extends OutputOperation {
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister());
-        System.out.println(m.getRam().getByte(ramAddress));
+        System.out.println(Byte.toUnsignedInt(m.getRam().getByte(ramAddress)));
         return true;
     }
 

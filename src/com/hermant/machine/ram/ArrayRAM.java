@@ -21,8 +21,8 @@ public class ArrayRAM extends RandomAccessMemory{
     }
 
     @Override
-    public int getByte(int address) {
-        return Byte.toUnsignedInt(memory[address]);
+    public byte getByte(int address) {
+        return memory[address];
     }
 
 }
