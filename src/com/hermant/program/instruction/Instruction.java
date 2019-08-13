@@ -3,13 +3,13 @@ package com.hermant.program.instruction;
 import com.hermant.machine.*;
 import com.hermant.machine.register.FlagsRegister;
 import com.hermant.machine.register.InstructionPointer;
-import com.hermant.machine.register.Register;
 
 import java.io.Serializable;
 import java.util.function.BiFunction;
 
 public abstract class Instruction implements Serializable {
     //instruction codes
+    public static final byte EXIT = (byte)0b00000000;
     public static final byte RETURN = (byte)0b00000001;
 
     public static final byte LOAD = (byte)0b10000010;
@@ -139,11 +139,11 @@ public abstract class Instruction implements Serializable {
     Byte reg2;
     Short ramOffset;
 
-    Instruction(byte code, Byte reg1, Byte reg2, Short ramAddress){
+    Instruction(byte code, Byte reg1, Byte reg2, Short ramOffset){
         this.code = code;
         this.reg1 = reg1;
         this.reg2 = reg2;
-        this.ramOffset = ramAddress;
+        this.ramOffset = ramOffset;
     }
 
     public boolean execute(Machine m, boolean debug){

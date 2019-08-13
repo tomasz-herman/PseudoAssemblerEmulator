@@ -24,6 +24,7 @@ public class Parser {
     private static final String COMMENT = ";";
 
     //instructions
+    private static final String EXIT = "EXIT";
     private static final String RETURN = "RET";
     private static final String ENTER = "ENTER";
     private static final String LEAVE = "LEAVE";
@@ -135,6 +136,7 @@ public class Parser {
     static {
         final Map<String, ParseMethod> tokens = new HashMap<>();
         TOKENS = Collections.unmodifiableMap(tokens);
+        tokens.put(EXIT, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.EXIT, words, program, lineNum));
         tokens.put(RETURN, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.RETURN, words, program, lineNum));
         tokens.put(NO_OPERATION, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.NO_OPERATION, words, program, lineNum));
         tokens.put(PUSH_FLAGS, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.PUSH_FLAGS, words, program, lineNum));
@@ -235,6 +237,7 @@ public class Parser {
     static {
         final Map<String, instructionType> instruction_types = new HashMap<>();
         INSTRUCTION_TYPES = Collections.unmodifiableMap(instruction_types);
+        instruction_types.put(EXIT, instructionType.instruction2Bytes1Word);
         instruction_types.put(RETURN, instructionType.instruction2Bytes1Word);
         instruction_types.put(NO_OPERATION, instructionType.instruction2Bytes1Word);
         instruction_types.put(PUSH_FLAGS, instructionType.instruction2Bytes1Word);
@@ -634,7 +637,7 @@ public class Parser {
     private static boolean startsWithPositiveNumber(String s){ return s.matches("^[1-9]\\d*.*");}
     private static int parseInt(String s){return s.startsWith("0x") ? (Integer.parseUnsignedInt(s.substring(2), 16)) : s.startsWith("0b") ? (Integer.parseUnsignedInt(s.substring(2), 2)) : parseDecInt(s);}
     private static float parseFloat(String s){return s.startsWith("0x") ? (Float.intBitsToFloat(Integer.parseUnsignedInt(s.substring(2), 16))) : s.startsWith("0b") ? Float.intBitsToFloat((Integer.parseUnsignedInt(s.substring(2), 2))) : Float.parseFloat(s);}
-    private static boolean validateCommandWithComma(String s){return s.matches("^\\s*[A-Z]+\\s+[0-9]+\\s*,\\s*[A-Za-z0-9()_]+\\s*$");}
+    private static boolean validateCommandWithComma(String s){return s.matches("^\\s*[A-Z]+\\s+[0-9]+\\s*,\\s*[-A-Za-z0-9()_]+\\s*$");}
     private static int parseDecInt(String s){return new BigInteger(s).intValue();}
     private static char processCharValue(String s){if(s.startsWith("\'"))return processStringValue(s).charAt(1); else return (char)parseInt(s);}
     private static String processStringValue(String s){return s.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t").replaceAll("\\\\'", "'");}

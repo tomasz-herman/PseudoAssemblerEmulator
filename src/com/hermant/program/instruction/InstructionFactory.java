@@ -14,6 +14,7 @@ public abstract class InstructionFactory {
 
     static {
         INSTRUCTION_CONSTRUCTORS = new InstructionConstructor[256];
+        INSTRUCTION_CONSTRUCTORS[128 + EXIT] = ExitInstruction::new;
         INSTRUCTION_CONSTRUCTORS[128 + RETURN] = ReturnInstruction::new;
         INSTRUCTION_CONSTRUCTORS[128 + LOAD] = LoadInstruction::new;
         INSTRUCTION_CONSTRUCTORS[128 + LOAD_REGISTER] = LoadRegisterInstruction::new;

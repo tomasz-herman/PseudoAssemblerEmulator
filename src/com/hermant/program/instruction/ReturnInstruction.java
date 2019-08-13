@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
 
-public class ReturnInstruction extends Instruction {
+public class ReturnInstruction extends Instruction implements JumpOperation{
 
     ReturnInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.RETURN, reg1, reg2, ramAddress);
@@ -11,8 +11,7 @@ public class ReturnInstruction extends Instruction {
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        if(m.getStack().empty()) return false;
-        else m.getInstructionPointer().set(m.getStack().pop());
+        jump(m.getInstructionPointer(), m.getStack().pop());
         return true;
     }
 
