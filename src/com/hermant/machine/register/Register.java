@@ -6,7 +6,7 @@ public class Register{
 
     private static final int REGISTER_SIZE = 16;
     public static final int REMAINDER = 8;
-    public static final int RESERVED = 9;
+    public static final int POINTER = 9;
     public static final int STACK_FRAME_POINTER = 10;
     public static final int STACK_POINTER = 11;
     public static final int STACK_SECTION = 12;

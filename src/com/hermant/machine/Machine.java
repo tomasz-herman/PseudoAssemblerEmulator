@@ -43,7 +43,7 @@ public class Machine {
         int extendedDataSection = dataSection + (1 + random.nextInt(3)) * SECTION_SIZE;
         int stackSection = extendedDataSection + (1 + random.nextInt(3)) * SECTION_SIZE;
         register.setInteger(REMAINDER, 0);
-        register.setInteger(RESERVED, 0);
+        register.setInteger(POINTER, 0);
         register.setInteger(PROGRAM_SECTION, programSection);
         register.setInteger(DATA_SECTION, dataSection);
         register.setInteger(EXTRA_DATA_SECTION, extendedDataSection);
@@ -61,6 +61,7 @@ public class Machine {
         for (var instruction : program.instructions)
             programPointer=instruction.loadIntoMemory(ram, programPointer);
         instructionPointer = new InstructionPointer(register.getInteger(PROGRAM_SECTION));
+        register.setInteger(POINTER, dataPointer);
     }
 
     public void runProgram(){
