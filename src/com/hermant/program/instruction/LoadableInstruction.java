@@ -5,8 +5,8 @@ import com.hermant.machine.ram.RandomAccessMemory;
 
 public class LoadableInstruction extends Instruction {
 
-    public LoadableInstruction(byte code, Byte reg1, Byte reg2, Short ramAddress) {
-        super(code, reg1, reg2, ramAddress);
+    public LoadableInstruction(byte code, Byte reg1, Byte reg2, Short ramOffset) {
+        super(code, reg1, reg2, ramOffset);
     }
 
     public int loadIntoMemory(RandomAccessMemory ram, int address){

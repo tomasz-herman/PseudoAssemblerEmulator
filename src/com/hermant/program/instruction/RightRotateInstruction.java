@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class RightRotateInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
-    RightRotateInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.RIGHT_ROTATE, reg1, reg2, ramAddress);
+    RightRotateInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.RIGHT_ROTATE, reg1, reg2, ramOffset);
     }
 
     @Override

@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class JumpNotSignedInstruction extends Instruction implements JumpOperation {
 
-    JumpNotSignedInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.JUMP_NOT_SIGNED, reg1, reg2, ramAddress);
+    JumpNotSignedInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.JUMP_NOT_SIGNED, reg1, reg2, ramOffset);
     }
 
     @Override

@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class PushRegisterFloatInstruction extends Instruction {
 
-    PushRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.PUSH_REGISTER_FLOAT, reg1, reg2, ramAddress);
+    PushRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.PUSH_REGISTER_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

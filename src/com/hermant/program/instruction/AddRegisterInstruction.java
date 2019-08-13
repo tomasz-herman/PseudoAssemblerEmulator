@@ -2,10 +2,10 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class AddRegisterInstruction extends Instruction implements IntegerArithmetic {
+public class AddRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
-    AddRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.ADD_REGISTER, reg1, reg2, ramAddress);
+    AddRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.ADD_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override
@@ -13,8 +13,7 @@ public class AddRegisterInstruction extends Instruction implements IntegerArithm
         super.execute(m, debug);
         int a = m.getRegister().getInteger(reg1);
         int b = m.getRegister().getInteger(reg2);
-        compare(a, b, m.getFlagsRegister(), Long::sum);
-        m.getRegister().setInteger(reg1, a + b);
+        m.getRegister().setInteger(reg1, add(a, b, m.getFlagsRegister()));
         return true;
     }
 

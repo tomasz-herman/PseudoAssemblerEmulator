@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class MultiplyRegisterFloatInstruction extends Instruction {
 
-    MultiplyRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.MULTIPLY_REGISTER_FLOAT, reg1, reg2, ramAddress);
+    MultiplyRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.MULTIPLY_REGISTER_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

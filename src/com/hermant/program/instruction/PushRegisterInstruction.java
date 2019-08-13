@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class PushRegisterInstruction extends Instruction {
 
-    PushRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.PUSH_REGISTER, reg1, reg2, ramAddress);
+    PushRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.PUSH_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

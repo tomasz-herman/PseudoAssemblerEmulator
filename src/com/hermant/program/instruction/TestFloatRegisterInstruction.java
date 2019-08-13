@@ -2,10 +2,10 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class TestFloatRegisterInstruction extends Instruction implements FloatArithmetic {
+public class TestFloatRegisterInstruction extends Instruction implements FloatArithmeticOperation {
 
-    TestFloatRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.TEST_FLOAT_REGISTER, reg1, reg2, ramAddress);
+    TestFloatRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.TEST_FLOAT_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

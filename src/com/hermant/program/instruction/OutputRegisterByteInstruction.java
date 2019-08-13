@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class OutputRegisterByteInstruction extends OutputOperation {
 
-    OutputRegisterByteInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.OUTPUT_REGISTER_BYTE, reg1, reg2, ramAddress);
+    OutputRegisterByteInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.OUTPUT_REGISTER_BYTE, reg1, reg2, ramOffset);
     }
 
     @Override

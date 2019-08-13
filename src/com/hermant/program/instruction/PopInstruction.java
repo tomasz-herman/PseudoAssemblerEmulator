@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class PopInstruction extends Instruction implements MemoryOperation {
 
-    PopInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.POP, reg1, reg2, ramAddress);
+    PopInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.POP, reg1, reg2, ramOffset);
     }
 
     @Override

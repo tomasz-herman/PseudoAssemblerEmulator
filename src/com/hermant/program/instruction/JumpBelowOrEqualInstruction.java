@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class JumpBelowOrEqualInstruction extends Instruction implements JumpOperation {
 
-    JumpBelowOrEqualInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.JUMP_BELOW_OR_EQUAL, reg1, reg2, ramAddress);
+    JumpBelowOrEqualInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.JUMP_BELOW_OR_EQUAL, reg1, reg2, ramOffset);
     }
 
     @Override

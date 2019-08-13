@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class JumpLesserInstruction extends Instruction implements JumpOperation {
 
-    JumpLesserInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.JUMP_LESSER, reg1, reg2, ramAddress);
+    JumpLesserInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.JUMP_LESSER, reg1, reg2, ramOffset);
     }
 
     @Override

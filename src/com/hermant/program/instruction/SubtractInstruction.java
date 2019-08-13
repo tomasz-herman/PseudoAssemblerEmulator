@@ -2,10 +2,10 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class SubtractInstruction extends Instruction implements MemoryOperation, IntegerArithmetic {
+public class SubtractInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
-    SubtractInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.SUBTRACT, reg1, reg2, ramAddress);
+    SubtractInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.SUBTRACT, reg1, reg2, ramOffset);
     }
 
     @Override
@@ -14,8 +14,7 @@ public class SubtractInstruction extends Instruction implements MemoryOperation,
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         int a = m.getRegister().getInteger(reg1);
         int b = m.getRam().getInteger(ramAddress);
-        compare(a, b, m.getFlagsRegister(), (x, y) -> x - y);
-        m.getRegister().setInteger(reg1, a - b);
+        m.getRegister().setInteger(reg1, subtract(a, b, m.getFlagsRegister()));
         return true;
     }
 

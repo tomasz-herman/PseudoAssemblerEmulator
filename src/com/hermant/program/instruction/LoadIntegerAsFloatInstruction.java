@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class LoadIntegerAsFloatInstruction extends Instruction implements MemoryOperation{
 
-    LoadIntegerAsFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.LOAD_INTEGER_AS_FLOAT, reg1, reg2, ramAddress);
+    LoadIntegerAsFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.LOAD_INTEGER_AS_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

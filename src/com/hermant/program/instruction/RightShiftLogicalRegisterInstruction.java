@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class RightShiftLogicalRegisterInstruction extends Instruction implements LogicalOperation {
 
-    RightShiftLogicalRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.RIGHT_SHIFT_LOGICAL_REGISTER, reg1, reg2, ramAddress);
+    RightShiftLogicalRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.RIGHT_SHIFT_LOGICAL_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

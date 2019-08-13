@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class OutputCharInstruction extends OutputOperation implements MemoryOperation {
 
-    OutputCharInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.OUTPUT_CHAR, reg1, reg2, ramAddress);
+    OutputCharInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.OUTPUT_CHAR, reg1, reg2, ramOffset);
     }
 
     @Override

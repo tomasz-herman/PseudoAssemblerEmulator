@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class PopRegisterFloatInstruction extends Instruction {
 
-    PopRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.POP_REGISTER_FLOAT, reg1, reg2, ramAddress);
+    PopRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.POP_REGISTER_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

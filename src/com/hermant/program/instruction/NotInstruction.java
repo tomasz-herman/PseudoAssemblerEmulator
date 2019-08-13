@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class NotInstruction extends Instruction implements MemoryOperation {
 
-    NotInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.NOT, reg1, reg2, ramAddress);
+    NotInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.NOT, reg1, reg2, ramOffset);
     }
 
     @Override

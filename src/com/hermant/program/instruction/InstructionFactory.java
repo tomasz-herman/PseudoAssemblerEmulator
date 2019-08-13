@@ -8,7 +8,7 @@ import static com.hermant.program.instruction.Instruction.*;
 public abstract class InstructionFactory {
 
     //command design pattern
-    public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Short ramAddress); }
+    public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Short ramOffset); }
 
     private static final InstructionConstructor[] INSTRUCTION_CONSTRUCTORS;
 

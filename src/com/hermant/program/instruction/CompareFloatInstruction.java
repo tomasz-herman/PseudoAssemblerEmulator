@@ -2,10 +2,10 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class CompareFloatInstruction extends Instruction implements MemoryOperation, FloatArithmetic {
+public class CompareFloatInstruction extends Instruction implements MemoryOperation, FloatArithmeticOperation {
 
-    CompareFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.COMPARE_FLOAT, reg1, reg2, ramAddress);
+    CompareFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.COMPARE_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

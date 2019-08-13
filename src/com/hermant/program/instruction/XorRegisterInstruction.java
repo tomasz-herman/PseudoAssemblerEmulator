@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class XorRegisterInstruction extends Instruction implements LogicalOperation {
 
-    XorRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.XOR_REGISTER, reg1, reg2, ramAddress);
+    XorRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.XOR_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

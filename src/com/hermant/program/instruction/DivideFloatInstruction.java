@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class DivideFloatInstruction extends Instruction implements MemoryOperation {
 
-    DivideFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.DIVIDE_FLOAT, reg1, reg2, ramAddress);
+    DivideFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.DIVIDE_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

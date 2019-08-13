@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class ExchangeRegisterInstruction extends Instruction implements ExchangeOperation {
 
-    ExchangeRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.EXCHANGE_REGISTER, reg1, reg2, ramAddress);
+    ExchangeRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.EXCHANGE_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

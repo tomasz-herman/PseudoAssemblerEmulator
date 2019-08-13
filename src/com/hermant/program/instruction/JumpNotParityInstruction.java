@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class JumpNotParityInstruction extends Instruction implements JumpOperation {
 
-    JumpNotParityInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.JUMP_NOT_PARITY, reg1, reg2, ramAddress);
+    JumpNotParityInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.JUMP_NOT_PARITY, reg1, reg2, ramOffset);
     }
 
     @Override

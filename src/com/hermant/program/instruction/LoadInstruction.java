@@ -4,8 +4,8 @@ import com.hermant.machine.*;
 
 public class LoadInstruction extends Instruction implements MemoryOperation {
 
-    LoadInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.LOAD, reg1, reg2, ramAddress);
+    LoadInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.LOAD, reg1, reg2, ramOffset);
     }
 
     @Override

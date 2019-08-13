@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class OutputSignedInstruction extends OutputOperation implements MemoryOperation {
 
-    OutputSignedInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.OUTPUT_SIGNED, reg1, reg2, ramAddress);
+    OutputSignedInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.OUTPUT_SIGNED, reg1, reg2, ramOffset);
     }
 
     @Override

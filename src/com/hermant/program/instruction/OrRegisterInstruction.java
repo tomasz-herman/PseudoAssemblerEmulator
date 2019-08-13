@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class OrRegisterInstruction extends Instruction implements LogicalOperation {
 
-    OrRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.OR_REGISTER, reg1, reg2, ramAddress);
+    OrRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.OR_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

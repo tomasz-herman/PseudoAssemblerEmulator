@@ -4,8 +4,8 @@ import com.hermant.machine.Machine;
 
 public class AbsoluteFloatInstruction extends Instruction {
 
-    AbsoluteFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
-        super(Instruction.ABSOLUTE_FLOAT, reg1, reg2, ramAddress);
+    AbsoluteFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
+        super(Instruction.ABSOLUTE_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override
