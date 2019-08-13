@@ -38,10 +38,10 @@ public class Machine {
 
     private void setupRegisterAddresses(){
         Random random = new Random();
-        int programSection = random.nextInt(SECTION_SIZE / 4) * 4 + SECTION_SIZE * 4;
-        int dataSection = programSection + random.nextInt(SECTION_SIZE / 4) * 4 + SECTION_SIZE;
-        int extendedDataSection = dataSection + random.nextInt(SECTION_SIZE / 4) * 4 + SECTION_SIZE;
-        int stackSection = extendedDataSection + random.nextInt(SECTION_SIZE / 4) * 4 + SECTION_SIZE;
+        int programSection = random.nextInt(4) * SECTION_SIZE;
+        int dataSection = programSection + (1 + random.nextInt(3)) * SECTION_SIZE;
+        int extendedDataSection = dataSection + (1 + random.nextInt(3)) * SECTION_SIZE;
+        int stackSection = extendedDataSection + (1 + random.nextInt(3)) * SECTION_SIZE;
         register.setInteger(REMAINDER, 0);
         register.setInteger(RESERVED, 0);
         register.setInteger(PROGRAM_SECTION, programSection);
