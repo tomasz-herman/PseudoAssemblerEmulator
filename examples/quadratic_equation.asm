@@ -34,4 +34,4 @@ ZERO_ROZWIAZAN:                     ;B * B - CZTERY * A * C < 0
 
 KONIEC_PROGRAMU:
         OUT     WYNIK               ;WYPISZ WYNIK NA EKRAN
-        RET                         ;KONIEC
+        EXIT                        ;KONIEC

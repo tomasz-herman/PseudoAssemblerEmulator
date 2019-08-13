@@ -1,6 +1,5 @@
 ;PROGRAM DO WYZNACZANIA SUMY DODATNICH LICZB ZE 100-ELEMENTOWEGO WEKTORA
 JEDEN:      DC      INTEGER(1)
-CZTERY:     DC      INTEGER(4)
 STO:        DC      INTEGER(100)
 WEKTOR:     DS      100*INTEGER
 SUMA:       DS      INTEGER
@@ -16,7 +15,7 @@ LOOP:   CMP     0, 3(0)         ;ZERO ? I-TY ELEMENT WEKTORA
         JGE     NEGATIVE        ;JEŚLI ZERO JEST WIĘKSZE LUB RÓWNE I-TEMU ELEMENTOWI WEKTORA TO NIE DODAWAJ DO SUMY
         ADD     1, 3(0)         ;W.P.P. DODAWAJ
 NEGATIVE:
-        ADD     3, CZTERY       ;PRZESUŃ WSKAŹNIK WEKTORA NA NASTĘPNY ELEMENT
+        LDA     3, 3(4)         ;PRZESUŃ WSKAŹNIK WEKTORA NA NASTĘPNY ELEMENT
         ADD     2, JEDEN        ;ZWIĘKSZ ITERATOR O JEDEN
         CMP     2, STO          ;ITERATOR ? STO
         JZ      KONIEC_PROGRAMU ;JEŚLI ITERATOR RÓWNY STO TO SKOŃCZYL SIĘ WEKTOR
@@ -24,7 +23,7 @@ NEGATIVE:
 KONIEC_PROGRAMU:
         ST      1, SUMA         ;ZAPISZ WYNIK W PAMIĘCI
         OUT     SUMA            ;WYPISZ WYNIK NA EKRAN
-        RET                     ;KONIEC PROGRAMU
+        EXIT                    ;KONIEC PROGRAMU
 
 
 
@@ -44,7 +43,7 @@ NEXT:   RND     4
         SUB     4, STO
         ST      4, 2(0)
         INC     3
-        ADD     2, CZTERY
+        LDA     2, 2(4)
         CMP     3, STO
         JL      NEXT
         RET

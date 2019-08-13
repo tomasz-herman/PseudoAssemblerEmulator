@@ -48,8 +48,8 @@ public class Machine {
         register.setInteger(DATA_SECTION, dataSection);
         register.setInteger(EXTRA_DATA_SECTION, extendedDataSection);
         register.setInteger(STACK_SECTION, stackSection);
-        register.setInteger(STACK_POINTER, stackSection + SECTION_SIZE);
-        register.setInteger(STACK_FRAME_POINTER, stackSection + SECTION_SIZE);
+        register.setInteger(STACK_POINTER, stackSection);
+        register.setInteger(STACK_FRAME_POINTER, stackSection);
     }
 
     public void loadProgram(Program program){

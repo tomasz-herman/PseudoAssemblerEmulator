@@ -14,7 +14,7 @@ MAIN:
             CALL    INIT_TAB
             CALL    INSERTION_SORT
             CALL    PRINT_TAB
-            RET
+            EXIT
 
 ;INICJALIZUJE TABLICĘ WARTOŚCIAMI OD MINVALUE(INCLUSIVE) DO MAXVALUE(EXLUSIVE)
 ;ARGUMENTY:
@@ -25,7 +25,7 @@ MAIN:
 ;OPERUJE NA:
 ;REJESTRY 1, 2, 4, 5
 ;WYMAGA DEKLARACJI:
-;CZTERY - INTEGER(4)
+;---
 ;ZWRACA:
 ;REJESTR 0 - WEJŚCIOWY POINTER NA TAB
 ;REJESTR 1 - WEJŚCIOWY ROZMIAR TABLICY
@@ -39,7 +39,7 @@ L1:         RND     5
             LD      5, 8
             ADD     5, 2
             ST      5, 0(0)
-            ADD     0, CZTERY
+            LDA     0, 0(4)
             LOOP    1, L1
             POP     1
             POP     0
@@ -52,7 +52,7 @@ L1:         RND     5
 ;OPERUJE NA:
 ;REJESTRY 0, 1
 ;WYMAGA DEKLARACJI:
-;CZTERY - INTEGER(4)
+;---
 ;ZWRACA:
 ;REJESTR 0 - WEJŚCIOWY POINTER NA TAB
 ;REJESTR 1 - WEJŚCIOWY ROZMIAR TABLICY
@@ -60,7 +60,7 @@ PRINT_TAB:
             PUSH    0
             PUSH    1
 L2:         IOUT    0(0)
-            ADD     0, CZTERY
+            LDA     0, 0(4)
             LOOP    1, L2
             POP     1
             POP     0
@@ -94,7 +94,7 @@ L4:
             CMP     3, ZERO ;j >? 0
             JLE     L4STOP
             LD      5, 4
-            SUB     4, CZTERY
+            LDA     4, 4(-4)
             LD      6, 4(0)
             CMP     6, 5(0) ;A[j-1] >? A[j]
             JLE     L4STOP
