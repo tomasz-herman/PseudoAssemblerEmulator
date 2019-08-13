@@ -4,14 +4,14 @@ import com.hermant.machine.Machine;
 
 public class JumpOverflowInstruction extends Instruction implements JumpOperation {
 
-    JumpOverflowInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    JumpOverflowInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.JUMP_OVERFLOW, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         if(m.getFlagsRegister().isOverflow()) jump(m.getInstructionPointer(), ramAddress);
         return true;
     }

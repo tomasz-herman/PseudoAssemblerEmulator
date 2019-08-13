@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class NotRegisterInstruction extends Instruction {
 
-    NotRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    NotRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.NOT_REGISTER, reg1, reg2, ramAddress);
     }
 

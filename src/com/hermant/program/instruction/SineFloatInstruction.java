@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class SineFloatInstruction extends Instruction {
 
-    SineFloatInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    SineFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.SINE_FLOAT, reg1, reg2, ramAddress);
     }
 

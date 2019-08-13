@@ -10,7 +10,7 @@ public class Stack {
 
     private RandomAccessMemory ram;
     private Register reg;
-    private static final int MAX_SIZE = 65536;
+    private static final int MAX_SIZE = 0x10000;
 
     Stack(RandomAccessMemory ram, Register reg){
         this.ram = ram;

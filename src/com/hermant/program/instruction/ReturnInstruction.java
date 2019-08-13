@@ -4,7 +4,7 @@ import com.hermant.machine.*;
 
 public class ReturnInstruction extends Instruction {
 
-    ReturnInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    ReturnInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.RETURN, reg1, reg2, ramAddress);
     }
 

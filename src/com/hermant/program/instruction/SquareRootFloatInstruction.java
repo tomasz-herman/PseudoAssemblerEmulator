@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class SquareRootFloatInstruction extends Instruction {
 
-    SquareRootFloatInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    SquareRootFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.SQUARE_ROOT_FLOAT, reg1, reg2, ramAddress);
     }
 

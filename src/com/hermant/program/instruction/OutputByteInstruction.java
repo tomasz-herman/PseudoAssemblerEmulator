@@ -2,16 +2,16 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class OutputByteInstruction extends OutputOperation {
+public class OutputByteInstruction extends OutputOperation implements MemoryOperation {
 
-    OutputByteInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    OutputByteInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.OUTPUT_BYTE, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         System.out.println(Byte.toUnsignedInt(m.getRam().getByte(ramAddress)));
         return true;
     }

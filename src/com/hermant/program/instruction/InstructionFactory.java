@@ -8,7 +8,7 @@ import static com.hermant.program.instruction.Instruction.*;
 public abstract class InstructionFactory {
 
     //command design pattern
-    public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Integer ramAddress); }
+    public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Short ramAddress); }
 
     private static final InstructionConstructor[] INSTRUCTION_CONSTRUCTORS;
 
@@ -137,9 +137,9 @@ public abstract class InstructionFactory {
         byte code = ram.getByte(address);
         byte reg1 = (byte)((ram.getByte(address+1)>>4)&0xf);
         byte reg2 = (byte)(ram.getByte(address+1)&0xf);
-        Integer ramOffset = null;
+        Short ramOffset = null;
         if ((code & 0x10000000)!=0)
-            ramOffset = (Byte.toUnsignedInt(ram.getByte(address + 2)) << 8) | Byte.toUnsignedInt(ram.getByte(address + 3));//BigEndian
+            ramOffset = (short)((Byte.toUnsignedInt(ram.getByte(address + 2)) << 8) | Byte.toUnsignedInt(ram.getByte(address + 3)));//BigEndian
             //ramOffset = (ram.getByte(address + 3) << 8) + ram.getByte(address + 2);//LittleEndian/MiddleEndian
         InstructionConstructor constructor = INSTRUCTION_CONSTRUCTORS[128 + code];
         if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));

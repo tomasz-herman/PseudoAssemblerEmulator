@@ -4,7 +4,7 @@ import com.hermant.machine.register.FlagsRegister;
 
 public interface LogicalOperation {
 
-    default int setFlagsAfterLogicalOp(int result, FlagsRegister flags){
+    default int logical(int result, FlagsRegister flags){
         if((result & 0x80000000) != 0)flags.setSignFlag();
         else flags.resetSignFlag();
         if(result == 0)flags.setZeroFlag();

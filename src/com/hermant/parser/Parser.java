@@ -564,7 +564,7 @@ public class Parser {
             var numbers = words[1].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -583,7 +583,7 @@ public class Parser {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -602,7 +602,7 @@ public class Parser {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
             mem = parseDecInt(numbers[1]);
-            program.addInstruction(new LoadableInstruction(codeRegMem, (byte)reg1, (byte)reg2, mem));
+            program.addInstruction(new LoadableInstruction(codeRegMem, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
         if(validateRegister(words[2])){

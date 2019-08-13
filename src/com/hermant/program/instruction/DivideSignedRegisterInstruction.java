@@ -6,7 +6,7 @@ import static com.hermant.machine.register.Register.REMAINDER;
 
 public class DivideSignedRegisterInstruction extends Instruction {
 
-    DivideSignedRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    DivideSignedRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.DIVIDE_SIGNED_REGISTER, reg1, reg2, ramAddress);
     }
 

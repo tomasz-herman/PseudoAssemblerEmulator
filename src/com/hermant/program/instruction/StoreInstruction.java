@@ -2,16 +2,16 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
 
-public class StoreInstruction extends Instruction {
+public class StoreInstruction extends Instruction implements MemoryOperation {
 
-    StoreInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    StoreInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.STORE, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getRam().setInteger(ramAddress, m.getRegister().getInteger(reg1));
         return true;
     }

@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class CompareRegisterFloatInstruction extends Instruction {
 
-    CompareRegisterFloatInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    CompareRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.COMPARE_REGISTER_FLOAT, reg1, reg2, ramAddress);
     }
 

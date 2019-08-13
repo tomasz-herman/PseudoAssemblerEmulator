@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class TangentFloatInstruction extends Instruction {
 
-    TangentFloatInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    TangentFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.TANGENT_FLOAT, reg1, reg2, ramAddress);
     }
 

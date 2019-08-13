@@ -2,16 +2,16 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class CompareFloatInstruction extends Instruction {
+public class CompareFloatInstruction extends Instruction implements MemoryOperation {
 
-    CompareFloatInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    CompareFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.COMPARE_FLOAT, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         compareFloat(m.getFPR().getFloat(reg1), m.getRam().getFloat(ramAddress), m.getFlagsRegister());
         return true;
     }

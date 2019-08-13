@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class CompareRegisterInstruction extends Instruction {
 
-    CompareRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    CompareRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.COMPARE_REGISTER, reg1, reg2, ramAddress);
     }
 

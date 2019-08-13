@@ -2,17 +2,17 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class TestInstruction extends Instruction implements LogicalOperation {
+public class TestInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
-    TestInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    TestInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.TEST, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
-        setFlagsAfterLogicalOp(m.getRegister().getInteger(reg1) & m.getRam().getInteger(ramAddress), m.getFlagsRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
+        logical(m.getRegister().getInteger(reg1) & m.getRam().getInteger(ramAddress), m.getFlagsRegister());
         return true;
     }
 

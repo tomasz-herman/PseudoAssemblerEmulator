@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class DecrementRegisterInstruction extends Instruction {
 
-    DecrementRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    DecrementRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.DECREMENT_REGISTER, reg1, reg2, ramAddress);
     }
 

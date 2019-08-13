@@ -2,16 +2,16 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class IncrementInstruction extends Instruction {
+public class IncrementInstruction extends Instruction implements MemoryOperation {
 
-    IncrementInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    IncrementInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.INCREMENT, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         int a = m.getRam().getInteger(ramAddress);
         int result = a + 1;
         if(result == 0) m.getFlagsRegister().setZeroFlag();

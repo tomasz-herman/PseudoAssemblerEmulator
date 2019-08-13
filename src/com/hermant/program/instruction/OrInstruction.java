@@ -2,17 +2,17 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class OrInstruction extends Instruction implements LogicalOperation {
+public class OrInstruction extends Instruction implements LogicalOperation , MemoryOperation{
 
-    OrInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    OrInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.OR, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
-        m.getRegister().setInteger(reg1, setFlagsAfterLogicalOp(m.getRegister().getInteger(reg1) | m.getRam().getInteger(ramAddress), m.getFlagsRegister()));
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
+        m.getRegister().setInteger(reg1, logical(m.getRegister().getInteger(reg1) | m.getRam().getInteger(ramAddress), m.getFlagsRegister()));
         return true;
     }
 

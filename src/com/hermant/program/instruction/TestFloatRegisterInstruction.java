@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class TestFloatRegisterInstruction extends Instruction {
 
-    TestFloatRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    TestFloatRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.TEST_FLOAT_REGISTER, reg1, reg2, ramAddress);
     }
 

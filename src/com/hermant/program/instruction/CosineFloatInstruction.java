@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class CosineFloatInstruction extends Instruction {
 
-    CosineFloatInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    CosineFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.COSINE_FLOAT, reg1, reg2, ramAddress);
     }
 

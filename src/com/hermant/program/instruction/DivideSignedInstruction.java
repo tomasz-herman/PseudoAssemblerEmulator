@@ -4,16 +4,16 @@ import com.hermant.machine.Machine;
 
 import static com.hermant.machine.register.Register.REMAINDER;
 
-public class DivideSignedInstruction extends Instruction {
+public class DivideSignedInstruction extends Instruction implements MemoryOperation {
 
-    DivideSignedInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    DivideSignedInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.DIVIDE_SIGNED, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         int b = m.getRam().getInteger(ramAddress);
         if(b == 0){
             m.getFlagsRegister().setOverflowFlag();

@@ -2,17 +2,17 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class LeftRotateInstruction extends Instruction implements LogicalOperation {
+public class LeftRotateInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
-    LeftRotateInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    LeftRotateInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.LEFT_ROTATE, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
-        m.getRegister().setInteger(reg1, setFlagsAfterLogicalOp(Integer.rotateLeft(m.getRegister().getInteger(reg1), m.getRam().getInteger(ramAddress)), m.getFlagsRegister()));
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
+        m.getRegister().setInteger(reg1, logical(Integer.rotateLeft(m.getRegister().getInteger(reg1), m.getRam().getInteger(ramAddress)), m.getFlagsRegister()));
         return true;
     }
 

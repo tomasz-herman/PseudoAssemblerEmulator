@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class AddRegisterInstruction extends Instruction {
 
-    AddRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    AddRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.ADD_REGISTER, reg1, reg2, ramAddress);
     }
 

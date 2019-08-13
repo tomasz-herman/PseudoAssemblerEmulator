@@ -4,14 +4,13 @@ import com.hermant.machine.Machine;
 
 public class MultiplyRegisterInstruction extends Instruction {
 
-    MultiplyRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    MultiplyRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.MULTIPLY_REGISTER, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
         int a = m.getRegister().getInteger(reg1);
         int b = m.getRegister().getInteger(reg2);
         int result = a * b;

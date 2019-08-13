@@ -137,16 +137,14 @@ public abstract class Instruction implements Serializable {
     Byte code;
     Byte reg1;
     Byte reg2;
-    Integer ramOffset;
+    Short ramOffset;
 
-    Instruction(byte code, Byte reg1, Byte reg2, Integer ramAddress){
+    Instruction(byte code, Byte reg1, Byte reg2, Short ramAddress){
         this.code = code;
         this.reg1 = reg1;
         this.reg2 = reg2;
         this.ramOffset = ramAddress;
     }
-
-    int getMemoryAddress(Register reg){ return (code & 0x10000000) != 0 ? reg.getInteger(reg2) + ramOffset : 0; }
 
     public boolean execute(Machine m, boolean debug){
         if(debug) debug(m.getInstructionPointer());

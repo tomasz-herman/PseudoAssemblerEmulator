@@ -2,16 +2,16 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class DivideFloatInstruction extends Instruction {
+public class DivideFloatInstruction extends Instruction implements MemoryOperation {
 
-    DivideFloatInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    DivideFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.DIVIDE_FLOAT, reg1, reg2, ramAddress);
     }
 
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister());
+        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getFPR().setFloat(reg1, m.getFPR().getFloat(reg1) / m.getRam().getFloat(ramAddress));
         return true;
     }

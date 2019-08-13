@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class PopFlagsInstruction extends Instruction {
 
-    PopFlagsInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    PopFlagsInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.POP_FLAGS, reg1, reg2, ramAddress);
     }
 

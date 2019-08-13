@@ -4,7 +4,7 @@ import com.hermant.machine.Machine;
 
 public class OutputRegisterInstruction extends OutputOperation {
 
-    OutputRegisterInstruction(Byte reg1, Byte reg2, Integer ramAddress) {
+    OutputRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.OUTPUT_REGISTER, reg1, reg2, ramAddress);
     }
 
