@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class CompareRegisterFloatInstruction extends Instruction {
+public class CompareRegisterFloatInstruction extends Instruction implements FloatArithmetic {
 
     CompareRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.COMPARE_REGISTER_FLOAT, reg1, reg2, ramAddress);

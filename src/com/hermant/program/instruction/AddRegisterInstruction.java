@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class AddRegisterInstruction extends Instruction {
+public class AddRegisterInstruction extends Instruction implements IntegerArithmetic {
 
     AddRegisterInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.ADD_REGISTER, reg1, reg2, ramAddress);

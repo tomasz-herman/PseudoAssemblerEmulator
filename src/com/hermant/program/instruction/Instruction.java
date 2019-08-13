@@ -1,13 +1,14 @@
 package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
-import com.hermant.machine.register.FlagsRegister;
 import com.hermant.machine.register.InstructionPointer;
 
 import java.io.Serializable;
-import java.util.function.BiFunction;
 
 public abstract class Instruction implements Serializable {
+
+    private static final byte LENGTH_MASK = (byte)0b10000000;
+
     //instruction codes
     public static final byte EXIT = (byte)0b00000000;
     public static final byte RETURN = (byte)0b00000001;
@@ -157,75 +158,8 @@ public abstract class Instruction implements Serializable {
     }
 
     private void setInstructionPointer(InstructionPointer instructionPointer){
-        int instructionLength = (code & 0x10000000) == 0 ? 2 : 4;
+        int instructionLength = (code & LENGTH_MASK) == 0 ? 2 : 4;
         instructionPointer.set(instructionPointer.get() + instructionLength);
-    }
-
-    void compare(int a, int b, FlagsRegister flags, BiFunction<Long, Long, Long> bi){
-        long signed = bi.apply((long)a, (long)b);
-        long unsigned = bi.apply(Integer.toUnsignedLong(a), Integer.toUnsignedLong(b));
-        if((signed & 0x80000000) != 0)flags.setSignFlag();
-        else flags.resetSignFlag();
-        if(signed == 0)flags.setZeroFlag();
-        else flags.resetZeroFlag();
-        if(signed < Integer.MIN_VALUE || signed > Integer.MAX_VALUE) flags.setOverflowFlag();
-        else flags.resetOverflowFlag();
-        if((unsigned & 0x100000000L) != 0)flags.setCarryFlag();
-        else flags.resetCarryFlag();
-        if((Integer.bitCount((int)signed)&0x1)==0)flags.setParityFlag();
-        else flags.resetParityFlag();
-    }
-
-    void compareFloat(float a, float b, FlagsRegister flags){
-        flags.resetSignFlag();
-        if(a > b){
-            flags.resetZeroFlag();
-            flags.resetCarryFlag();
-            flags.resetParityFlag();
-        } else if(a < b){
-            flags.resetZeroFlag();
-            flags.setCarryFlag();
-            flags.resetParityFlag();
-        } else if(a == b){
-            flags.setZeroFlag();
-            flags.resetCarryFlag();
-            flags.resetParityFlag();
-        } else {
-            flags.setZeroFlag();
-            flags.setCarryFlag();
-            flags.setParityFlag();
-        }
-    }
-
-    void examineFloat(float f, FlagsRegister flags){
-        int bytes = Float.floatToIntBits(f);
-        if((bytes & 0x80000000) != 0)flags.setSignFlag();
-        else flags.resetSignFlag();
-        if(Float.isInfinite(f)){//infinity
-            flags.resetZeroFlag();
-            flags.setCarryFlag();
-            flags.setParityFlag();
-        } else if(Float.isNaN(f)){//nan
-            flags.resetZeroFlag();
-            flags.setCarryFlag();
-            flags.resetParityFlag();
-        } else if(f == 0.0f){//zero
-            flags.setZeroFlag();
-            flags.resetCarryFlag();
-            flags.resetParityFlag();
-        } else if((bytes & 0x7F800000) == 0){//subnormal
-            flags.setZeroFlag();
-            flags.resetCarryFlag();
-            flags.setParityFlag();
-        } else if(Float.isFinite(f)){//finite
-            flags.resetZeroFlag();
-            flags.resetCarryFlag();
-            flags.setParityFlag();
-        } else {//else
-            flags.resetZeroFlag();
-            flags.resetCarryFlag();
-            flags.resetParityFlag();
-        }
     }
 
     public abstract String instCode();

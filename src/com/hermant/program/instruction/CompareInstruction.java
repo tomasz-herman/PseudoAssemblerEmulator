@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class CompareInstruction extends Instruction implements MemoryOperation {
+public class CompareInstruction extends Instruction implements MemoryOperation, IntegerArithmetic {
 
     CompareInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.COMPARE, reg1, reg2, ramAddress);

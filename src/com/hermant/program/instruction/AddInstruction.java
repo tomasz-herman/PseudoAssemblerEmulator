@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class AddInstruction extends Instruction implements MemoryOperation {
+public class AddInstruction extends Instruction implements MemoryOperation, IntegerArithmetic {
 
     AddInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.ADD, reg1, reg2, ramAddress);

@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class TestFloatInstruction extends Instruction implements MemoryOperation {
+public class TestFloatInstruction extends Instruction implements MemoryOperation, FloatArithmetic {
 
     TestFloatInstruction(Byte reg1, Byte reg2, Short ramAddress) {
         super(Instruction.TEST_FLOAT, reg1, reg2, ramAddress);
