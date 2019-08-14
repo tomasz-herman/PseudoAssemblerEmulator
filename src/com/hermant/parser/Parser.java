@@ -449,10 +449,10 @@ public class Parser {
         if(declaration.startsWith(INTEGER) || declaration.startsWith(FLOAT))return 4;
         else if(declaration.startsWith(BYTE) || declaration.startsWith(CHAR))return 1;
         else{
-            if(!startsWithPositiveNumber(declaration))throw new ParseException("Illegal declaration", lineNum);
+            if(!startsWithPositiveShortNumber(declaration))throw new ParseException("Illegal declaration", lineNum);
             String num = declaration.replaceFirst("\\*.*", "");
-            if(declaration.contains(INTEGER) || declaration.contains(FLOAT))return parseDecInt(num) * 4;
-            else if(declaration.contains(BYTE) || declaration.contains(CHAR))return parseDecInt(num);
+            if(declaration.contains(INTEGER) || declaration.contains(FLOAT))return Integer.parseInt(num) * 4;
+            else if(declaration.contains(BYTE) || declaration.contains(CHAR))return Integer.parseInt(num);
         }
         throw new ParseException("Illegal declaration", lineNum);
     }
@@ -495,8 +495,8 @@ public class Parser {
         String value = words[1].split("([()])")[1];
         Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
                 aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
-        if(startsWithPositiveNumber(words[1])){
-            int count = parseDecInt(words[1].split("\\*")[0]);
+        if(startsWithPositiveShortNumber(words[1])){
+            int count = Integer.parseInt(words[1].split("\\*")[0]);
             switch (type){
                 case anInteger -> program.addDeclaration(new IntegerDeclaration(count, parseInt(value)));
                 case aFloat -> program.addDeclaration(new FloatDeclaration(count, parseFloat(value)));
@@ -516,8 +516,8 @@ public class Parser {
             throw new ParseException("illegal declaration parameters", lineNum);
         Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
                 aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
-        if(startsWithPositiveNumber(words[1])){
-            int count = parseDecInt(words[1].split("\\*")[0]);
+        if(startsWithPositiveShortNumber(words[1])){
+            int count = Integer.parseInt(words[1].split("\\*")[0]);
             switch (type){
                 case anInteger-> program.addDeclaration(new IntegerDeclaration(count, null));
                 case aFloat -> program.addDeclaration(new FloatDeclaration(count, null));
@@ -566,7 +566,7 @@ public class Parser {
         if(validateMemoryAddress(words[1])) {
             var numbers = words[1].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
-            mem = parseDecInt(numbers[1]);
+            mem = Integer.parseInt(numbers[1]);
             program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
@@ -585,7 +585,7 @@ public class Parser {
         if(validateMemoryAddress(words[2])) {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
-            mem = parseDecInt(numbers[1]);
+            mem = Integer.parseInt(numbers[1]);
             program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
@@ -604,7 +604,7 @@ public class Parser {
         if(validateMemoryAddress(words[2])) {
             var numbers = words[2].split("([()])");
             reg2 = Integer.parseInt(numbers[0]);
-            mem = parseDecInt(numbers[1]);
+            mem = Integer.parseInt(numbers[1]);
             program.addInstruction(new LoadableInstruction(codeRegMem, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
@@ -631,14 +631,13 @@ public class Parser {
     private static String removeLabels(String s){return s.trim().replaceFirst(".*:", "").trim();}
     private static boolean validateRegister(String s){ return s.matches("^(1[0-5]|[0-9])$"); }
     private static boolean validateLabel(String s){ return s.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"); }
-    private static boolean validateMemoryAddress(String s) { return s.matches("^(1[0-5]|[0-9])\\(([+-]?[1-9]\\d*|[+-]?0)\\)$"); }
-    private static boolean validateDeclaringSpace(String s) { return s.matches("^([1-9]\\d*\\*)?(INTEGER|FLOAT|BYTE|CHAR)$"); }
-    private static boolean validateDeclaringConstant(String s) { return s.matches("^(([1-9]\\d*\\*)?(INTEGER\\((([+-]?0|[1-9][0-9]{0,8}|1[0-9]{9}|20[0-9]{8}|21[0-3][0-9]{7}|214[0-6][0-9]{6}|2147[0-3][0-9]{5}|21474[0-7][0-9]{4}|214748[0-2][0-9]{3}|2147483[0-5][0-9]{2}|21474836[0-3][0-9]|214748364[0-7])|-2147483648|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|FLOAT\\(([+-]?(([1-9]\\d*|0)(\\.\\d*)?|\\.\\d+)|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|BYTE\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8})\\)|CHAR\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8}|'([\\x00-\\x7F]|\\\\n|\\\\t|\\\\'\\\\\")')\\))|STRING\\(\"([\\x00-\\x7F]|\\\\n|\\\\t|\\\\'\\\\\")*\"\\))"); }
-    private static boolean startsWithPositiveNumber(String s){ return s.matches("^[1-9]\\d*.*");}
-    private static int parseInt(String s){return s.startsWith("0x") ? (Integer.parseUnsignedInt(s.substring(2), 16)) : s.startsWith("0b") ? (Integer.parseUnsignedInt(s.substring(2), 2)) : parseDecInt(s);}
+    private static boolean validateMemoryAddress(String s) { return s.matches("^(1[0-5]|[0-9])\\(([+-]?[1-9]\\d{0,5}|[+-]?0)\\)$"); }
+    private static boolean validateDeclaringSpace(String s) { return s.matches("^([1-9]\\d{0,5}\\*)?(INTEGER|FLOAT|BYTE|CHAR)$"); }
+    private static boolean validateDeclaringConstant(String s) { return s.matches("^(([1-9]\\d{0,5}\\*)?(INTEGER\\((([+-]?0|[1-9][0-9]{0,8}|1[0-9]{9}|20[0-9]{8}|21[0-3][0-9]{7}|214[0-6][0-9]{6}|2147[0-3][0-9]{5}|21474[0-7][0-9]{4}|214748[0-2][0-9]{3}|2147483[0-5][0-9]{2}|21474836[0-3][0-9]|214748364[0-7])|-2147483648|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|FLOAT\\(([+-]?(([1-9]\\d*|0)(\\.\\d*)?|\\.\\d+)|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|BYTE\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8})\\)|CHAR\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8}|'([\\x00-\\x7F]|\\\\n|\\\\t|\\\\'|\\\\\"|\\\\([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))')\\))|STRING\\(\"[\\x00-\\x7F]*\"\\))"); }
+    private static boolean startsWithPositiveShortNumber(String s){ return s.matches("^[1-9]\\d{0,5}.*");}
+    private static int parseInt(String s){return s.startsWith("0x") ? (Integer.parseUnsignedInt(s.substring(2), 16)) : s.startsWith("0b") ? (Integer.parseUnsignedInt(s.substring(2), 2)) : Integer.parseInt(s);}
     private static float parseFloat(String s){return s.startsWith("0x") ? (Float.intBitsToFloat(Integer.parseUnsignedInt(s.substring(2), 16))) : s.startsWith("0b") ? Float.intBitsToFloat((Integer.parseUnsignedInt(s.substring(2), 2))) : Float.parseFloat(s);}
     private static boolean validateCommandWithComma(String s){return s.matches("^\\s*[A-Z]+\\s+[0-9]+\\s*,\\s*[-A-Za-z0-9()_]+\\s*$");}
-    private static int parseDecInt(String s){return new BigInteger(s).intValue();}
     private static char processCharValue(String s){if(s.startsWith("\'"))return processStringValue(s).charAt(1); else return (char)parseInt(s);}
     private static String processStringValue(String s){return s.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t").replaceAll("\\\\'", "'");}
 }
