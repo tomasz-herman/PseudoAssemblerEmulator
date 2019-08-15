@@ -127,6 +127,7 @@ public class Parser {
     private static final String FLOAT = "FLOAT";
     private static final String BYTE = "BYTE";
     private static final String CHAR = "CHAR";
+    private static final String STRING = "STRING";
 
     public interface ParseMethod { void parse(String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException; }
 
@@ -447,7 +448,11 @@ public class Parser {
     private static int getDeclarationSize(String declaration, int lineNum) throws ParseException {
         if(declaration.startsWith(INTEGER) || declaration.startsWith(FLOAT))return 4;
         else if(declaration.startsWith(BYTE) || declaration.startsWith(CHAR))return 1;
-        else{
+        else if(declaration.startsWith(STRING)){
+            String value = retrieveDeclaredValue(declaration);
+            value = removeFirstAndLastChar(value);
+            return value.length() + 1;
+        } else {
             if(!startsWithPositiveShortNumber(declaration))throw new ParseException("Illegal declaration", lineNum);
             String num = declaration.replaceFirst("\\*.*", "");
             if(declaration.contains(INTEGER) || declaration.contains(FLOAT))return Integer.parseInt(num) * 4;
@@ -491,7 +496,7 @@ public class Parser {
     private static void declareConstant(String[] words, Program program, int lineNum) throws ParseException {
         if (words.length != 2 || !validateDeclaringConstant(words[1]))
             throw new ParseException("illegal declaration parameters", lineNum);
-        String value = words[1].split("([()])")[1];
+        String value = retrieveDeclaredValue(words[1]);
         Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
                 aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
         if(startsWithPositiveShortNumber(words[1])){
@@ -507,6 +512,7 @@ public class Parser {
             case aFloat -> program.addDeclaration(new FloatDeclaration(1, parseFloat(value)));
             case aByte -> program.addDeclaration(new ByteDeclaration(1, (byte)parseInt(value)));
             case aChar -> program.addDeclaration(new CharDeclaration(1, processCharValue(value)));
+            case aString -> program.addDeclaration(new StringDeclaration(removeFirstAndLastChar(value)));
         }
     }
 
@@ -514,7 +520,7 @@ public class Parser {
         if (words.length != 2 || !validateDeclaringSpace(words[1]))
             throw new ParseException("illegal declaration parameters", lineNum);
         Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
-                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
+                aFloat : words[1].contains(BYTE) ? aByte : aChar;
         if(startsWithPositiveShortNumber(words[1])){
             int count = Integer.parseInt(words[1].split("\\*")[0]);
             switch (type){
@@ -640,4 +646,6 @@ public class Parser {
     private static boolean validateCommandWithComma(String s){return s.matches("^\\s*[A-Z]+\\s+[0-9]+\\s*,\\s*[-A-Za-z0-9()_]+\\s*$");}
     private static char processCharValue(String s){if(s.startsWith("\'"))return processStringValue(s).charAt(1); else return (char)parseInt(s);}
     private static String processStringValue(String s){return s.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t").replaceAll("\\\\'", "'");}
+    private static String retrieveDeclaredValue(String s){ return s.substring(s.indexOf('(') + 1, s.lastIndexOf(')')); }
+    private static String removeFirstAndLastChar(String s){ return s.substring(1, s.length() - 1); }
 }
