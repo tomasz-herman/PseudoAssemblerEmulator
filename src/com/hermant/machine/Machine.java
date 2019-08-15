@@ -11,6 +11,7 @@ import sun.misc.Signal;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.IntConsumer;
 
 import static com.hermant.machine.register.Register.*;
 
@@ -66,19 +67,20 @@ public class Machine {
         register.setInteger(POINTER, dataPointer);
     }
 
-    public void runProgram(){
+    public void runProgram(int sleep){
+        IntConsumer next = (i) -> executedCounter++;
+        if(sleep > 0) next = next.andThen(this::sleep);
         final long start = System.nanoTime();
         var running = new AtomicBoolean(true);
         Signal.handle(new Signal("INT"), sig -> running.set(false));
         while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).execute(this, debug))
-            executedCounter++;
+            next.accept(sleep);
         final long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         System.out.println();
         System.out.println("Executed " + Long.toUnsignedString(executedCounter) + " instructions in " + millis + "ms.");
         executedCounter = 0;
     }
 
-    @SuppressWarnings("unused")
     private void sleep(int millis){
         try {
             Thread.sleep(millis);

@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.30.2 beta");
+        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.31.0 beta");
         if(parseArgsForHelp(args))usage();
         Program program;
         String input = parseArgsForInputFile(args);
@@ -23,7 +23,7 @@ public class Main {
         if(parseArgsForAbandon(args))System.exit(0);
         Machine m = new Machine(parseArgsForDebug(args));
         m.loadProgram(program);
-        m.runProgram();
+        m.runProgram(parseArgsForSleep(args));
     }
 
     private static Program deserializeBinary(String path){
@@ -78,6 +78,17 @@ public class Main {
         return null;
     }
 
+    private static int parseArgsForSleep(String[] args){
+        int sleep = 0;
+        for (String arg : args)
+            if (arg.startsWith("--sleep=")){
+                sleep = Integer.parseInt(arg.substring(8));
+                if(sleep < 0) sleep = 0;
+                break;
+            }
+        return sleep;
+    }
+
     private static boolean parseArgsForDebug(String[] args){
         for (String arg : args)
             if (arg.equals("--debug"))
@@ -118,6 +129,7 @@ public class Main {
         System.out.println("Flags:");
         System.out.println("--input=FILE\tspecify input file(optional, will ask for it if not specified)");
         System.out.println("--output=FILE\tspecify a file that binary will be saved to(optional)");
+        System.out.println("--sleep=number\tspecify a time in millis to sleep in between executing instructions(optional)");
         System.out.println("--debug\t\t\tenable debug(optional)");
         System.out.println("--binary\t\tif input file is a binary(optional)");
         System.out.println("--abandon\t\tdon't run loaded program(optional)");
