@@ -15,6 +15,13 @@ import java.util.function.IntConsumer;
 
 import static com.hermant.machine.register.Register.*;
 
+/**
+ * {@link Machine} contains General Purpose {@link Register}(GPR), Floating Point {@link Register}(FPR),
+ * {@link FlagsRegister}, {@link RandomAccessMemory}, {@link RandomNumberGenerator}, {@link InstructionPointer}
+ * and {@link Stack}. {@link Program} might be loaded({@link Machine#loadProgram(Program)}) into {@link Machine#ram}
+ * and started({@link Machine#runProgram(int sleep)}). To create a new {@link Machine} use constructor
+ * {@link Machine#Machine(boolean debug)}.
+ */
 public class Machine {
 
     private Register register;
@@ -29,6 +36,12 @@ public class Machine {
     private boolean debug;
     private long executedCounter = 0;
 
+    /**
+     * Creates a new {@link Machine}. It contains General Purpose {@link Register}(GPR),
+     * Floating Point {@link Register}(FPR), {@link FlagsRegister}, {@link RandomAccessMemory},
+     * {@link RandomNumberGenerator}, {@link InstructionPointer} and {@link Stack}.
+     * @param debug if executing command should print info. Will degrade performance if true.
+     */
     public Machine(boolean debug){
         register = new Register();
         floatingPointRegister = new Register();
@@ -39,6 +52,27 @@ public class Machine {
         this.debug = debug;
     }
 
+    /**
+     * Allocates memory sections that might be used by running program. The sections are:
+     * <p><ul>
+     * <li>Program section
+     * <li>Data section
+     * <li>Extra data section
+     * <li>Stack section
+     * </ul><p>
+     * Each section takes {@link Machine#SECTION_SIZE}(65536) bytes of ram.
+     * Following registers are set:
+     * <p><ul>
+     * <li>{@link Register#REMAINDER} is set to 0
+     * <li>{@link Register#POINTER} is set to 0
+     * <li>{@link Register#PROGRAM_SECTION} is set to address of program section start
+     * <li>{@link Register#DATA_SECTION} is set to address of data section start
+     * <li>{@link Register#EXTRA_DATA_SECTION} is set to address of extra data section start
+     * <li>{@link Register#STACK_SECTION} is set to address of stack section start
+     * <li>{@link Register#STACK_POINTER} is set to address of stack section start
+     * <li>{@link Register#STACK_FRAME_POINTER} is set to address of stack section start
+     * </ul><p>
+     */
     private void setupRegisterAddresses(){
         Random random = new Random();
         int programSection = random.nextInt(4) * SECTION_SIZE;
@@ -55,6 +89,11 @@ public class Machine {
         register.setInteger(STACK_FRAME_POINTER, stackSection);
     }
 
+    /**
+     * Loads program into memory. Sections(program, data, extra data, stack) are allocated during the process
+     * and {@link Register} registers are set up accordingly. For more info see {@link Machine#setupRegisterAddresses()}.
+     * @param program is loaded into memory starting from address stored at {@link Register#PROGRAM_SECTION PROGRAM_SECTION}
+     */
     public void loadProgram(Program program){
         setupRegisterAddresses();
         int programPointer = register.getInteger(PROGRAM_SECTION);
@@ -68,6 +107,9 @@ public class Machine {
     }
 
     /**
+     * Runs program starting from instruction at address stored in {@link InstructionPointer}.
+     * Ends when reaches {@link com.hermant.program.instruction.ExitInstruction ExitInstruction} or
+     * when unrecognizable instruction is loaded resulting in {@link IllegalStateException}.
      * @param sleep time in milliseconds to sleep in between instructions
      */
     public void runProgram(int sleep){
@@ -84,6 +126,10 @@ public class Machine {
         executedCounter = 0;
     }
 
+    /**
+     * Sleeps for specified number of milliseconds
+     * @param millis time in milliseconds to sleep
+     */
     private void sleep(int millis){
         try {
             Thread.sleep(millis);
@@ -92,30 +138,51 @@ public class Machine {
         }
     }
 
+    /**
+     * @return Machine's General Purpose {@link Register}:{@link Machine#register}
+     */
     public Register getRegister() {
         return register;
     }
 
+    /**
+     * @return Machine's Floating Point {@link Register}:{@link Machine#floatingPointRegister}
+     */
     public Register getFPR() {
         return floatingPointRegister;
     }
 
+    /**
+     * @return Machine's {@link FlagsRegister}:{@link Machine#flagsRegister}
+     */
     public FlagsRegister getFlagsRegister() {
         return flagsRegister;
     }
 
+    /**
+     * @return Machine's {@link RandomAccessMemory}:{@link Machine#ram}
+     */
     public RandomAccessMemory getRam() {
         return ram;
     }
 
+    /**
+     * @return Machine's {@link RandomNumberGenerator}:{@link Machine#rng}
+     */
     public RandomNumberGenerator getRng() {
         return rng;
     }
 
+    /**
+     * @return Machine's {@link Stack}:{@link Machine#stack}
+     */
     public Stack getStack() {
         return stack;
     }
 
+    /**
+     * @return Machine's {@link InstructionPointer}:{@link Machine#instructionPointer}
+     */
     public InstructionPointer getInstructionPointer(){
         return instructionPointer;
     }
