@@ -9,6 +9,7 @@ import com.hermant.program.instruction.InstructionFactory;
 import sun.misc.Signal;
 
 import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
@@ -79,6 +80,21 @@ public class Machine {
         System.out.println();
         System.out.println("Executed " + Long.toUnsignedString(executedCounter) + " instructions in " + millis + "ms.");
         executedCounter = 0;
+    }
+
+    @SuppressWarnings("unused")
+    private boolean askToContinue(){
+        while(true){
+            Scanner in = new Scanner(System.in);
+            System.out.println("Continue?(Y/n)");
+            String answer = in.nextLine();
+            answer = answer.toLowerCase();
+            if(answer.toLowerCase().equals("y") | answer.equals("")){
+                return true;
+            } else if(answer.equals("n"))
+                break;
+        }
+        return false;
     }
 
     private void sleep(int millis){

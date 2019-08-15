@@ -23,7 +23,8 @@ public class Main {
         if(parseArgsForAbandon(args))System.exit(0);
         Machine m = new Machine(parseArgsForDebug(args));
         m.loadProgram(program);
-        m.runProgram(parseArgsForSleep(args));
+        int sleep = parseArgsForSleep(args);
+        m.runProgram(sleep);
     }
 
     private static Program deserializeBinary(String path){
