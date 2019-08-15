@@ -70,9 +70,9 @@ public class Machine {
     public void runProgram(int sleep){
         IntConsumer next = (i) -> executedCounter++;
         if(sleep > 0) next = next.andThen(this::sleep);
-        final long start = System.nanoTime();
         var running = new AtomicBoolean(true);
         Signal.handle(new Signal("INT"), sig -> running.set(false));
+        final long start = System.nanoTime();
         while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).execute(this, debug))
             next.accept(sleep);
         final long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);

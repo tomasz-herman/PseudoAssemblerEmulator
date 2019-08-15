@@ -617,7 +617,8 @@ public class Parser {
 
     //some regex and string processing:
     private static String[] splitByWhiteSpaces(String s){
-        Pattern pat = Pattern.compile("(\"[^\"]*\"|'[^']*'|[\\S])+");
+        //Pattern pat = Pattern.compile("(\"[^\"]*\"|'[^']*'|[\\S])+");
+        Pattern pat = Pattern.compile("(((?<![\\\\])['\"])((?:.(?!(?<![\\\\])\\2))*.?)\\2|[\\S])+");
         Matcher mat = pat.matcher(s.trim());
         ArrayList<String> list = new ArrayList<>();
         while (mat.find()) list.add(mat.group());
