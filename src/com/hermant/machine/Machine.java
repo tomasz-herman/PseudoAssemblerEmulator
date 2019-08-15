@@ -6,9 +6,11 @@ import com.hermant.machine.register.InstructionPointer;
 import com.hermant.machine.register.Register;
 import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionFactory;
+import sun.misc.Signal;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.hermant.machine.register.Register.*;
 
@@ -66,7 +68,9 @@ public class Machine {
 
     public void runProgram(){
         final long start = System.nanoTime();
-        while(InstructionFactory.fetchNextInstruction(ram, instructionPointer).execute(this, debug))
+        var running = new AtomicBoolean(true);
+        Signal.handle(new Signal("INT"), sig -> running.set(false));
+        while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).execute(this, debug))
             executedCounter++;
         final long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         System.out.println();
