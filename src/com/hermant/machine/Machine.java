@@ -19,21 +19,57 @@ import static com.hermant.machine.register.Register.*;
  * {@link Machine} contains General Purpose {@link Register}(GPR), Floating Point {@link Register}(FPR),
  * {@link FlagsRegister}, {@link RandomAccessMemory}, {@link RandomNumberGenerator}, {@link InstructionPointer}
  * and {@link Stack}. {@link Program} might be loaded({@link Machine#loadProgram(Program)}) into {@link Machine#ram}
- * and started({@link Machine#runProgram(int sleep)}). To create a new {@link Machine} use constructor
+ * and started({@link Machine#runProgram(int sleep)}). To create a new {@link Machine} see constructor:
  * {@link Machine#Machine(boolean debug)}.
  */
 public class Machine {
 
+    /**
+     * General Purpose {@link Register}(GPR) used for storing ints and addressing.
+     */
     private Register register;
+    /**
+     * Floating Point {@link Register}(FPR) used for storing floats.
+     */
     private Register floatingPointRegister;
+    /**
+     * {@link FlagsRegister} indicating status of last operation that affects flags. These are:
+     * {@link com.hermant.program.instruction.IntegerArithmeticOperation IntegerArithmeticOperation},
+     * {@link com.hermant.program.instruction.LogicalOperation LogicalOperation} and
+     * {@link com.hermant.program.instruction.FloatArithmeticOperation FloatArithmeticOperation}.
+     */
     private FlagsRegister flagsRegister;
+    /**
+     * {@link RandomAccessMemory} used for storing data that machine needs for operating.
+     */
     private RandomAccessMemory ram;
+    /**
+     * {@link RandomNumberGenerator} used as a source of entropy.
+     */
     private RandomNumberGenerator rng;
+    /**
+     * Section of ram used as {@link Stack}.
+     */
     private Stack stack;
+    /**
+     * {@link InstructionPointer} stores pointer to next Instruction that should be executed.
+     */
     private InstructionPointer instructionPointer;
+    /**
+     * Defines section size which is equal to 2^16(64kB).
+     */
     public static final int SECTION_SIZE = 65536;
+    /**
+     * Default ram size is equal to 64*{@link Machine#SECTION_SIZE}=2^22(4MB).
+     */
     private static final int RAM_SIZE = SECTION_SIZE * 64;
+    /**
+     * If true debug info will be printed during execution of command at cost of performance.
+     */
     private boolean debug;
+    /**
+     * Counts how many instructions were executed during run of a program.
+     */
     private long executedCounter = 0;
 
     /**
@@ -91,7 +127,8 @@ public class Machine {
 
     /**
      * Loads program into memory. Sections(program, data, extra data, stack) are allocated during the process
-     * and {@link Register} registers are set up accordingly. For more info see {@link Machine#setupRegisterAddresses()}.
+     * and General Purpose {@link Register} {@link Machine#register}s are set up accordingly. For more info
+     * see {@link Machine#setupRegisterAddresses()}.
      * @param program is loaded into memory starting from address stored at {@link Register#PROGRAM_SECTION PROGRAM_SECTION}
      */
     public void loadProgram(Program program){
