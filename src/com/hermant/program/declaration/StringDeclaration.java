@@ -15,7 +15,7 @@ public class StringDeclaration implements Declaration{
     @Override
     public int declare(RandomAccessMemory ram, int address) {
         int i = 0;
-        if(value != null) for (; i < value.length(); i++) ram.setByte(address + i , (byte)(Character.getNumericValue(value.charAt(i))));
+        if(value != null) for (; i < value.length(); i++) ram.setByte(address + i , (byte)value.charAt(i));
         ram.setByte(address + i , (byte)0);
         return count + address;
     }

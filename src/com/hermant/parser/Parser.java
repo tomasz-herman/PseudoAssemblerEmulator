@@ -452,7 +452,7 @@ public class Parser {
             String value = retrieveDeclaredValue(declaration);
             value = removeFirstAndLastChar(value);
             if(validateStringValue(value)){
-                value = processEscapedCharacters(value);
+                value = processEscapedCharacters(value, '"');
                 System.out.println(value);
                 return value.length() + 1;
             }
@@ -507,7 +507,7 @@ public class Parser {
         if(type==aString){
             value = removeFirstAndLastChar(value);
             if(!validateStringValue(value)) throw new ParseException("illegal string value", lineNum);
-            value = processEscapedCharacters(value);
+            value = processEscapedCharacters(value, '"');
         }
         if(startsWithPositiveShortNumber(words[1])){
             int count = Integer.parseInt(words[1].split("\\*")[0]);
@@ -631,7 +631,10 @@ public class Parser {
         throw new ParseException("illegal arguments", lineNum);
     }
 
-    //some regex and string processing:
+    /**
+     * @param s input string line.
+     * @return input s splitted by whitespaces. Quoted sequences are ignored, these are left as a whole.
+     */
     private static String[] splitByWhiteSpaces(String s){
         Pattern pat = Pattern.compile("(((?<![\\\\])['\"])((?:.(?!(?<![\\\\])\\2))*.?)\\2|[\\S])+");
         Matcher mat = pat.matcher(s.trim());
@@ -639,36 +642,185 @@ public class Parser {
         while (mat.find()) list.add(mat.group());
         return list.toArray(new String[0]);
     }
-    private static String removeComment(String s){return s.replaceFirst(COMMENT + ".*", "").trim();}
-    private static boolean hasLabel(String s){ return s.contains(":"); }
-    private static String label(String s){ if(s.contains(":")) return s.trim().replaceFirst(":.*", "").trim(); else return "";}
-    private static String removeLabel(String s){return s.trim().replaceFirst("^[a-zA-Z0-9_]*:", "").trim();}
-    private static String removeLabels(String s){return s.trim().replaceFirst(".*:", "").trim();}
-    private static boolean validateRegister(String s){ return s.matches("^(1[0-5]|[0-9])$"); }
-    private static boolean validateLabel(String s){ return s.matches("^[a-zA-Z_][a-zA-Z0-9_]*$"); }
-    private static boolean validateMemoryAddress(String s) { return s.matches("^(1[0-5]|[0-9])\\(([+-]?[1-9]\\d{0,5}|[+-]?0)\\)$"); }
-    private static boolean validateDeclaringSpace(String s) { return s.matches("^([1-9]\\d{0,5}\\*)?(INTEGER|FLOAT|BYTE|CHAR)$"); }
-    private static boolean validateDeclaringConstant(String s) { return s.matches("^(([1-9]\\d{0,5}\\*)?(INTEGER\\((([+-]?0|[1-9][0-9]{0,8}|1[0-9]{9}|20[0-9]{8}|21[0-3][0-9]{7}|214[0-6][0-9]{6}|2147[0-3][0-9]{5}|21474[0-7][0-9]{4}|214748[0-2][0-9]{3}|2147483[0-5][0-9]{2}|21474836[0-3][0-9]|214748364[0-7])|-2147483648|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|FLOAT\\(([+-]?(([1-9]\\d*|0)(\\.\\d*)?|\\.\\d+)|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|BYTE\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8})\\)|CHAR\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8}|'([\\x00-\\x7F]|\\\\n|\\\\t|\\\\'|\\\\\"|\\\\([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))')\\))|STRING\\(\"[\\x00-\\x7F]*\"\\))"); }
-    private static boolean startsWithPositiveShortNumber(String s){ return s.matches("^[1-9]\\d{0,5}.*");}
-    private static int parseInt(String s){return s.startsWith("0x") ? (Integer.parseUnsignedInt(s.substring(2), 16)) : s.startsWith("0b") ? (Integer.parseUnsignedInt(s.substring(2), 2)) : Integer.parseInt(s);}
-    private static float parseFloat(String s){return s.startsWith("0x") ? (Float.intBitsToFloat(Integer.parseUnsignedInt(s.substring(2), 16))) : s.startsWith("0b") ? Float.intBitsToFloat((Integer.parseUnsignedInt(s.substring(2), 2))) : Float.parseFloat(s);}
-    private static boolean validateCommandWithComma(String s){return s.matches("^\\s*[A-Z]+\\s+[0-9]+\\s*,\\s*[-A-Za-z0-9()_]+\\s*$");}
-    private static char processCharValue(String s){if(s.startsWith("\'"))return processStringValue(s).charAt(1); else return (char)parseInt(s);}
-    private static String processStringValue(String s){return s.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t").replaceAll("\\\\'", "'");}
-    private static String retrieveDeclaredValue(String s){ return s.substring(s.indexOf('(') + 1, s.lastIndexOf(')')); }
-    private static String removeFirstAndLastChar(String s){ return s.substring(1, s.length() - 1); }
-    private static boolean validateStringValue(String s){ return s.matches("^([^\\\\]|\\\\\\\\|\\\\n|\\\\t|\\\\\")*$"); }
-    private static String processEscapedCharacters(String s){
+
+    /**
+     * @param s input string line.
+     * @return output string line with comments removed.
+     */
+    private static String removeComment(String s){
+        return s.replaceFirst(COMMENT + ".*", "").trim();
+    }
+
+    /**
+     * @param s input string line.
+     * @return true if input string has label. However this method doesn't check if label is valid.
+     */
+    private static boolean hasLabel(String s){
+        return s.contains(":");
+    }
+
+    /**
+     * @param s input string line.
+     * @return first label of the line if line has one, otherwise empty string.
+     */
+    private static String label(String s){
+        if(s.contains(":"))
+            return s.trim().replaceFirst(":.*", "").trim();
+        else
+            return "";
+    }
+
+    /**
+     * @param s input string line.
+     * @return removes first label of the line. Resulting line is trimmed.
+     */
+    private static String removeLabel(String s){
+        return s.trim().replaceFirst("^[a-zA-Z0-9_]*:", "").trim();
+    }
+
+    /**
+     * @param s s input string line.
+     * @return removes all labels of the line. Resulting line is trimmed.
+     */
+    private static String removeLabels(String s){
+        return s.trim().replaceFirst(".*:", "").trim();
+    }
+
+    /**
+     * @param s input string.
+     * @return true if input string is a valid register, i.e. number from 0 to 15.
+     */
+    private static boolean validateRegister(String s){
+        return s.matches("^(1[0-5]|[0-9])$");
+    }
+
+    /**
+     * @param s input string.
+     * @return true if input string is a valid label, i.e. starts with a
+     * letter or '_' and contains only letters numbers or '_' chars.
+     */
+    private static boolean validateLabel(String s){
+        return s.matches("^[a-zA-Z_][a-zA-Z0-9_]*$");
+    }
+
+    /**
+     * @param s input string.
+     * @return true if input string is a valid memory address, e.g. 15(-3245),
+     * first number indicates register, second memory offset and must be 6 digits maximum.
+     */
+    private static boolean validateMemoryAddress(String s) { 
+        return s.matches("^(1[0-5]|[0-9])\\(([+-]?[1-9]\\d{0,5}|[+-]?0)\\)$");
+    }
+
+    /**
+     * @param s input string.
+     * @return true if input string is a valid declaration of space.
+     */
+    private static boolean validateDeclaringSpace(String s) {
+        return s.matches("^([1-9]\\d{0,5}\\*)?(INTEGER|FLOAT|BYTE|CHAR)$");
+    }
+
+    /**
+     * @param s input string.
+     * @return true if input string is a valid declaration of a constant.
+     */
+    private static boolean validateDeclaringConstant(String s) {
+        return s.matches("^(([1-9]\\d{0,5}\\*)?(INTEGER\\((([+-]?0|[1-9][0-9]{0,8}|1[0-9]{9}|20[0-9]{8}|21[0-3][0-9]{7}|214[0-6][0-9]{6}|2147[0-3][0-9]{5}|21474[0-7][0-9]{4}|214748[0-2][0-9]{3}|2147483[0-5][0-9]{2}|21474836[0-3][0-9]|214748364[0-7])|-2147483648|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|FLOAT\\(([+-]?(([1-9]\\d*|0)(\\.\\d*)?|\\.\\d+)|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|BYTE\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8})\\)|CHAR\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8}|'([\\x00-\\x7F]|\\\\n|\\\\t|\\\\'|\\\\\"|\\\\([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))')\\))|STRING\\(\"[\\x00-\\x7F]*\"\\))");
+    }
+
+    /**
+     * @param s input string.
+     * @return true if input string starts with a positive number, but is no larger than 6 digits.
+     */
+    private static boolean startsWithPositiveShortNumber(String s){
+        return s.matches("^[1-9]\\d{0,5}.*");
+    }
+
+    /**
+     * @param s string containing int number or byte/hex representation of int.
+     * @return parsed int value.
+     */
+    private static int parseInt(String s){
+        return s.startsWith("0x") ?
+                (Integer.parseUnsignedInt(s.substring(2), 16)) :
+                s.startsWith("0b") ? (Integer.parseUnsignedInt(s.substring(2), 2)) :
+                        Integer.parseInt(s);
+    }
+
+    /**
+     * @param s string containing float number or byte/hex representation of float.
+     * @return parsed float value.
+     */
+    private static float parseFloat(String s){
+        return s.startsWith("0x") ?
+                (Float.intBitsToFloat(Integer.parseUnsignedInt(s.substring(2), 16))) :
+                s.startsWith("0b") ?
+                        Float.intBitsToFloat((Integer.parseUnsignedInt(s.substring(2), 2))) :
+                        Float.parseFloat(s);
+    }
+
+    /**
+     * @param s input command string.
+     * @return true if input string is a valid command with comma in the right place.
+     */
+    private static boolean validateCommandWithComma(String s){
+        return s.matches("^\\s*[A-Z]+\\s+[0-9]+\\s*,\\s*[-A-Za-z0-9()_]+\\s*$");
+    }
+
+    /**
+     * @param s input string containing char value. Might be either byte value or single quoted char or escaped char.
+     * @return if s was a byte value returns char from byte value, otherwise returns char or escaped char.
+     */
+    private static char processCharValue(String s){
+        if(s.startsWith("\'"))
+            return processEscapedCharacters(removeFirstAndLastChar(s), '\'').charAt(0);
+        else
+            return (char)parseInt(s);
+    }
+
+    /**
+     * @param s input string.
+     * @return substring between first '(' char and last ')' char.
+     * @exception IndexOutOfBoundsException might be thrown if the input string isn't valid declaration.
+     */
+    private static String retrieveDeclaredValue(String s){
+        return s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
+    }
+
+    /**
+     * @param s input string.
+     * @return output string without first and last character.
+     * @exception IndexOutOfBoundsException if the input string has length lesser than 2.
+     */
+    private static String removeFirstAndLastChar(String s){
+        return s.substring(1, s.length() - 1);
+    }
+
+    /**
+     * @param s input string
+     * @return true if input string is valid String sequence i.e. all chars '\' and '"' are properly escaped.
+     */
+    private static boolean validateStringValue(String s){
+        return s.matches("^([^\\\\\"]|\\\\\\\\|\\\\n|\\\\t|\\\\\")*$");
+    }
+
+    /**
+     * @param s input string
+     * @param quote char that need escaping depending if char or string value is processed.
+     * @return String with escaped chars replaced e.g. sequence '\n' will be replaced with new line char.
+     */
+    private static String processEscapedCharacters(String s, char quote){
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if(c=='\\'){
-                switch(s.charAt(i+1)){
+                char escaped = s.charAt(i+1);
+                switch(escaped){
                     case 'n' -> sb.append('\n');
                     case 't' -> sb.append('\t');
                     case '\\' -> sb.append('\\');
-                    case '"' -> sb.append('"');
                 }
+                if(escaped==quote) sb.append(quote);
                 i++;
             } else sb.append(c);
         }
