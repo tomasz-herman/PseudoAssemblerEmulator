@@ -384,6 +384,8 @@ public class Parser {
             line = processLabels(line, labels, lineNum);
             if(line.isBlank())continue;
             String[] words = extractWords(line, lineNum);
+            instructionType type = INSTRUCTION_TYPES.get(words[0]);
+            if(type == null) throw new ParseException("Unrecognizable OP code", lineNum);
             switch (INSTRUCTION_TYPES.get(words[0])){
                 case declaration -> {
                     if(programSection>0)throw new ParseException("illegal declaration after instructions" ,lineNum);
@@ -423,7 +425,6 @@ public class Parser {
                     if(validateRegister(words[2]))programSection+=2;
                     else programSection+=4;
                 }
-                default -> throw new ParseException("Unrecognizable OP code", lineNum);
             }
             if(dataSection > SECTION_SIZE) throw new IllegalStateException("exceeded maximum data section size");
             if(programSection > SECTION_SIZE) throw new IllegalStateException("exceeded maximum instruction section size");
@@ -475,7 +476,7 @@ public class Parser {
 
     private static String[] extractWords(String line, int lineNum) throws ParseException {
         String[] words;
-        if(line.contains(","))
+        if(line.contains(",") && !line.matches(".*'.*,.*'.*|.*\".*,.*\".*"))
             if (validateCommandWithComma(line)) {
                 line = line.replace(",", " ");
                 words = splitByWhiteSpaces(line);
@@ -708,7 +709,7 @@ public class Parser {
      * @return true if input string is a valid memory address, e.g. 15(-3245),
      * first number indicates register, second memory offset and must be 6 digits maximum.
      */
-    private static boolean validateMemoryAddress(String s) { 
+    private static boolean validateMemoryAddress(String s) {
         return s.matches("^(1[0-5]|[0-9])\\(([+-]?[1-9]\\d{0,5}|[+-]?0)\\)$");
     }
 
@@ -806,7 +807,7 @@ public class Parser {
 
     /**
      * @param s input string
-     * @param quote char that need escaping depending if char or string value is processed.
+     * @param quote char that needs escaping depending if char or string value is processed.
      * @return String with escaped chars replaced e.g. sequence '\n' will be replaced with new line char.
      */
     private static String processEscapedCharacters(String s, char quote){
