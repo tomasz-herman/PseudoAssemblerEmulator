@@ -451,7 +451,12 @@ public class Parser {
         else if(declaration.startsWith(STRING)){
             String value = retrieveDeclaredValue(declaration);
             value = removeFirstAndLastChar(value);
-            return value.length() + 1;
+            if(validateStringValue(value)){
+                value = processEscapedCharacters(value);
+                System.out.println(value);
+                return value.length() + 1;
+            }
+            throw new ParseException("Illegal string value " + value, lineNum);
         } else {
             if(!startsWithPositiveShortNumber(declaration))throw new ParseException("Illegal declaration", lineNum);
             String num = declaration.replaceFirst("\\*.*", "");
@@ -499,6 +504,11 @@ public class Parser {
         String value = retrieveDeclaredValue(words[1]);
         Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
                 aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
+        if(type==aString){
+            value = removeFirstAndLastChar(value);
+            if(!validateStringValue(value)) throw new ParseException("illegal string value", lineNum);
+            value = processEscapedCharacters(value);
+        }
         if(startsWithPositiveShortNumber(words[1])){
             int count = Integer.parseInt(words[1].split("\\*")[0]);
             switch (type){
@@ -512,7 +522,7 @@ public class Parser {
             case aFloat -> program.addDeclaration(new FloatDeclaration(1, parseFloat(value)));
             case aByte -> program.addDeclaration(new ByteDeclaration(1, (byte)parseInt(value)));
             case aChar -> program.addDeclaration(new CharDeclaration(1, processCharValue(value)));
-            case aString -> program.addDeclaration(new StringDeclaration(removeFirstAndLastChar(value)));
+            case aString -> program.addDeclaration(new StringDeclaration(value));
         }
     }
 
@@ -623,7 +633,6 @@ public class Parser {
 
     //some regex and string processing:
     private static String[] splitByWhiteSpaces(String s){
-        //Pattern pat = Pattern.compile("(\"[^\"]*\"|'[^']*'|[\\S])+");
         Pattern pat = Pattern.compile("(((?<![\\\\])['\"])((?:.(?!(?<![\\\\])\\2))*.?)\\2|[\\S])+");
         Matcher mat = pat.matcher(s.trim());
         ArrayList<String> list = new ArrayList<>();
@@ -648,4 +657,21 @@ public class Parser {
     private static String processStringValue(String s){return s.replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t").replaceAll("\\\\'", "'");}
     private static String retrieveDeclaredValue(String s){ return s.substring(s.indexOf('(') + 1, s.lastIndexOf(')')); }
     private static String removeFirstAndLastChar(String s){ return s.substring(1, s.length() - 1); }
+    private static boolean validateStringValue(String s){ return s.matches("^([^\\\\]|\\\\\\\\|\\\\n|\\\\t|\\\\\")*$"); }
+    private static String processEscapedCharacters(String s){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(c=='\\'){
+                switch(s.charAt(i+1)){
+                    case 'n' -> sb.append('\n');
+                    case 't' -> sb.append('\t');
+                    case '\\' -> sb.append('\\');
+                    case '"' -> sb.append('"');
+                }
+                i++;
+            } else sb.append(c);
+        }
+        return sb.toString();
+    }
 }
