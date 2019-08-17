@@ -17,6 +17,11 @@ public class JumpLessOrEqualInstruction extends Instruction implements JumpOpera
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "JUMP_LESS_OR_EQUAL";
     }

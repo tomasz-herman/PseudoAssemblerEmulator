@@ -17,6 +17,11 @@ public class StoreInstruction extends Instruction implements MemoryOperation {
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "STORE";
     }

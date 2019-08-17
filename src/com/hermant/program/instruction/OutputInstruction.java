@@ -18,6 +18,11 @@ public class OutputInstruction extends OutputOperation implements MemoryOperatio
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "OUTPUT";
     }

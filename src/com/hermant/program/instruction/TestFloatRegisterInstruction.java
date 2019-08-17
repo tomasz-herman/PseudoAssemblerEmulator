@@ -16,6 +16,11 @@ public class TestFloatRegisterInstruction extends Instruction implements FloatAr
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "TEST_FLOAT_REGISTER";
     }

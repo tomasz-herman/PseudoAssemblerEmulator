@@ -18,6 +18,11 @@ public class CallInstruction extends Instruction implements JumpOperation {
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "CALL";
     }

@@ -17,6 +17,11 @@ public class LoadAddressInstruction extends Instruction implements MemoryOperati
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "LOAD_ADDRESS";
     }

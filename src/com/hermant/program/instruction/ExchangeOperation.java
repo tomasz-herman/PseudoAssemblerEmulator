@@ -3,7 +3,7 @@ package com.hermant.program.instruction;
 import com.hermant.machine.ram.RandomAccessMemory;
 import com.hermant.machine.register.Register;
 
-public interface ExchangeOperation extends MemoryOperation{
+public interface ExchangeOperation {
 
     default void exchangeRegReg(Register reg, int reg1, int reg2){
         int temp = reg.getInteger(reg1);

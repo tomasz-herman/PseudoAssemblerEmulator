@@ -22,6 +22,11 @@ public class DivideRegisterInstruction extends Instruction implements IntegerAri
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "DIVIDE_REGISTER";
     }

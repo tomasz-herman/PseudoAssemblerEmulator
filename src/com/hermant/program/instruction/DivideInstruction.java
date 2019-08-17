@@ -23,6 +23,11 @@ public class DivideInstruction extends Instruction implements MemoryOperation, I
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "DIVIDE";
     }

@@ -17,6 +17,11 @@ public class JumpNotOverflowInstruction extends Instruction implements JumpOpera
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "JUMP_NOT_OVERFLOW";
     }

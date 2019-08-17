@@ -18,6 +18,11 @@ public class AddRegisterInstruction extends Instruction implements IntegerArithm
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "ADD_REGISTER";
     }

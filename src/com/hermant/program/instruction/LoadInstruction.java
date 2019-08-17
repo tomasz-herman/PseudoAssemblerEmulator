@@ -17,6 +17,11 @@ public class LoadInstruction extends Instruction implements MemoryOperation {
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "LOAD";
     }

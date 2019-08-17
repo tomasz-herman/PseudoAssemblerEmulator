@@ -17,6 +17,11 @@ public class XorInstruction extends Instruction implements LogicalOperation, Mem
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "XOR";
     }

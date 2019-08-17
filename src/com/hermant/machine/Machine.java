@@ -138,7 +138,7 @@ public class Machine {
         for (var declaration : program.declarations)
             dataPointer=declaration.declare(ram, dataPointer);
         for (var instruction : program.instructions)
-            programPointer=instruction.loadIntoMemory(ram, programPointer);
+            programPointer=instruction.loadIntoMemory(debug, ram, programPointer);
         instructionPointer = new InstructionPointer(register.getInteger(PROGRAM_SECTION));
         register.setInteger(POINTER, dataPointer);
     }

@@ -17,6 +17,11 @@ public class LoadIntegerAsFloatInstruction extends Instruction implements Memory
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "LOAD_INTEGER_AS_FLOAT";
     }

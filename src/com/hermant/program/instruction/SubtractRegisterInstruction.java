@@ -18,6 +18,11 @@ public class SubtractRegisterInstruction extends Instruction implements IntegerA
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "SUBTRACT_REGISTER";
     }

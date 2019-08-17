@@ -17,6 +17,11 @@ public class LoadByteUnsignedInstruction extends Instruction implements MemoryOp
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "LOAD_BYTE_UNSIGNED";
     }

@@ -18,6 +18,11 @@ public class OutputFloatInstruction extends OutputOperation implements MemoryOpe
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "OUTPUT_FLOAT";
     }

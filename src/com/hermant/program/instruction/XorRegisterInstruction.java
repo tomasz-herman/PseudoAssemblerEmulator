@@ -16,6 +16,11 @@ public class XorRegisterInstruction extends Instruction implements LogicalOperat
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "XOR_REGISTER";
     }

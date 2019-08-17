@@ -16,6 +16,11 @@ public class RightShiftLogicalRegisterInstruction extends Instruction implements
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "RIGHT_SHIFT_LOGICAL_REGISTER";
     }

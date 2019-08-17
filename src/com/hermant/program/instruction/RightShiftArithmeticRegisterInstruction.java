@@ -16,6 +16,11 @@ public class RightShiftArithmeticRegisterInstruction extends Instruction impleme
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "RIGHT_SHIFT_ARITHMETIC_REGISTER";
     }

@@ -17,6 +17,11 @@ public class RightShiftArithmeticInstruction extends Instruction implements Logi
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "RIGHT_SHIFT_ARITHMETIC";
     }

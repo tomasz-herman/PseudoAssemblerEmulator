@@ -18,6 +18,11 @@ public class CompareRegisterInstruction extends Instruction implements IntegerAr
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "COMPARE_REGISTER";
     }

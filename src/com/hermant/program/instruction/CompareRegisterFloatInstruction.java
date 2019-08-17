@@ -16,6 +16,11 @@ public class CompareRegisterFloatInstruction extends Instruction implements Floa
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "COMPARE_REGISTER_FLOAT";
     }

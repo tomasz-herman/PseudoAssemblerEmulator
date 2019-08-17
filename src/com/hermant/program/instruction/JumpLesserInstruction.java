@@ -17,6 +17,11 @@ public class JumpLesserInstruction extends Instruction implements JumpOperation 
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "JUMP_LESSER";
     }

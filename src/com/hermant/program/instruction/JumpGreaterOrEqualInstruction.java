@@ -17,6 +17,11 @@ public class JumpGreaterOrEqualInstruction extends Instruction implements JumpOp
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "JUMP_GREATER_OR_EQUAL";
     }

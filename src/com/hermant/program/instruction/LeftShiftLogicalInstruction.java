@@ -17,6 +17,11 @@ public class LeftShiftLogicalInstruction extends Instruction implements LogicalO
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "LEFT_SHIFT_LOGICAL";
     }

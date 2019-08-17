@@ -17,6 +17,11 @@ public class NegateRegisterInstruction extends Instruction implements IntegerAri
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "NEGATE_REGISTER";
     }

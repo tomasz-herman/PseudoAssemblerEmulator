@@ -22,6 +22,11 @@ public class DivideSignedRegisterInstruction extends Instruction implements Inte
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "DIVIDE_SIGNED_REGISTER";
     }

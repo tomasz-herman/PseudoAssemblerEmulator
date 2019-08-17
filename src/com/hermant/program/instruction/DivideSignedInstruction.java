@@ -23,6 +23,11 @@ public class DivideSignedInstruction extends Instruction implements MemoryOperat
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "DIVIDE_SIGNED";
     }

@@ -17,6 +17,11 @@ public class ExamineFloatInstruction extends Instruction implements MemoryOperat
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "EXAMINE_FLOAT";
     }

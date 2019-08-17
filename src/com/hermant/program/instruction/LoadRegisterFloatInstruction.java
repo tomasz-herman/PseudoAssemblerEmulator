@@ -16,6 +16,11 @@ public class LoadRegisterFloatInstruction extends Instruction {
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "LOAD_REGISTER_FLOAT";
     }

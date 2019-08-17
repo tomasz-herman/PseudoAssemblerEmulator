@@ -16,6 +16,11 @@ public class PushRegisterFloatInstruction extends Instruction {
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "PUSH_REGISTER_FLOAT";
     }

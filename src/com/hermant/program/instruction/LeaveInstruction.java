@@ -20,6 +20,11 @@ public class LeaveInstruction extends Instruction {
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "LEAVE";
     }

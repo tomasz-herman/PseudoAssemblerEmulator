@@ -16,6 +16,11 @@ public class OrRegisterInstruction extends Instruction implements LogicalOperati
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "OR_REGISTER";
     }

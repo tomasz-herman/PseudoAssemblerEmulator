@@ -17,6 +17,11 @@ public class RightShiftLogicalInstruction extends Instruction implements Logical
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "RIGHT_SHIFT_LOGICAL";
     }

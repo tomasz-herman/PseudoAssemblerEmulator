@@ -16,6 +16,11 @@ public class ExchangeRegisterInstruction extends Instruction implements Exchange
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "EXCHANGE_REGISTER";
     }

@@ -17,6 +17,11 @@ public class LeftRotateInstruction extends Instruction implements LogicalOperati
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "LEFT_ROTATE";
     }

@@ -17,6 +17,11 @@ public class OutputRegisterSignedInstruction extends OutputOperation {
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "OUTPUT_REGISTER_SIGNED";
     }

@@ -7,8 +7,6 @@ import java.io.Serializable;
 
 public abstract class Instruction implements Serializable {
 
-    private static final byte LENGTH_MASK = (byte)0b10000000;
-
     //instruction codes
     public static final byte EXIT = (byte)0b00000000;
     public static final byte RETURN = (byte)0b00000001;
@@ -158,9 +156,10 @@ public abstract class Instruction implements Serializable {
     }
 
     private void setInstructionPointer(InstructionPointer instructionPointer){
-        int instructionLength = (code & LENGTH_MASK) == 0 ? 2 : 4;
-        instructionPointer.set(instructionPointer.get() + instructionLength);
+        instructionPointer.set(instructionPointer.get() + instLength());
     }
+
+    public abstract int instLength();
 
     public abstract String instCode();
 

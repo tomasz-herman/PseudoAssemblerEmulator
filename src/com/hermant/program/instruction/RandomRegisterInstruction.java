@@ -16,6 +16,11 @@ public class RandomRegisterInstruction extends Instruction {
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "RANDOM_REGISTER";
     }

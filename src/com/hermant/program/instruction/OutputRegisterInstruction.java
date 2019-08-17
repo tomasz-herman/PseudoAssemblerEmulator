@@ -17,6 +17,11 @@ public class OutputRegisterInstruction extends OutputOperation {
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "OUTPUT_REGISTER";
     }

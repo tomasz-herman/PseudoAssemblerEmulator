@@ -17,6 +17,11 @@ public class MultiplyFloatInstruction extends Instruction implements MemoryOpera
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "MULTIPLY_FLOAT";
     }

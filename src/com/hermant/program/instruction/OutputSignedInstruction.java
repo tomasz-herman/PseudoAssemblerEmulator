@@ -18,6 +18,11 @@ public class OutputSignedInstruction extends OutputOperation implements MemoryOp
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "OUTPUT_SIGNED";
     }

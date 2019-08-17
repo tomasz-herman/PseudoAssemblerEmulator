@@ -11,8 +11,13 @@ public abstract class InstructionFactory {
     public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Short ramOffset); }
 
     private static final InstructionConstructor[] INSTRUCTION_CONSTRUCTORS;
+    static final int[] INSTRUCTION_LENGTHS;
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
+    private static final String[] INSTRUCTION_CODES;
 
     static {
+        INSTRUCTION_LENGTHS  = new int[256];
+        INSTRUCTION_CODES  = new String[256];
         INSTRUCTION_CONSTRUCTORS = new InstructionConstructor[256];
         INSTRUCTION_CONSTRUCTORS[128 + EXIT] = ExitInstruction::new;
         INSTRUCTION_CONSTRUCTORS[128 + RETURN] = ReturnInstruction::new;
@@ -131,19 +136,26 @@ public abstract class InstructionFactory {
         INSTRUCTION_CONSTRUCTORS[128 + JUMP_NOT_PARITY] = JumpNotParityInstruction::new;
         INSTRUCTION_CONSTRUCTORS[128 + LOOP] = LoopInstruction::new;
         INSTRUCTION_CONSTRUCTORS[128 + CALL] = CallInstruction::new;
+        for (int i = 0; i < 256; i++) {
+            if(INSTRUCTION_CONSTRUCTORS[i]==null) continue;
+            Instruction inst = INSTRUCTION_CONSTRUCTORS[i].create(null, null, null);
+            INSTRUCTION_LENGTHS[i] = inst.instLength();
+            INSTRUCTION_CODES[i] = inst.instCode();
+        }
     }
 
     public static Instruction fetchNextInstruction(RandomAccessMemory ram, InstructionPointer instructionPointer){
         int address = instructionPointer.get();
         byte code = ram.getByte(address);
-        byte reg1 = (byte)((ram.getByte(address+1)>>4)&0xf);
-        byte reg2 = (byte)(ram.getByte(address+1)&0xf);
-        Short ramOffset = null;
-        if ((code & 0x10000000)!=0)
-            ramOffset = (short)((Byte.toUnsignedInt(ram.getByte(address + 2)) << 8) | Byte.toUnsignedInt(ram.getByte(address + 3)));//BigEndian
-            //ramOffset = (ram.getByte(address + 3) << 8) + ram.getByte(address + 2);//LittleEndian/MiddleEndian
         InstructionConstructor constructor = INSTRUCTION_CONSTRUCTORS[128 + code];
         if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
+        byte reg1 = (byte)((ram.getByte(address+1)>>4)&0xf);
+        byte reg2 = (byte)(ram.getByte(address+1)&0xf);
+        Short ramOffset = INSTRUCTION_LENGTHS[128 + code] == 4 ?
+                (short) ((Byte.toUnsignedInt(ram.getByte(address + 2)) << 8) | Byte.toUnsignedInt(ram.getByte(address + 3)))
+                : null;
+        //BigEndian
+        //ramOffset = (ram.getByte(address + 3) << 8) + ram.getByte(address + 2);//LittleEndian/MiddleEndian
         return constructor.create(reg1, reg2, ramOffset);
     }
 }

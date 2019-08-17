@@ -16,6 +16,11 @@ public class ExchangeRegisterFloatInstruction extends Instruction implements Exc
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "EXAMINE_FLOAT_REGISTER";
     }

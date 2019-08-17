@@ -18,6 +18,11 @@ public class NegateInstruction extends Instruction implements MemoryOperation, I
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "NEGATE";
     }

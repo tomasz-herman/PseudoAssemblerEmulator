@@ -17,6 +17,11 @@ public class StoreFloatAsIntegerInstruction extends Instruction implements Memor
     }
 
     @Override
+    public int instLength() {
+        return 4;
+    }
+
+    @Override
     public String instCode() {
         return "STORE_FLOAT_AS_INTEGER";
     }

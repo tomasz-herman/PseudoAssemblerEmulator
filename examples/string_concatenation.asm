@@ -71,7 +71,7 @@ _LOOP3:         LDB     4, 1(0)     ;PRZEPISZ DRUGI NAPIS
 _STOP2:
                 STB     3, 2(0)     ;DOPISZ ZNAK '\0'
                 LDA     2, 2(1)
-                LD      4, 2
+                LD      3, 2
                 POP     2
                 POP     1
                 POP     0

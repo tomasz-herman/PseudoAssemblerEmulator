@@ -16,6 +16,11 @@ public class ReturnInstruction extends Instruction implements JumpOperation{
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "RETURN";
     }

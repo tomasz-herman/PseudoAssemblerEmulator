@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class ExchangeFloatInstruction extends Instruction implements ExchangeOperation {
+public class ExchangeFloatInstruction extends Instruction implements ExchangeOperation, MemoryOperation {
 
     ExchangeFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
         super(Instruction.EXCHANGE_FLOAT, reg1, reg2, ramOffset);
@@ -14,6 +14,11 @@ public class ExchangeFloatInstruction extends Instruction implements ExchangeOpe
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         exchangeRegMem(m.getFPR(), reg1, m.getRam(), ramAddress);
         return true;
+    }
+
+    @Override
+    public int instLength() {
+        return 4;
     }
 
     @Override

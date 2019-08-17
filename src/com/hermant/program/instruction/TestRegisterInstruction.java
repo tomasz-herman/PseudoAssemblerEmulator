@@ -16,6 +16,11 @@ public class TestRegisterInstruction extends Instruction implements LogicalOpera
     }
 
     @Override
+    public int instLength() {
+        return 2;
+    }
+
+    @Override
     public String instCode() {
         return "TEST_REGISTER";
     }
