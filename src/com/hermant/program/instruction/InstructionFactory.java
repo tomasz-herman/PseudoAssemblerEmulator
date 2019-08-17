@@ -12,8 +12,7 @@ public abstract class InstructionFactory {
 
     private static final InstructionConstructor[] INSTRUCTION_CONSTRUCTORS;
     static final int[] INSTRUCTION_LENGTHS;
-    @SuppressWarnings("MismatchedReadAndWriteOfArray")
-    private static final String[] INSTRUCTION_CODES;
+    static final String[] INSTRUCTION_CODES;
 
     static {
         INSTRUCTION_LENGTHS  = new int[256];

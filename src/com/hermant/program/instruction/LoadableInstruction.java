@@ -34,6 +34,6 @@ public class LoadableInstruction extends Instruction {
 
     @Override
     public String instCode() {
-        return "?";
+        return InstructionFactory.INSTRUCTION_CODES[code + 128];
     }
 }
