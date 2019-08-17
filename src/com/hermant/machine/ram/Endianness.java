@@ -6,6 +6,16 @@ import java.util.function.Function;
 public enum Endianness{
 
     LittleEndian {
+        @Override
+        void setShort(BiConsumer<Integer, Byte> setByte, int address, short value) {
+            setByte.accept(address++, (byte)((value & 0x000000ff)));
+            setByte.accept(address, (byte)((value & 0x0000ff00)>>8));
+        }
+
+        @Override
+        short getShort(Function<Integer, Byte> getByte, int address) {
+            return (short) ((getByte.apply(address++) & 0xff) | (getByte.apply(address) & 0xff) << 8);
+        }
 
         @Override
         void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
@@ -23,6 +33,16 @@ public enum Endianness{
 
     },
     MiddleEndian {
+        @Override
+        void setShort(BiConsumer<Integer, Byte> setByte, int address, short value) {
+            setByte.accept(address++, (byte)((value & 0x000000ff)));
+            setByte.accept(address, (byte)((value & 0x0000ff00)>>8));
+        }
+
+        @Override
+        short getShort(Function<Integer, Byte> getByte, int address) {
+            return (short) ((getByte.apply(address++) & 0xff) | (getByte.apply(address) & 0xff) << 8);
+        }
 
         @Override
         void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
@@ -40,6 +60,16 @@ public enum Endianness{
 
     },
     BigEndian {
+        @Override
+        void setShort(BiConsumer<Integer, Byte> setByte, int address, short value) {
+            setByte.accept(address++, (byte)((value & 0x0000ff00)>>8));
+            setByte.accept(address, (byte)((value & 0x000000ff)));
+        }
+
+        @Override
+        short getShort(Function<Integer, Byte> getByte, int address) {
+            return (short)((getByte.apply(address++) & 0xff) << 8 | (getByte.apply(address) & 0xff));
+        }
 
         @Override
         void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
@@ -56,6 +86,10 @@ public enum Endianness{
         }
 
     };
+
+    abstract void setShort(BiConsumer<Integer, Byte> setByte, int address, short value);
+
+    abstract short getShort(Function<Integer, Byte> getByte, int address);
 
     abstract void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value);
 

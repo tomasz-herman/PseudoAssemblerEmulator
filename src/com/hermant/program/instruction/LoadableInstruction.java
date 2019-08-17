@@ -15,16 +15,9 @@ public class LoadableInstruction extends Instruction {
         ram.setByte(address + 1, (byte)(((reg1 & 0xf)<<4) | (reg2 & 0xf)));
         int length = instLength();
 
-//        ram.setByte(address + 3, (byte)((ramOffset & 0xff00)>>8));
-//        ram.setByte(address + 2, (byte)(ramOffset & 0xff));
-        if(length==4) {
-            ram.setByte(address + 2, (byte) ((ramOffset & 0xff00) >> 8));//BigEndian
-            ram.setByte(address + 3, (byte) (ramOffset & 0xff));
-        }
+        if(length==4) ram.setShort(address + 2, ramOffset);
 
-        if(debug){
-            System.out.println(InstructionFactory.fetchNextInstruction(ram, new InstructionPointer(address)));
-        }
+        if(debug) System.out.println(InstructionFactory.fetchNextInstruction(ram, new InstructionPointer(address)));
 
         return address + length;
     }

@@ -12,6 +12,10 @@ public abstract class RandomAccessMemory {
 
     public abstract byte getByte(int address);
 
+    public void setShort(int address, short value){ endianness.setShort(this::setByte, address, value); }
+
+    public short getShort(int address){ return endianness.getShort(this::getByte, address); }
+
     public void setInteger(int address, int value){ endianness.setInteger(this::setByte, address, value); }
 
     public int getInteger(int address){ return endianness.getInteger(this::getByte, address); }
