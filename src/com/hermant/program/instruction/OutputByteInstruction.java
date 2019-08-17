@@ -12,7 +12,8 @@ public class OutputByteInstruction extends OutputOperation implements MemoryOper
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        System.out.println(Byte.toUnsignedInt(m.getRam().getByte(ramAddress)));
+        System.out.print(Byte.toUnsignedInt(m.getRam().getByte(ramAddress)));
+        if(debug) System.out.println();
         return true;
     }
 

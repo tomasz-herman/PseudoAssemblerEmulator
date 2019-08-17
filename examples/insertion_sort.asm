@@ -4,6 +4,7 @@ CZTERY:     DC      INTEGER(4)
 MAXVALUE:   DC      INTEGER(100)
 TAB:        DS      25*INTEGER
 TAB_SIZE:   DC      INTEGER(25)
+SEPARATOR:  DC      CHAR('\n')
 
 MAIN:
             LDA     0, TAB
@@ -13,6 +14,7 @@ MAIN:
             LD      3, MAXVALUE
             CALL    INIT_TAB
             CALL    INSERTION_SORT
+            LDB     2, SEPARATOR
             CALL    PRINT_TAB
             EXIT
 
@@ -49,6 +51,7 @@ L1:         RND     5
 ;ARGUMENTY:
 ;REJESTR 0 - TAB POINTER
 ;RESESTR 1 - TAB_SIZE
+;RESESTR 2 - SEPARATOR
 ;OPERUJE NA:
 ;REJESTRY 0, 1
 ;WYMAGA DEKLARACJI:
@@ -60,6 +63,7 @@ PRINT_TAB:
             PUSH    0
             PUSH    1
 L2:         IOUT    0(0)
+            COUT    2
             LDA     0, 0(4)
             LOOP    1, L2
             POP     1

@@ -12,7 +12,8 @@ public class OutputCharInstruction extends OutputOperation implements MemoryOper
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        System.out.println((char)m.getRam().getByte(ramAddress));
+        System.out.print((char)m.getRam().getByte(ramAddress));
+        if(debug) System.out.println();
         return true;
     }
 

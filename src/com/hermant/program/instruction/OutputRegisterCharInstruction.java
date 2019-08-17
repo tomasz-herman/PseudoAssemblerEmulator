@@ -11,7 +11,8 @@ public class OutputRegisterCharInstruction extends OutputOperation {
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        System.out.println((char)(byte)m.getRegister().getInteger(reg1));
+        System.out.print((char)(byte)m.getRegister().getInteger(reg1));
+        if(debug) System.out.println();
         return true;
     }
 

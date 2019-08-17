@@ -11,7 +11,8 @@ public class OutputRegisterByteInstruction extends OutputOperation {
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        System.out.println(m.getRegister().getInteger(reg1) & 0xFF);
+        System.out.print(m.getRegister().getInteger(reg1) & 0xFF);
+        if(debug) System.out.println();
         return true;
     }
 

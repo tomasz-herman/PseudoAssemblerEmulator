@@ -12,7 +12,8 @@ public class OutputInstruction extends OutputOperation implements MemoryOperatio
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        System.out.println(Integer.toUnsignedString(m.getRam().getInteger(ramAddress)));
+        System.out.print(Integer.toUnsignedString(m.getRam().getInteger(ramAddress)));
+        if(debug) System.out.println();
         return true;
     }
 

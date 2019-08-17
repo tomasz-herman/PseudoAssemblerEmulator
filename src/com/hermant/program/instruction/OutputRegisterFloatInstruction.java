@@ -11,7 +11,8 @@ public class OutputRegisterFloatInstruction extends OutputOperation {
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
-        System.out.println(m.getFPR().getFloat(reg1));
+        System.out.print(m.getFPR().getFloat(reg1));
+        if(debug) System.out.println();
         return true;
     }
 

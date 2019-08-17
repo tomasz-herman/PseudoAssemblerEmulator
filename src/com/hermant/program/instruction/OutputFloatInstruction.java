@@ -12,7 +12,8 @@ public class OutputFloatInstruction extends OutputOperation implements MemoryOpe
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        System.out.println(m.getRam().getFloat(ramAddress));
+        System.out.print(m.getRam().getFloat(ramAddress));
+        if(debug) System.out.println();
         return true;
     }
 
