@@ -17,7 +17,7 @@ public class LoadableInstruction extends Instruction {
 
         if(length==4) ram.setShort(address + 2, ramOffset);
 
-        if(debug) System.out.println(InstructionFactory.fetchNextInstruction(ram, new InstructionPointer(address)));
+        if(debug) System.out.println(String.format("%1$08X",address) + " | " + InstructionFactory.fetchNextInstruction(ram, new InstructionPointer(address)));
 
         return address + length;
     }

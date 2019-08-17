@@ -137,8 +137,10 @@ public class Machine {
         int dataPointer = register.getInteger(DATA_SECTION);
         for (var declaration : program.declarations)
             dataPointer=declaration.declare(ram, dataPointer);
+        if(debug) System.out.println("Program:");
         for (var instruction : program.instructions)
             programPointer=instruction.loadIntoMemory(debug, ram, programPointer);
+        if(debug) System.out.println();
         instructionPointer = new InstructionPointer(register.getInteger(PROGRAM_SECTION));
         register.setInteger(POINTER, dataPointer);
     }
@@ -150,6 +152,7 @@ public class Machine {
      * @param sleep time in milliseconds to sleep in between instructions
      */
     public void runProgram(int sleep){
+        System.out.println("Program has started");
         IntConsumer next = (i) -> executedCounter++;
         if(sleep > 0) next = next.andThen(this::sleep);
         var running = new AtomicBoolean(true);

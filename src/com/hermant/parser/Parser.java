@@ -454,7 +454,6 @@ public class Parser {
             value = removeFirstAndLastChar(value);
             if(validateStringValue(value)){
                 value = processEscapedCharacters(value, '"');
-                System.out.println(value);
                 return value.length() + 1;
             }
             throw new ParseException("Illegal string value " + value, lineNum);
