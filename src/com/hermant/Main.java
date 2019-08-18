@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.31.4 beta");
+        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.31.6 beta");
         if(parseArgsForHelp(args))usage();
         Program program;
         String input = parseArgsForInputFile(args);

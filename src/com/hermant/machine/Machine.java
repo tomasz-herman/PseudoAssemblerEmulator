@@ -84,6 +84,7 @@ public class Machine {
         flagsRegister = new FlagsRegister();
         ram = new ArrayRAM(Endianness.LittleEndian, RAM_SIZE);
         rng = new RandomNumberGenerator();
+        instructionPointer = new InstructionPointer(0);
         stack = new Stack(ram, register);
         this.debug = debug;
     }
@@ -141,7 +142,7 @@ public class Machine {
         for (var instruction : program.instructions)
             programPointer=instruction.loadIntoMemory(debug, ram, programPointer);
         if(debug) System.out.println();
-        instructionPointer = new InstructionPointer(register.getInteger(PROGRAM_SECTION));
+        instructionPointer.set(register.getInteger(PROGRAM_SECTION));
         register.setInteger(POINTER, dataPointer);
     }
 

@@ -148,8 +148,9 @@ public abstract class InstructionFactory {
         byte code = ram.getByte(address);
         InstructionConstructor constructor = INSTRUCTION_CONSTRUCTORS[128 + code];
         if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
-        byte reg1 = (byte)((ram.getByte(address+1)>>4)&0xf);
-        byte reg2 = (byte)(ram.getByte(address+1)&0xf);
+        byte reg = ram.getByte(address+1);
+        byte reg1 = (byte)(reg>>4&0xf);
+        byte reg2 = (byte)(reg&0xf);
         Short ramOffset = INSTRUCTION_LENGTHS[128 + code] == 4 ? ram.getShort(address + 2) : null;
         return constructor.create(reg1, reg2, ramOffset);
     }
