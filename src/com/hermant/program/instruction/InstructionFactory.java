@@ -1,6 +1,5 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.Machine;
 import com.hermant.machine.register.InstructionPointer;
 import com.hermant.machine.ram.RandomAccessMemory;
 
@@ -9,13 +8,11 @@ import static com.hermant.program.instruction.Instruction.*;
 public abstract class InstructionFactory {
 
     private static int BYTE_TO_UNSIGNED = 128;
-    
+
     //command design pattern
     public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Short ramOffset); }
-    public interface InstructionAction { boolean execute(Machine m, boolean debug); }
 
     private static final InstructionConstructor[] INSTRUCTION_CONSTRUCTORS;
-    static final InstructionAction[] INSTRUCTION_ACTIONS;
     static final int[] INSTRUCTION_LENGTHS;
     static final String[] INSTRUCTION_CODES;
 
@@ -23,7 +20,6 @@ public abstract class InstructionFactory {
         int BYTES_QUANTITY = 256;
         INSTRUCTION_LENGTHS  = new int[BYTES_QUANTITY];
         INSTRUCTION_CODES  = new String[BYTES_QUANTITY];
-        INSTRUCTION_ACTIONS = new InstructionAction[BYTES_QUANTITY];
         INSTRUCTION_CONSTRUCTORS = new InstructionConstructor[BYTES_QUANTITY];
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + EXIT] = ExitInstruction::new;
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + RETURN] = ReturnInstruction::new;
@@ -147,7 +143,6 @@ public abstract class InstructionFactory {
             Instruction inst = INSTRUCTION_CONSTRUCTORS[i].create(null, null, null);
             INSTRUCTION_LENGTHS[i] = inst.instLength();
             INSTRUCTION_CODES[i] = inst.instCode();
-            INSTRUCTION_ACTIONS[i] = inst::execute;
         }
     }
 
