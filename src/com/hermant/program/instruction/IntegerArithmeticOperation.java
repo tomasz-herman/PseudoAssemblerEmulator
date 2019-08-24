@@ -29,6 +29,8 @@ public interface IntegerArithmeticOperation {
         else flags.resetOverflowFlag();
         if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
         else flags.resetParityFlag();
+        if((result & 0x80000000) != 0)flags.setSignFlag();
+        else flags.resetSignFlag();
         return result;
     }
 
@@ -40,6 +42,8 @@ public interface IntegerArithmeticOperation {
         else flags.resetOverflowFlag();
         if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
         else flags.resetParityFlag();
+        if((result & 0x80000000) != 0)flags.setSignFlag();
+        else flags.resetSignFlag();
         return result;
     }
 
