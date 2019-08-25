@@ -680,7 +680,7 @@ public class Parser {
      * @return true if input string has label. However this method doesn't check if label is valid.
      */
     private static boolean hasLabel(String s){
-        return s.contains(":");
+        return s.replaceAll("((?<![\\\\])['\"])((?:.(?!(?<![\\\\])\\1))*.?)\\1", "").contains(":");
     }
 
     /**
@@ -688,7 +688,7 @@ public class Parser {
      * @return first label of the line if line has one, otherwise empty string.
      */
     private static String label(String s){
-        if(s.contains(":"))
+        if(hasLabel(s))
             return s.trim().replaceFirst(":.*", "").trim();
         else
             return "";
@@ -707,7 +707,8 @@ public class Parser {
      * @return removes all labels of the line. Resulting line is trimmed.
      */
     private static String removeLabels(String s){
-        return s.trim().replaceFirst(".*:", "").trim();
+        while(hasLabel(s))s = removeLabel(s);
+        return s.trim();
     }
 
     /**

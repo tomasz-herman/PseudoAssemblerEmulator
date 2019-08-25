@@ -2,8 +2,8 @@
 MINUTE:     DC      INTEGER(60)
 HOUR:       DC      INTEGER(3600)
 DAY:        DC      INTEGER(86400)
-UTC:        DC      INTEGER(2)
-SEPARATOR:  DC      CHAR('.')
+UTC:        DC      INTEGER(7200)
+SEPARATOR:  DC      CHAR(':')
 TEN:        DC      INTEGER(10)
 
 MAIN:
@@ -11,10 +11,10 @@ MAIN:
 CLOCK:
             HLT
             TIME    0
+            ADD     0, UTC
             DIV     0, DAY
             LD      0, 8
             DIV     0, HOUR
-            ADD     0, UTC
             CMP     0, TEN
             JGE     H
             OUT     1
