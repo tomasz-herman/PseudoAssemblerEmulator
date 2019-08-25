@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Register{
 
-    private static final int REGISTER_SIZE = 16;
+    public static final int REGISTER_SIZE = 16;
     public static final int REMAINDER = 8;
     public static final int POINTER = 9;
     public static final int STACK_FRAME_POINTER = 10;

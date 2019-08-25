@@ -25,6 +25,10 @@ public class Parser {
     //instructions
     private static final String EXIT = "EXIT";
     private static final String RETURN = "RET";
+    private static final String PUSH_ALL = "PUSHA";
+    private static final String PUSH_ALL_FLOAT = "FPUSHA";
+    private static final String POP_ALL = "POPA";
+    private static final String POP_ALL_FLOAT = "FPOPA";
     private static final String ENTER = "ENTER";
     private static final String LEAVE = "LEAVE";
     private static final String LOAD = "LD";
@@ -138,11 +142,15 @@ public class Parser {
         TOKENS = Collections.unmodifiableMap(tokens);
         tokens.put(EXIT, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.EXIT, words, program, lineNum));
         tokens.put(RETURN, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.RETURN, words, program, lineNum));
-        tokens.put(NO_OPERATION, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.NO_OPERATION, words, program, lineNum));
+        tokens.put(PUSH_ALL, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.PUSH_ALL, words, program, lineNum));
+        tokens.put(PUSH_ALL_FLOAT, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.PUSH_ALL_FLOAT, words, program, lineNum));
+        tokens.put(POP_ALL, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.POP_ALL, words, program, lineNum));
+        tokens.put(POP_ALL_FLOAT, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.POP_ALL_FLOAT, words, program, lineNum));
         tokens.put(PUSH_FLAGS, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.PUSH_FLAGS, words, program, lineNum));
         tokens.put(POP_FLAGS, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.POP_FLAGS, words, program, lineNum));
         tokens.put(ENTER, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.ENTER, words, program, lineNum));
         tokens.put(LEAVE, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.LEAVE, words, program, lineNum));
+        tokens.put(NO_OPERATION, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.NO_OPERATION, words, program, lineNum));
         tokens.put(LOAD, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LOAD, Instruction.LOAD_REGISTER, words, labels, program, lineNum));
         tokens.put(LOAD_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LOAD_FLOAT, Instruction.LOAD_REGISTER_FLOAT, words, labels, program, lineNum));
         tokens.put(STORE, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.STORE, words, labels, program, lineNum));
@@ -239,11 +247,15 @@ public class Parser {
         INSTRUCTION_TYPES = Collections.unmodifiableMap(instruction_types);
         instruction_types.put(EXIT, instructionType.instruction2Bytes1Word);
         instruction_types.put(RETURN, instructionType.instruction2Bytes1Word);
-        instruction_types.put(NO_OPERATION, instructionType.instruction2Bytes1Word);
+        instruction_types.put(PUSH_ALL, instructionType.instruction2Bytes1Word);
+        instruction_types.put(PUSH_ALL_FLOAT, instructionType.instruction2Bytes1Word);
+        instruction_types.put(POP_ALL, instructionType.instruction2Bytes1Word);
+        instruction_types.put(POP_ALL_FLOAT, instructionType.instruction2Bytes1Word);
         instruction_types.put(PUSH_FLAGS, instructionType.instruction2Bytes1Word);
         instruction_types.put(POP_FLAGS, instructionType.instruction2Bytes1Word);
         instruction_types.put(ENTER, instructionType.instruction2Bytes1Word);
         instruction_types.put(LEAVE, instructionType.instruction2Bytes1Word);
+        instruction_types.put(NO_OPERATION, instructionType.instruction2Bytes1Word);
         instruction_types.put(LOAD, instructionType.instruction2or4Bytes3Words);
         instruction_types.put(LOAD_FLOAT, instructionType.instruction2or4Bytes3Words);
         instruction_types.put(STORE, instructionType.instruction4Bytes3Words);
