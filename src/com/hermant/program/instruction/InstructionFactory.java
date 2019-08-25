@@ -142,6 +142,13 @@ public abstract class InstructionFactory {
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + JUMP_NOT_PARITY] = JumpNotParityInstruction::new;
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + LOOP] = LoopInstruction::new;
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + CALL] = CallInstruction::new;
+        INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + INPUT] = InputInstruction::new;
+        INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + INPUT_REGISTER] = InputRegisterInstruction::new;
+        INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + HALT] = HaltInstruction::new;
+        INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + TIME] = TimeInstruction::new;
+        INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + TIME_REGISTER] = TimeRegisterInstruction::new;
+        INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + SLEEP] = SleepInstruction::new;
+        INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + SLEEP_REGISTER] = SleepRegisterInstruction::new;
         for (int i = 0; i < BYTES_QUANTITY; i++) {
             if(INSTRUCTION_CONSTRUCTORS[i]==null) continue;
             Instruction inst = INSTRUCTION_CONSTRUCTORS[i].create(null, null, null);

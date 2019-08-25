@@ -50,6 +50,10 @@ public class Parser {
     private static final String LOAD_INTEGER_AS_FLOAT = "FILD";
     private static final String STORE_FLOAT_AS_INTEGER = "FIST";
     private static final String RANDOM = "RND";
+    private static final String HALT = "HLT";
+    private static final String TIME = "TIME";
+    private static final String INPUT = "IN";
+    private static final String SLEEP = "SLP";
 
     private static final String PUSH = "PUSH";
     private static final String PUSH_FLOAT = "FPUSH";
@@ -142,6 +146,7 @@ public class Parser {
         TOKENS = Collections.unmodifiableMap(tokens);
         tokens.put(EXIT, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.EXIT, words, program, lineNum));
         tokens.put(RETURN, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.RETURN, words, program, lineNum));
+        tokens.put(HALT, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.HALT, words, program, lineNum));
         tokens.put(PUSH_ALL, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.PUSH_ALL, words, program, lineNum));
         tokens.put(PUSH_ALL_FLOAT, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.PUSH_ALL_FLOAT, words, program, lineNum));
         tokens.put(POP_ALL, (words, labels, program, lineNum) -> loadNoParametersInstruction(Instruction.POP_ALL, words, program, lineNum));
@@ -158,6 +163,9 @@ public class Parser {
         tokens.put(LOAD_ADDRESS, (words, labels, program, lineNum) -> loadRegMemInstruction(Instruction.LOAD_ADDRESS, words, labels, program, lineNum));
         tokens.put(EXCHANGE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.EXCHANGE, Instruction.EXCHANGE_REGISTER, words, labels, program, lineNum));
         tokens.put(EXCHANGE_FLOAT, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.EXCHANGE_FLOAT, Instruction.EXCHANGE_REGISTER_FLOAT, words, labels, program, lineNum));
+        tokens.put(INPUT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.INPUT, Instruction.INPUT_REGISTER, words, labels, program, lineNum));
+        tokens.put(TIME, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.TIME, Instruction.TIME_REGISTER, words, labels, program, lineNum));
+        tokens.put(SLEEP, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.SLEEP, Instruction.SLEEP_REGISTER, words, labels, program, lineNum));
         tokens.put(PUSH, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.PUSH, Instruction.PUSH_REGISTER, words, labels, program, lineNum));
         tokens.put(PUSH_FLOAT, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.PUSH, Instruction.PUSH_REGISTER_FLOAT, words, labels, program, lineNum));
         tokens.put(POP, (words, labels, program, lineNum) -> loadRegOrMemInstruction(Instruction.POP, Instruction.POP_REGISTER, words, labels, program, lineNum));
@@ -247,6 +255,7 @@ public class Parser {
         INSTRUCTION_TYPES = Collections.unmodifiableMap(instruction_types);
         instruction_types.put(EXIT, instructionType.instruction2Bytes1Word);
         instruction_types.put(RETURN, instructionType.instruction2Bytes1Word);
+        instruction_types.put(HALT, instructionType.instruction2Bytes1Word);
         instruction_types.put(PUSH_ALL, instructionType.instruction2Bytes1Word);
         instruction_types.put(PUSH_ALL_FLOAT, instructionType.instruction2Bytes1Word);
         instruction_types.put(POP_ALL, instructionType.instruction2Bytes1Word);
@@ -263,6 +272,9 @@ public class Parser {
         instruction_types.put(LOAD_ADDRESS, instructionType.instruction4Bytes3Words);
         instruction_types.put(EXCHANGE, instructionType.instruction2or4Bytes3Words);
         instruction_types.put(EXCHANGE_FLOAT, instructionType.instruction2or4Bytes3Words);
+        instruction_types.put(INPUT, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(TIME, instructionType.instruction2or4Bytes2Words);
+        instruction_types.put(SLEEP, instructionType.instruction2or4Bytes2Words);
         instruction_types.put(PUSH, instructionType.instruction2or4Bytes2Words);
         instruction_types.put(PUSH_FLOAT, instructionType.instruction2or4Bytes2Words);
         instruction_types.put(POP, instructionType.instruction2or4Bytes2Words);
