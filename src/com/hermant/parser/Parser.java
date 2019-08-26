@@ -20,8 +20,7 @@ import static com.hermant.program.declaration.Declaration.Type.*;
 public class Parser {
 
     //tokens
-    private static final String COMMENT = ";";
-
+    
     //instructions
     private static final String EXIT = "EXIT";
     private static final String RETURN = "RET";
@@ -672,7 +671,18 @@ public class Parser {
      * @return output string line with comments removed.
      */
     private static String removeComment(String s){
-        return s.replaceFirst(COMMENT + ".*", "").trim();
+        while(s.replaceAll("((?<![\\\\])['\"])((?:.(?!(?<![\\\\])\\1))*.?)\\1", "").contains(";")){
+            StringBuilder sb = new StringBuilder();
+            sb.append(s);
+            sb = sb.reverse();
+            s = sb.toString();
+            s = s.replaceFirst("[^;]*;", "");
+            sb = new StringBuilder();
+            sb.append(s);
+            sb = sb.reverse();
+            s = sb.toString();
+        }
+        return s;
     }
 
     /**
