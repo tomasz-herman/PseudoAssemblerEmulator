@@ -20,7 +20,7 @@ import static com.hermant.program.declaration.Declaration.Type.*;
 public class Parser {
 
     //tokens
-    
+
     //instructions
     private static final String EXIT = "EXIT";
     private static final String RETURN = "RET";
