@@ -5,7 +5,9 @@ import com.hermant.machine.ram.RandomAccessMemory;
 
 import static com.hermant.program.instruction.Instruction.*;
 
-public abstract class InstructionFactory {
+public final class InstructionFactory {
+
+    private InstructionFactory() {}
 
     private static int BYTE_TO_UNSIGNED = 128;
 
