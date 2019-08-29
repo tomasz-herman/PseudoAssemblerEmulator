@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class RightShiftArithmeticRegisterInstruction extends Instruction implements LogicalOperation {
 
     RightShiftArithmeticRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.RIGHT_SHIFT_ARITHMETIC_REGISTER, reg1, reg2, ramOffset);
+        super(RIGHT_SHIFT_ARITHMETIC_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

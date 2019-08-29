@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class SubtractRegisterFloatInstruction extends Instruction {
 
     SubtractRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.SUBTRACT_REGISTER_FLOAT, reg1, reg2, ramOffset);
+        super(SUBTRACT_REGISTER_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

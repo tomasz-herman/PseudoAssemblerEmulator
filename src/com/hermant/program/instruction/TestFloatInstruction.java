@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class TestFloatInstruction extends Instruction implements MemoryOperation, FloatArithmeticOperation {
 
     TestFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.TEST_FLOAT, reg1, reg2, ramOffset);
+        super(TEST_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

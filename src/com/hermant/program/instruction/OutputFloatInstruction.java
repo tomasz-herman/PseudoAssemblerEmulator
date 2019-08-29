@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class OutputFloatInstruction extends OutputOperation implements MemoryOperation {
 
     OutputFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.OUTPUT_FLOAT, reg1, reg2, ramOffset);
+        super(OUTPUT_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

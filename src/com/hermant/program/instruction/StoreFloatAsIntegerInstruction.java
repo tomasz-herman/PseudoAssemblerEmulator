@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class StoreFloatAsIntegerInstruction extends Instruction implements MemoryOperation {
 
     StoreFloatAsIntegerInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.STORE_FLOAT_AS_INTEGER, reg1, reg2, ramOffset);
+        super(STORE_FLOAT_AS_INTEGER, reg1, reg2, ramOffset);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class RandomRegisterInstruction extends Instruction {
 
     RandomRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.RANDOM_REGISTER, reg1, reg2, ramOffset);
+        super(RANDOM_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class XorInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
     XorInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.XOR, reg1, reg2, ramOffset);
+        super(XOR, reg1, reg2, ramOffset);
     }
 
     @Override

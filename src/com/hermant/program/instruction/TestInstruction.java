@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class TestInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
     TestInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.TEST, reg1, reg2, ramOffset);
+        super(TEST, reg1, reg2, ramOffset);
     }
 
     @Override

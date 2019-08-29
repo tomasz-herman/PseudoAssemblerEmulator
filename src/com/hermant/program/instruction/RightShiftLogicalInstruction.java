@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class RightShiftLogicalInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
     RightShiftLogicalInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.RIGHT_SHIFT_LOGICAL, reg1, reg2, ramOffset);
+        super(RIGHT_SHIFT_LOGICAL, reg1, reg2, ramOffset);
     }
 
     @Override

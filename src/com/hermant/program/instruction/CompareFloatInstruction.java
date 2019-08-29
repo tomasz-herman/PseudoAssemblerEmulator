@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class CompareFloatInstruction extends Instruction implements MemoryOperation, FloatArithmeticOperation {
 
     CompareFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.COMPARE_FLOAT, reg1, reg2, ramOffset);
+        super(COMPARE_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

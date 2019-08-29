@@ -8,7 +8,7 @@ import static com.hermant.machine.register.Register.STACK_POINTER;
 public class EnterInstruction extends Instruction {
 
     EnterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.ENTER, reg1, reg2, ramOffset);
+        super(ENTER, reg1, reg2, ramOffset);
     }
 
     @Override

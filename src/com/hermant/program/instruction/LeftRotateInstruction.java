@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class LeftRotateInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
     LeftRotateInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.LEFT_ROTATE, reg1, reg2, ramOffset);
+        super(LEFT_ROTATE, reg1, reg2, ramOffset);
     }
 
     @Override

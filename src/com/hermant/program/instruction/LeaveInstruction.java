@@ -8,7 +8,7 @@ import static com.hermant.machine.register.Register.STACK_POINTER;
 public class LeaveInstruction extends Instruction {
 
     LeaveInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.LEAVE, reg1, reg2, ramOffset);
+        super(LEAVE, reg1, reg2, ramOffset);
     }
 
     @Override

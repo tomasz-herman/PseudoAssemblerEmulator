@@ -7,7 +7,7 @@ import static com.hermant.machine.register.Register.REMAINDER;
 public class DivideSignedInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
     DivideSignedInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.DIVIDE_SIGNED, reg1, reg2, ramOffset);
+        super(DIVIDE_SIGNED, reg1, reg2, ramOffset);
     }
 
     @Override

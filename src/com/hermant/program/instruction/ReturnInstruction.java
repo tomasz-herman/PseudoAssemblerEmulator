@@ -5,7 +5,7 @@ import com.hermant.machine.*;
 public class ReturnInstruction extends Instruction implements JumpOperation{
 
     ReturnInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.RETURN, reg1, reg2, ramOffset);
+        super(RETURN, reg1, reg2, ramOffset);
     }
 
     @Override

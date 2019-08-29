@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class CompareRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
     CompareRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.COMPARE_REGISTER, reg1, reg2, ramOffset);
+        super(COMPARE_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

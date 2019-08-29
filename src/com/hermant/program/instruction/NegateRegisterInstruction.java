@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class NegateRegisterInstruction extends Instruction implements IntegerArithmeticOperation{
 
     NegateRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.NEGATE_REGISTER, reg1, reg2, ramOffset);
+        super(NEGATE_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

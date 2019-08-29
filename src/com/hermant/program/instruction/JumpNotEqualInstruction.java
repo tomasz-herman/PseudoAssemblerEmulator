@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class JumpNotEqualInstruction extends Instruction implements JumpOperation {
 
     JumpNotEqualInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.JUMP_NOT_EQUAL, reg1, reg2, ramOffset);
+        super(JUMP_NOT_EQUAL, reg1, reg2, ramOffset);
     }
 
     @Override

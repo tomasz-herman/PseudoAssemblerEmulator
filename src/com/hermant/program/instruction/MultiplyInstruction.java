@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class MultiplyInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
     MultiplyInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.MULTIPLY, reg1, reg2, ramOffset);
+        super(MULTIPLY, reg1, reg2, ramOffset);
     }
 
     @Override

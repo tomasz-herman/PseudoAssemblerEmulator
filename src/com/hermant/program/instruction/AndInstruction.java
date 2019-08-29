@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class AndInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
     AndInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.AND, reg1, reg2, ramOffset);
+        super(AND, reg1, reg2, ramOffset);
     }
 
     @Override

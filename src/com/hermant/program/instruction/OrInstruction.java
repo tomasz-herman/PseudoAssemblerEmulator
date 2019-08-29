@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class OrInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
     OrInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.OR, reg1, reg2, ramOffset);
+        super(OR, reg1, reg2, ramOffset);
     }
 
     @Override

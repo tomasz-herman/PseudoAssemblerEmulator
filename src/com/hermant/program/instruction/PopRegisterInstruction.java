@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class PopRegisterInstruction extends Instruction {
 
     PopRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.POP_REGISTER, reg1, reg2, ramOffset);
+        super(POP_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.hermant.machine.*;
 public class LoadRegisterFloatInstruction extends Instruction {
 
     LoadRegisterFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.LOAD_REGISTER_FLOAT, reg1, reg2, ramOffset);
+        super(LOAD_REGISTER_FLOAT, reg1, reg2, ramOffset);
     }
 
     @Override

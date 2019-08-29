@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class DecrementInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
     DecrementInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.DECREMENT, reg1, reg2, ramOffset);
+        super(DECREMENT, reg1, reg2, ramOffset);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class PushInstruction extends Instruction implements MemoryOperation {
 
     PushInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.PUSH, reg1, reg2, ramOffset);
+        super(PUSH, reg1, reg2, ramOffset);
     }
 
     @Override

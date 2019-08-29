@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class LoopInstruction extends Instruction implements JumpOperation {
 
     LoopInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.LOOP, reg1, reg2, ramOffset);
+        super(LOOP, reg1, reg2, ramOffset);
     }
 
     @Override

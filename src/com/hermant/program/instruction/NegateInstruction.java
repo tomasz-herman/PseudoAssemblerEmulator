@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class NegateInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
     NegateInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.NEGATE, reg1, reg2, ramOffset);
+        super(NEGATE, reg1, reg2, ramOffset);
     }
 
     @Override

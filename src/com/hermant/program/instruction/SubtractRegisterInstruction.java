@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class SubtractRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
     SubtractRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.SUBTRACT_REGISTER, reg1, reg2, ramOffset);
+        super(SUBTRACT_REGISTER, reg1, reg2, ramOffset);
     }
 
     @Override

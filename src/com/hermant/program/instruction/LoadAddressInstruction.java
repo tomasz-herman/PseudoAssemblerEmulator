@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class LoadAddressInstruction extends Instruction implements MemoryOperation {
 
     LoadAddressInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.LOAD_ADDRESS, reg1, reg2, ramOffset);
+        super(LOAD_ADDRESS, reg1, reg2, ramOffset);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.hermant.machine.Machine;
 public class PushFlagsInstruction extends Instruction {
 
     PushFlagsInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(Instruction.PUSH_FLAGS, reg1, reg2, ramOffset);
+        super(PUSH_FLAGS, reg1, reg2, ramOffset);
     }
 
     @Override
