@@ -159,7 +159,7 @@ RETURN:
 ;
 ;    i = (low - 1)  // Index of smaller element;
 ;
-;    for (j = low; j <= high- 1; j++)
+;    for (j = low; j < high; j++)
 ;    {
 ;        // If current element is smaller than the pivot
 ;        if (arr[j] < pivot)
@@ -191,34 +191,32 @@ PARTITION:
             ADD     2, 0
             LD      2, 2(0)         ;r2 = PIVOT = tab[HIGH]
             LD      1, 11(8)        ;r1 = LOW
-            LD      3, 1            ;r3 = j = LOW
-            DEC     1               ;r1 = i = LOW - 1
-L3:
-            CMP     3, 4            ;j ? HIGH
-            JGE     L3STOP          ;j >=? HIGH -> goto L3STOP
-            LD      5, 3
+            LD      3, 4            ;j = HIGH
+            SUB     3, 1            ;j = HIGH - LOW, j zmniejsza się wraz z obrotem pętli!
+            LD      5, 1
             MUL     5, 8
-            ADD     5, 0
+            ADD     5, 0            ;r5 = &tab[LOW]
+            DEC     1               ;r1 = i = LOW - 1
+            LD      7, 1
+            MUL     7, 8
+            ADD     7, 0            ;r7 = &tab[i]
+L3:
             LD      6, 5(0)         ;r5 = tab[j]
             CMP     6, 2            ;tab[j] ? PIVOT
             JG      CONTINUE        ;tab[j] >? PIVOT -> goto CONTINUE
             INC     1               ;i++
-            LD      7, 1
-            MUL     7, 8
-            ADD     7, 0
+            LDA     7, 7(4)         ;r7 += 4
             XCHG    6, 7(0)         ;r5 <=> tab[i]
             ST      6, 5(0)         ;tab[j] = r5
 CONTINUE:
-            INC     3               ;j++
-            JMP     L3
+            LDA     5, 5(4)         ;r5 += 4
+            LOOP    3, L3           ;j--, goto L3 jeżeli j nieujemne
 L3STOP:
             INC     1               ;i++
-            LD      5, 1
-            MUL     5, 8
-            ADD     5, 0
-            LD      6, 5(0)         ;r6 = tab[i+1]
+            LDA     7, 7(4)         ;r7 += 4
+            LD      6, 7(0)         ;r6 = tab[i+1]
             MUL     4, 8
             ADD     4, 0
             XCHG    6, 4(0)         ;tab[HIGH] <=> r6
-            ST      6, 5(0)         ;tab[i+1] = r6
+            ST      6, 7(0)         ;tab[i+1] = r6
             RET
