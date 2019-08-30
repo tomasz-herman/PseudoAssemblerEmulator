@@ -136,7 +136,25 @@ public class Parser {
     private static final String CHAR = "CHAR";
     private static final String STRING = "STRING";
 
-    public interface ParseMethod { void parse(String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException; }
+    //regular expressions
+    private static final String DECIMAL_INTEGER = "([+-]?(0|[1-9][0-9]{0,8}|1[0-9]{9}|20[0-9]{8}|21[0-3][0-9]{7}|" +
+            "214[0-6][0-9]{6}|2147[0-3][0-9]{5}|21474[0-7][0-9]{4}|214748[0-2][0-9]{3}|2147483[0-5][0-9]{2}|" +
+            "21474836[0-3][0-9]|214748364[0-7]))|-2147483648";
+    private static final String HEXADECIMAL_INTEGER = "0x[0-9a-fA-F]{1,8}";
+    private static final String BINARY_INTEGER = "0b[0-1]{1,32}";
+    private static final String FLOATING_POINT_NUMBER = "([+-]?(([1-9]\\d*|0)(\\.\\d*)?|\\.\\d+)";
+    private static final String DECIMAL_UNSIGNED_BYTE = "[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]";
+    private static final String HEXADECIMAL_BYTE = "0x[0-9a-fA-F]{1,2}";
+    private static final String BINARY_BYTE = "0b[0-1]{1,8}";
+    private static final String ASCII_CHAR = "[\\x00-\\x7F]";
+    private static final String ESCAPED_CHAR = "\\\\n|\\\\t|\\\\'|\\\\\"|\\\\" + DECIMAL_UNSIGNED_BYTE;
+    private static final String DECIMAL_UNSIGNED_SHORT = "([0-9]|[1-9][0-9]|[1-9][0-9]{2}|[1-9][0-9]{3}|[1-5][0-9]{4}|" +
+            "6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])";
+
+    //functional interface
+    public interface ParseMethod {
+        void parse(String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException;
+    }
 
     private static final Map<String, ParseMethod> TOKENS;
 
@@ -744,7 +762,7 @@ public class Parser {
      * first number indicates register, second memory offset and must be 6 digits maximum.
      */
     private static boolean validateMemoryAddress(String s) {
-        return s.matches("^(1[0-5]|[0-9])\\(([+-]?[1-9]\\d{0,5}|[+-]?0)\\)$");
+        return s.matches("^(1[0-5]|[0-9])\\(("+DECIMAL_INTEGER+")\\)$");
     }
 
     /**
@@ -752,7 +770,7 @@ public class Parser {
      * @return true if input string is a valid declaration of space.
      */
     private static boolean validateDeclaringSpace(String s) {
-        return s.matches("^([1-9]\\d{0,5}\\*)?(INTEGER|FLOAT|BYTE|CHAR)$");
+        return s.matches("^("+DECIMAL_UNSIGNED_SHORT+"\\*)?(INTEGER|FLOAT|BYTE|CHAR)$");
     }
 
     /**
@@ -760,7 +778,12 @@ public class Parser {
      * @return true if input string is a valid declaration of a constant.
      */
     private static boolean validateDeclaringConstant(String s) {
-        return s.matches("^(([1-9]\\d{0,5}\\*)?(INTEGER\\((([+-]?(0|[1-9][0-9]{0,8}|1[0-9]{9}|20[0-9]{8}|21[0-3][0-9]{7}|214[0-6][0-9]{6}|2147[0-3][0-9]{5}|21474[0-7][0-9]{4}|214748[0-2][0-9]{3}|2147483[0-5][0-9]{2}|21474836[0-3][0-9]|214748364[0-7]))|-2147483648|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|FLOAT\\(([+-]?(([1-9]\\d*|0)(\\.\\d*)?|\\.\\d+)|0x[0-9a-fA-F]{1,8}|0b[0-1]{1,32})\\)|BYTE\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8})\\)|CHAR\\(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]|0x[0-9a-fA-F]{1,2}|0b[0-1]{1,8}|'([\\x00-\\x7F]|\\\\n|\\\\t|\\\\'|\\\\\"|\\\\([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))')\\))|STRING\\(\"[\\x00-\\x7F]*\"\\))");
+        return s.matches("^(("+DECIMAL_UNSIGNED_SHORT+"\\*)?" +
+                "(INTEGER\\(("+DECIMAL_INTEGER+"|"+HEXADECIMAL_INTEGER+"|"+BINARY_INTEGER+")\\)|" +
+                "FLOAT\\("+FLOATING_POINT_NUMBER+"|"+HEXADECIMAL_INTEGER+"|"+BINARY_INTEGER+")\\)|" +
+                "BYTE\\(("+DECIMAL_UNSIGNED_BYTE+"|"+HEXADECIMAL_BYTE+"|"+BINARY_BYTE+")\\)|" +
+                "CHAR\\(("+DECIMAL_UNSIGNED_BYTE+"|"+HEXADECIMAL_BYTE+"|"+BINARY_BYTE+"|'("+ASCII_CHAR+"|"+ESCAPED_CHAR+")')\\))|" +
+                "STRING\\(\""+ASCII_CHAR+"*\"\\))$");
     }
 
     /**
