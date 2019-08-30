@@ -14,10 +14,19 @@ public class InputRegisterInstruction extends Instruction {
     public boolean execute(Machine m, boolean debug) {
         super.execute(m, debug);
         try {
-            m.getRegister().setInteger(reg1, System.in.read());
-        } catch (IOException e) {
+            byte input;
+            while(true)
+                if (System.in.available() > 0) {
+                    input = (byte)System.in.read();
+                    break;
+                }
+                else Thread.sleep(1);
+            m.getRegister().setInteger(reg1, input);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
+        catch (InterruptedException ignored) { }
         return true;
     }
 

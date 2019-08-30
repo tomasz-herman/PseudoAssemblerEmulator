@@ -15,10 +15,19 @@ public class InputInstruction extends Instruction implements MemoryOperation{
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         try {
-            m.getRam().setByte(ramAddress, (byte)System.in.read());
-        } catch (IOException e) {
+            byte input;
+            while(true)
+                if (System.in.available() > 0) {
+                    input = (byte)System.in.read();
+                    break;
+                }
+                else Thread.sleep(1);
+            m.getRam().setByte(ramAddress, input);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
+        catch (InterruptedException ignored) { }
         return true;
     }
 

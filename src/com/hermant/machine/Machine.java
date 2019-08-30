@@ -157,7 +157,11 @@ public class Machine {
         IntConsumer next = (i) -> executedCounter++;
         if(sleep > 0) next = next.andThen(this::sleep);
         var running = new AtomicBoolean(true);
-        Signal.handle(new Signal("INT"), sig -> running.set(false));
+        Thread t = Thread.currentThread();
+        Signal.handle(new Signal("INT"), sig -> {
+            running.set(false);
+            t.interrupt();
+        });
         final long start = System.nanoTime();
         while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).execute(this, debug))
             next.accept(sleep);

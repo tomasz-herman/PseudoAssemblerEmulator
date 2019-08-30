@@ -14,9 +14,7 @@ public class SleepInstruction extends Instruction implements MemoryOperation {
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         try {
             Thread.sleep(m.getRam().getInteger(ramAddress));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        } catch (InterruptedException ignored) { }
         return true;
     }
 

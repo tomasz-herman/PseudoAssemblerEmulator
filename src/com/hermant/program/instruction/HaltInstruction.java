@@ -4,6 +4,10 @@ import com.hermant.machine.Machine;
 
 import java.io.*;
 
+/**
+ * read() can't be interrupted by Thread.interrupt().
+ * https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4514257
+ */
 public class HaltInstruction extends Instruction {
 
     HaltInstruction(Byte reg1, Byte reg2, Short ramOffset) {
@@ -16,10 +20,14 @@ public class HaltInstruction extends Instruction {
         FileInputStream in = new FileInputStream(FileDescriptor.in);
         try {
             int i = -1;
-            while(i != 10) i = in.read();
-        } catch (IOException e) {
+            while(i != 10)
+                if (in.available() > 0) i = in.read();
+                else Thread.sleep(1);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
+        catch (InterruptedException ignored) { }
         return true;
     }
 

@@ -13,9 +13,7 @@ public class SleepRegisterInstruction extends Instruction {
         super.execute(m, debug);
         try {
             Thread.sleep(m.getRegister().getInteger(reg1));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        } catch (InterruptedException ignored) { }
         return true;
     }
 
