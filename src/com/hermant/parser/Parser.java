@@ -881,11 +881,15 @@ public class Parser {
                 if(escaped==quote) sb.append(quote);
                 if(Character.isDigit(escaped)){
                     StringBuilder number = new StringBuilder(4);
+                    int value = escaped - '0';
                     number.append(escaped);
-                    while(Integer.parseInt(number, 0, number.length(), 10)<255 && i + 2 < s.length()){
-                        i++;
-                        char digit = s.charAt(i+1);
-                        if(Character.isDigit(digit))number.append(digit);
+                    while(i + 2 < s.length()){
+                        char digit = s.charAt(++i+1);
+                        if(Character.isDigit(digit)){
+                            value = value * 10 + digit - '0';
+                            if(value > 255)break;
+                            else number.append(digit);
+                        }
                         else break;
                     }
                     i--;
