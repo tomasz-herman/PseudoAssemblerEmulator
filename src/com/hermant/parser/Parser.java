@@ -147,7 +147,7 @@ public class Parser {
     private static final String HEXADECIMAL_BYTE = "0x[0-9a-fA-F]{1,2}";
     private static final String BINARY_BYTE = "0b[0-1]{1,8}";
     private static final String ASCII_CHAR = "[\\x00-\\x7F]";
-    private static final String ESCAPED_CHAR = "\\\\n|\\\\t|\\\\'|\\\\\"|\\\\" + DECIMAL_UNSIGNED_BYTE;
+    private static final String ESCAPED_CHAR = "\\\\n|\\\\t|\\\\'|\\\\\"|\\\\(" + DECIMAL_UNSIGNED_BYTE + ")";
     private static final String DECIMAL_UNSIGNED_SHORT = "([0-9]|[1-9][0-9]|[1-9][0-9]{2}|[1-9][0-9]{3}|[1-5][0-9]{4}|" +
             "6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])";
 
@@ -859,7 +859,7 @@ public class Parser {
      * @return true if input string is valid String sequence i.e. all chars '\' and '"' are properly escaped.
      */
     private static boolean validateStringValue(String s){
-        return s.matches("^([^\\\\\"]|\\\\\\\\|\\\\n|\\\\t|\\\\\")*$");
+        return s.matches("^([^\\\\\"]|\\\\\\\\|\\\\("+DECIMAL_UNSIGNED_BYTE+")|\\\\n|\\\\t|\\\\\")*$");
     }
 
     /**
@@ -879,6 +879,18 @@ public class Parser {
                     case '\\' -> sb.append('\\');
                 }
                 if(escaped==quote) sb.append(quote);
+                if(Character.isDigit(escaped)){
+                    StringBuilder number = new StringBuilder(4);
+                    number.append(escaped);
+                    while(Integer.parseInt(number, 0, number.length(), 10)<255 && i + 2 < s.length()){
+                        i++;
+                        char digit = s.charAt(i+1);
+                        if(Character.isDigit(digit))number.append(digit);
+                        else break;
+                    }
+                    i--;
+                    sb.append((char)Integer.parseInt(number, 0, number.length(), 10));
+                }
                 i++;
             } else sb.append(c);
         }
