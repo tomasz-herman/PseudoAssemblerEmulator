@@ -81,8 +81,6 @@ RECURSION:
             LD      1, 11(8)
             LD      0, 11(12)
             CMP     2, 1
-            OUT     0
-            OUT     1
             JE      RETURN3
             PUSH    1
             DIV     0, 1
