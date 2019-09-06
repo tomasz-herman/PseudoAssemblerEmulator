@@ -163,7 +163,8 @@ public abstract class Instruction implements Serializable {
     }
 
     public void debug(InstructionPointer instructionPointer){
-        System.out.println(String.format("%1$08X",instructionPointer.get()) + " | " + this);
+        System.out.print(String.format("%1$08X",instructionPointer.get()) + " | " + this);
+        if(!(this instanceof OutputOperation))System.out.println();
     }
 
     private void setInstructionPointer(InstructionPointer instructionPointer){

@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class OutputRegisterInstruction extends OutputOperation {
+public class OutputRegisterInstruction extends Instruction implements OutputOperation {
 
     OutputRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
         super(OUTPUT_REGISTER, reg1, reg2, ramOffset);

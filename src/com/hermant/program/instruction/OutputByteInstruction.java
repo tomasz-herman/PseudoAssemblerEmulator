@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class OutputByteInstruction extends OutputOperation implements MemoryOperation {
+public class OutputByteInstruction extends Instruction implements MemoryOperation, OutputOperation {
 
     OutputByteInstruction(Byte reg1, Byte reg2, Short ramOffset) {
         super(OUTPUT_BYTE, reg1, reg2, ramOffset);
