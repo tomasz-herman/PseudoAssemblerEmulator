@@ -153,7 +153,7 @@ public final class InstructionFactory {
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + SLEEP_REGISTER] = SleepRegisterInstruction::new;
         for (int i = 0; i < BYTES_QUANTITY; i++) {
             if(INSTRUCTION_CONSTRUCTORS[i]==null) continue;
-            Instruction inst = INSTRUCTION_CONSTRUCTORS[i].create(null, null, null);
+            Instruction inst = INSTRUCTION_CONSTRUCTORS[i].create((byte)0, (byte)0, null);
             INSTRUCTION_LENGTHS[i] = inst.instLength();
             INSTRUCTION_CODES[i] = inst.instCode();
         }

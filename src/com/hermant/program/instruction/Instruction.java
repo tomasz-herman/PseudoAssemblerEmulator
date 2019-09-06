@@ -144,12 +144,12 @@ public abstract class Instruction implements Serializable {
     public static final byte LOOP = (byte)-68;
     public static final byte CALL = (byte)-69;
 
-    Byte code;
-    Byte reg1;
-    Byte reg2;
+    final byte code;
+    byte reg1;
+    byte reg2;
     Short ramOffset;
 
-    Instruction(byte code, Byte reg1, Byte reg2, Short ramOffset){
+    Instruction(byte code, byte reg1, byte reg2, Short ramOffset){
         this.code = code;
         this.reg1 = reg1;
         this.reg2 = reg2;
@@ -162,9 +162,17 @@ public abstract class Instruction implements Serializable {
         return true;
     }
 
+    /**
+     * Prints debug information about this {@link Instruction} instance. It includes memory location of instruction,
+     * it's code, registers and memory offset. If the instruction doesn't implement {@link OutputOperation} it won't
+     * yield new line at the end of debug information.
+     * @param instructionPointer points to this instruction
+     * @see OutputOperation
+     */
     public void debug(InstructionPointer instructionPointer){
         System.out.print(String.format("%1$08X",instructionPointer.get()) + " | " + this);
-        if(!(this instanceof OutputOperation))System.out.println();
+        if (this instanceof OutputOperation) return;
+        System.out.println();
     }
 
     private void setInstructionPointer(InstructionPointer instructionPointer){
