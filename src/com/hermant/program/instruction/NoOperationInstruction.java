@@ -2,8 +2,9 @@ package com.hermant.program.instruction;
 
 public class NoOperationInstruction extends Instruction {
 
-    NoOperationInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(NO_OPERATION, reg1, reg2, ramOffset);
+    @Override
+    public byte code() {
+        return NO_OPERATION;
     }
 
     @Override

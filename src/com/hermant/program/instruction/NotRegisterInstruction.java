@@ -4,15 +4,16 @@ import com.hermant.machine.Machine;
 
 public class NotRegisterInstruction extends Instruction {
 
-    NotRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(NOT_REGISTER, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         m.getRegister().setInteger(reg1, ~m.getRegister().getInteger(reg1));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return NOT_REGISTER;
     }
 
     @Override

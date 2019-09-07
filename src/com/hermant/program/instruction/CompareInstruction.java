@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class CompareInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
-    CompareInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(COMPARE, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -16,6 +12,11 @@ public class CompareInstruction extends Instruction implements MemoryOperation, 
         int b = m.getRam().getInteger(ramAddress);
         compare(a, b, m.getFlagsRegister(), (x, y) -> x - y);
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return COMPARE;
     }
 
     @Override

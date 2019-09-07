@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class OutputSignedInstruction extends Instruction implements MemoryOperation, OutputOperation {
 
-    OutputSignedInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(OUTPUT_SIGNED, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -15,6 +11,11 @@ public class OutputSignedInstruction extends Instruction implements MemoryOperat
         System.out.print(m.getRam().getInteger(ramAddress));
         if(debug) System.out.println();
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return OUTPUT_SIGNED;
     }
 
     @Override

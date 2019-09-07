@@ -4,16 +4,17 @@ import com.hermant.machine.Machine;
 
 public class ExamineFloatInstruction extends Instruction implements MemoryOperation, FloatArithmeticOperation {
 
-    ExamineFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(EXAMINE_FLOAT, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         examineFloat(m.getRam().getFloat(ramAddress), m.getFlagsRegister());
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return EXAMINE_FLOAT;
     }
 
     @Override

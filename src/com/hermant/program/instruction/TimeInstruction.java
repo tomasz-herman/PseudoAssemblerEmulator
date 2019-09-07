@@ -5,10 +5,6 @@ import com.hermant.machine.register.Register;
 
 public class TimeInstruction extends Instruction implements MemoryOperation {
 
-    TimeInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(TIME, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug) {
         super.execute(m, debug);
@@ -17,6 +13,11 @@ public class TimeInstruction extends Instruction implements MemoryOperation {
         m.getRam().setInteger(ramAddress, (int)(timeMillis / 1000));
         m.getRegister().setInteger(Register.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return TIME;
     }
 
     @Override

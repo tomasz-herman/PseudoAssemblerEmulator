@@ -6,10 +6,6 @@ import com.hermant.machine.register.Register;
 
 public class PushAllFloatInstruction extends Instruction {
 
-    PushAllFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(PUSH_ALL_FLOAT, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug) {
         super.execute(m, debug);
@@ -17,6 +13,11 @@ public class PushAllFloatInstruction extends Instruction {
         Register fpr = m.getFPR();
         for (int i = 0; i < Register.REGISTER_SIZE; i++) s.push(fpr.getInteger(i));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return PUSH_ALL_FLOAT;
     }
 
     @Override

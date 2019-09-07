@@ -9,12 +9,12 @@ public final class InstructionFactory {
 
     private InstructionFactory() {}
 
+    public interface Supplier{ Instruction get(); }
+
     private static int BYTE_TO_UNSIGNED = 128;
 
-    //command design pattern
-    public interface InstructionConstructor { Instruction create(Byte reg1, Byte reg2, Short ramOffset); }
-
-    private static final InstructionConstructor[] INSTRUCTION_CONSTRUCTORS;
+    private static final Supplier[] INSTRUCTION_CONSTRUCTORS;
+    private static final Instruction[] INSTRUCTIONS;
     static final int[] INSTRUCTION_LENGTHS;
     static final String[] INSTRUCTION_CODES;
 
@@ -22,7 +22,8 @@ public final class InstructionFactory {
         int BYTES_QUANTITY = 256;
         INSTRUCTION_LENGTHS  = new int[BYTES_QUANTITY];
         INSTRUCTION_CODES  = new String[BYTES_QUANTITY];
-        INSTRUCTION_CONSTRUCTORS = new InstructionConstructor[BYTES_QUANTITY];
+        INSTRUCTIONS = new Instruction[BYTES_QUANTITY];
+        INSTRUCTION_CONSTRUCTORS = new Supplier[BYTES_QUANTITY];
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + EXIT] = ExitInstruction::new;
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + RETURN] = ReturnInstruction::new;
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + LOAD] = LoadInstruction::new;
@@ -153,21 +154,24 @@ public final class InstructionFactory {
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + SLEEP_REGISTER] = SleepRegisterInstruction::new;
         for (int i = 0; i < BYTES_QUANTITY; i++) {
             if(INSTRUCTION_CONSTRUCTORS[i]==null) continue;
-            Instruction inst = INSTRUCTION_CONSTRUCTORS[i].create((byte)0, (byte)0, null);
-            INSTRUCTION_LENGTHS[i] = inst.instLength();
-            INSTRUCTION_CODES[i] = inst.instCode();
+            final Instruction instruction = INSTRUCTION_CONSTRUCTORS[i].get();
+            INSTRUCTIONS[i] = instruction;
+            INSTRUCTION_LENGTHS[i] = instruction.instLength();
+            INSTRUCTION_CODES[i] = instruction.instCode();
         }
     }
 
     public static Instruction fetchNextInstruction(RandomAccessMemory ram, InstructionPointer instructionPointer){
         int address = instructionPointer.get();
-        byte code = ram.getByte(address);
-        InstructionConstructor constructor = INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + code];
-        if(constructor == null) throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
-        byte reg = ram.getByte(address+1);
-        byte reg1 = (byte)(reg>>4&0xf);
-        byte reg2 = (byte)(reg&0xf);
-        Short ramOffset = INSTRUCTION_LENGTHS[BYTE_TO_UNSIGNED + code] == 4 ? ram.getShort(address + 2) : null;
-        return constructor.create(reg1, reg2, ramOffset);
+        byte code = ram.getByte(address++);
+        Instruction instruction = INSTRUCTIONS[BYTE_TO_UNSIGNED + code];
+        if(instruction == null)
+            throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
+        byte reg = ram.getByte(address++);
+        instruction.reg1 = (byte)(reg>>4&0xf);
+        instruction.reg2 = (byte)(reg&0xf);
+        instruction.ramOffset = INSTRUCTION_LENGTHS[BYTE_TO_UNSIGNED + code] == 4 ?
+                ram.getShort(address) : null;
+        return instruction;
     }
 }

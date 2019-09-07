@@ -10,10 +10,6 @@ import java.io.*;
  */
 public class HaltInstruction extends Instruction {
 
-    HaltInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(HALT, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug) {
         super.execute(m, debug);
@@ -29,6 +25,11 @@ public class HaltInstruction extends Instruction {
         }
         catch (InterruptedException ignored) { }
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return HALT;
     }
 
     @Override

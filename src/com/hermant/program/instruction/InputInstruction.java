@@ -4,11 +4,7 @@ import com.hermant.machine.Machine;
 
 import java.io.IOException;
 
-public class InputInstruction extends Instruction implements MemoryOperation{
-
-    InputInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(INPUT, reg1, reg2, ramOffset);
-    }
+public class InputInstruction extends Instruction implements MemoryOperation {
 
     @Override
     public boolean execute(Machine m, boolean debug) {
@@ -29,6 +25,11 @@ public class InputInstruction extends Instruction implements MemoryOperation{
         }
         catch (InterruptedException ignored) { }
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return INPUT;
     }
 
     @Override

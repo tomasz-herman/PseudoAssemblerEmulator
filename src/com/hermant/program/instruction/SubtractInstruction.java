@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class SubtractInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
-    SubtractInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(SUBTRACT, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -16,6 +12,11 @@ public class SubtractInstruction extends Instruction implements MemoryOperation,
         int b = m.getRam().getInteger(ramAddress);
         m.getRegister().setInteger(reg1, subtract(a, b, m.getFlagsRegister()));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return SUBTRACT;
     }
 
     @Override

@@ -4,16 +4,17 @@ import com.hermant.machine.Machine;
 
 public class IncrementRegisterInstruction extends Instruction implements IntegerArithmeticOperation{
 
-    IncrementRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(INCREMENT_REGISTER, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         int a = m.getRegister().getInteger(reg1);
         m.getRegister().setInteger(reg1, increment(a, m.getFlagsRegister()));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return INCREMENT_REGISTER;
     }
 
     @Override

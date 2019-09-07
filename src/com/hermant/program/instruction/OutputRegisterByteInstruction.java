@@ -4,16 +4,17 @@ import com.hermant.machine.Machine;
 
 public class OutputRegisterByteInstruction extends Instruction implements OutputOperation {
 
-    OutputRegisterByteInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(OUTPUT_REGISTER_BYTE, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         System.out.print(m.getRegister().getInteger(reg1) & 0xFF);
         if(debug) System.out.println();
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return OUTPUT_REGISTER_BYTE;
     }
 
     @Override

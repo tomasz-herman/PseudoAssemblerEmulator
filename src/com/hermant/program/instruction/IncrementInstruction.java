@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class IncrementInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
-    IncrementInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(INCREMENT, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -15,6 +11,11 @@ public class IncrementInstruction extends Instruction implements MemoryOperation
         int a = m.getRam().getInteger(ramAddress);
         m.getRam().setInteger(ramAddress, increment(a, m.getFlagsRegister()));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return INCREMENT;
     }
 
     @Override

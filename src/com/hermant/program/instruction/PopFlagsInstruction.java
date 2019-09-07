@@ -4,15 +4,16 @@ import com.hermant.machine.Machine;
 
 public class PopFlagsInstruction extends Instruction {
 
-    PopFlagsInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(POP_FLAGS, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         m.getFlagsRegister().setFlags(m.getStack().pop());
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return POP_FLAGS;
     }
 
     @Override

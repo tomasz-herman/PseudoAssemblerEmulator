@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class MultiplyRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
-    MultiplyRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(MULTIPLY_REGISTER, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -15,6 +11,11 @@ public class MultiplyRegisterInstruction extends Instruction implements IntegerA
         int b = m.getRegister().getInteger(reg2);
         m.getRegister().setInteger(reg1, multiply(a, b, m.getFlagsRegister()));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return MULTIPLY_REGISTER;
     }
 
     @Override

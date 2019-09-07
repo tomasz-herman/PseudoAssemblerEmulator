@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class OutputByteInstruction extends Instruction implements MemoryOperation, OutputOperation {
 
-    OutputByteInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(OUTPUT_BYTE, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -15,6 +11,11 @@ public class OutputByteInstruction extends Instruction implements MemoryOperatio
         System.out.print(Byte.toUnsignedInt(m.getRam().getByte(ramAddress)));
         if(debug) System.out.println();
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return OUTPUT_BYTE;
     }
 
     @Override

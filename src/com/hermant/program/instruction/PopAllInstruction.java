@@ -6,10 +6,6 @@ import com.hermant.machine.register.Register;
 
 public class PopAllInstruction extends Instruction {
 
-    PopAllInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(POP_ALL, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug) {
         super.execute(m, debug);
@@ -20,6 +16,11 @@ public class PopAllInstruction extends Instruction {
         s.pop();
         for (i--; i >= 0; i--) r.setInteger(i, s.pop());
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return POP_ALL;
     }
 
     @Override

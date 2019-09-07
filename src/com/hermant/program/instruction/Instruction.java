@@ -144,17 +144,11 @@ public abstract class Instruction implements Serializable {
     public static final byte LOOP = (byte)-68;
     public static final byte CALL = (byte)-69;
 
-    final byte code;
     byte reg1;
     byte reg2;
     Short ramOffset;
 
-    Instruction(byte code, byte reg1, byte reg2, Short ramOffset){
-        this.code = code;
-        this.reg1 = reg1;
-        this.reg2 = reg2;
-        this.ramOffset = ramOffset;
-    }
+    Instruction(){}
 
     public boolean execute(Machine m, boolean debug){
         if(debug) debug(m.getInstructionPointer());
@@ -164,7 +158,7 @@ public abstract class Instruction implements Serializable {
 
     /**
      * Prints debug information about this {@link Instruction} instance. It includes memory location of instruction,
-     * it's code, registers and memory offset. If the instruction doesn't implement {@link OutputOperation} it won't
+     * it's code, registers and memory offset. If the instruction doesn't implement {@link OutputOperation} it will
      * yield new line at the end of debug information.
      * @param instructionPointer points to this instruction
      * @see OutputOperation
@@ -179,6 +173,8 @@ public abstract class Instruction implements Serializable {
         instructionPointer.set(instructionPointer.get() + instLength());
     }
 
+    public abstract byte code();
+
     public abstract int instLength();
 
     public abstract String instCode();
@@ -186,7 +182,7 @@ public abstract class Instruction implements Serializable {
     @Override
     public String toString() {
         String instCode = instCode();
-        String hexCode = String.format("%1$02X",code);
+        String hexCode = String.format("%1$02X",code());
         String r1Hex = String.format("%1$01X",reg1);
         String r2Hex = String.format("%1$01X",reg2);
         String memHex = String.format("%1$04X",ramOffset);

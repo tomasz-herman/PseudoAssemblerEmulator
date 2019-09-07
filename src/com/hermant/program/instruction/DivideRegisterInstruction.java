@@ -6,10 +6,6 @@ import static com.hermant.machine.register.Register.REMAINDER;
 
 public class DivideRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
-    DivideRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(DIVIDE_REGISTER, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -19,6 +15,11 @@ public class DivideRegisterInstruction extends Instruction implements IntegerAri
         m.getRegister().setInteger(reg1, result.result);
         m.getRegister().setInteger(REMAINDER, result.remainder);
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return DIVIDE_REGISTER;
     }
 
     @Override

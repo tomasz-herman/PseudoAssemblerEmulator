@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class OutputFloatInstruction extends Instruction implements MemoryOperation, OutputOperation {
 
-    OutputFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(OUTPUT_FLOAT, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -15,6 +11,11 @@ public class OutputFloatInstruction extends Instruction implements MemoryOperati
         System.out.print(m.getRam().getFloat(ramAddress));
         if(debug) System.out.println();
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return OUTPUT_FLOAT;
     }
 
     @Override

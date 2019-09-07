@@ -6,10 +6,6 @@ import com.hermant.machine.register.Register;
 
 public class PopAllFloatInstruction extends Instruction {
 
-    PopAllFloatInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(POP_ALL_FLOAT, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug) {
         super.execute(m, debug);
@@ -17,6 +13,11 @@ public class PopAllFloatInstruction extends Instruction {
         Register fpr = m.getFPR();
         for (int i = Register.REGISTER_SIZE - 1; i >= 0; i--) fpr.setInteger(i, s.pop());
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return POP_ALL_FLOAT;
     }
 
     @Override

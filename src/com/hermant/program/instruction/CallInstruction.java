@@ -4,10 +4,6 @@ import com.hermant.machine.Machine;
 
 public class CallInstruction extends Instruction implements JumpOperation {
 
-    CallInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(CALL, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
@@ -15,6 +11,11 @@ public class CallInstruction extends Instruction implements JumpOperation {
         m.getStack().push(m.getInstructionPointer().get());
         jump(m.getInstructionPointer(), ramAddress);
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return CALL;
     }
 
     @Override

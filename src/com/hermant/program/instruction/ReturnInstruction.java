@@ -4,15 +4,16 @@ import com.hermant.machine.*;
 
 public class ReturnInstruction extends Instruction implements JumpOperation{
 
-    ReturnInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(RETURN, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         jump(m.getInstructionPointer(), m.getStack().pop());
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return RETURN;
     }
 
     @Override

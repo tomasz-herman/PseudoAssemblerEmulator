@@ -6,8 +6,13 @@ import com.hermant.machine.register.InstructionPointer;
 
 public class LoadableInstruction extends Instruction {
 
+    private byte code;
+
     public LoadableInstruction(byte code, Byte reg1, Byte reg2, Short ramOffset) {
-        super(code, reg1, reg2, ramOffset);
+        this.code = code;
+        this.reg1 = reg1;
+        this.reg2 = reg2;
+        this.ramOffset = ramOffset;
     }
 
     public int loadIntoMemory(boolean debug, RandomAccessMemory ram, int address){
@@ -25,6 +30,11 @@ public class LoadableInstruction extends Instruction {
     @Override
     public boolean execute(Machine m, boolean debug){
         throw new IllegalStateException("Can't execute loadable instruction");
+    }
+
+    @Override
+    public byte code() {
+        return code;
     }
 
     @Override

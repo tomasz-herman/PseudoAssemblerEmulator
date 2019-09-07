@@ -4,15 +4,16 @@ import com.hermant.machine.*;
 
 public class LoadRegisterInstruction extends Instruction {
 
-    LoadRegisterInstruction(Byte reg1, Byte reg2, Short ramOffset) {
-        super(LOAD_REGISTER, reg1, reg2, ramOffset);
-    }
-
     @Override
     public boolean execute(Machine m, boolean debug){
         super.execute(m, debug);
         m.getRegister().setInteger(reg1, m.getRegister().getInteger(reg2));
         return true;
+    }
+
+    @Override
+    public byte code() {
+        return LOAD_REGISTER;
     }
 
     @Override
