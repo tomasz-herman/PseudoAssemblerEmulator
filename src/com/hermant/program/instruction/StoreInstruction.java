@@ -5,8 +5,7 @@ import com.hermant.machine.*;
 public class StoreInstruction extends Instruction implements MemoryOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getRam().setInteger(ramAddress, m.getRegister().getInteger(reg1));

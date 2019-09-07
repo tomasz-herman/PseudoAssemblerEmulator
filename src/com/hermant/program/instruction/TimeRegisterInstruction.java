@@ -6,8 +6,7 @@ import com.hermant.machine.register.Register;
 public class TimeRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean execute(Machine m, boolean debug) {
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         long timeMillis = System.currentTimeMillis();
         m.getRegister().setInteger(reg1, (int)(timeMillis / 1000));

@@ -7,8 +7,7 @@ import java.io.IOException;
 public class InputRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean execute(Machine m, boolean debug) {
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         try {
             byte input;

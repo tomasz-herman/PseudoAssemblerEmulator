@@ -5,8 +5,7 @@ import com.hermant.machine.Machine;
 public class AddInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         int a = m.getRegister().getInteger(reg1);

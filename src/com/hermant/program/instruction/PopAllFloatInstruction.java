@@ -7,8 +7,7 @@ import com.hermant.machine.register.Register;
 public class PopAllFloatInstruction extends Instruction {
 
     @Override
-    public final boolean execute(Machine m, boolean debug) {
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
         Register fpr = m.getFPR();

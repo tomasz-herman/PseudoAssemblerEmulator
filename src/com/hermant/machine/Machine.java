@@ -163,8 +163,12 @@ public class Machine {
             t.interrupt();
         });
         final long start = System.nanoTime();
-        while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).execute(this, debug))
-            next.accept(sleep);
+        if(debug)
+            while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).debug(this))
+                next.accept(sleep);
+        else
+            while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this))
+                next.accept(sleep);
         final long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         System.out.println();
         System.out.println("Executed " + Long.toUnsignedString(executedCounter) + " instructions in " + millis + "ms.");

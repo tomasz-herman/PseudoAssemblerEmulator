@@ -8,7 +8,7 @@ public class LoadableInstruction extends Instruction {
 
     private byte code;
 
-    public LoadableInstruction(byte code, Byte reg1, Byte reg2, Short ramOffset) {
+    public LoadableInstruction(byte code, byte reg1, byte reg2, short ramOffset) {
         this.code = code;
         this.reg1 = reg1;
         this.reg2 = reg2;
@@ -28,7 +28,7 @@ public class LoadableInstruction extends Instruction {
     }
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
+    public final boolean run(Machine m){
         throw new IllegalStateException("Can't execute loadable instruction");
     }
 

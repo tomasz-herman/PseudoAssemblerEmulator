@@ -5,8 +5,7 @@ import com.hermant.machine.Machine;
 public class PushRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getStack().push(m.getRegister().getInteger(reg1));
         return true;

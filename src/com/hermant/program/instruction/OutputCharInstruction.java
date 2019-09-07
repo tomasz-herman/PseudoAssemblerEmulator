@@ -5,12 +5,10 @@ import com.hermant.machine.Machine;
 public class OutputCharInstruction extends Instruction implements MemoryOperation, OutputOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         System.out.print((char)m.getRam().getByte(ramAddress));
-        if(debug) System.out.println();
         return true;
     }
 

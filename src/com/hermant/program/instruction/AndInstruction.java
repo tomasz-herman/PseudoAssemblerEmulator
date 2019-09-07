@@ -5,8 +5,7 @@ import com.hermant.machine.Machine;
 public class AndInstruction extends Instruction implements LogicalOperation, MemoryOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getRegister().setInteger(reg1, logical(m.getRegister().getInteger(reg1) & m.getRam().getInteger(ramAddress), m.getFlagsRegister()));

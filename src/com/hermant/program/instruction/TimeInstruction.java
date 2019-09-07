@@ -6,8 +6,7 @@ import com.hermant.machine.register.Register;
 public class TimeInstruction extends Instruction implements MemoryOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug) {
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         long timeMillis = System.currentTimeMillis();

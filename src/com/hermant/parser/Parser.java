@@ -590,14 +590,14 @@ public class Parser {
 
     private static void loadNoParametersInstruction(byte code, String[] words, Program program, int lineNum) throws ParseException {
         if(words.length != 1)throw new ParseException("illegal parameters number", lineNum);
-        program.addInstruction(new LoadableInstruction(code, (byte)0, (byte)0, null));
+        program.addInstruction(new LoadableInstruction(code, (byte)0, (byte)0, (short)0));
     }
 
     private static void loadRegOrMemInstruction(byte codeMem, byte codeReg, String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException {
         if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
-            program.addInstruction(new LoadableInstruction(codeReg, (byte)reg, (byte)0, null));
+            program.addInstruction(new LoadableInstruction(codeReg, (byte)reg, (byte)0, (short)0));
         } else loadMemInstruction(codeMem, words, labels, program, lineNum);
     }
 
@@ -605,7 +605,7 @@ public class Parser {
         if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
-            program.addInstruction(new LoadableInstruction(code, (byte)reg, (byte)0, null));
+            program.addInstruction(new LoadableInstruction(code, (byte)reg, (byte)0, (short)0));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);
@@ -666,7 +666,7 @@ public class Parser {
         }
         if(validateRegister(words[2])){
             reg2 = Integer.parseInt(words[2]);
-            program.addInstruction(new LoadableInstruction(codeRegReg, (byte)reg1, (byte)reg2, null));
+            program.addInstruction(new LoadableInstruction(codeRegReg, (byte)reg1, (byte)reg2, (short)0));
             return;
         }
         throw new ParseException("illegal arguments", lineNum);

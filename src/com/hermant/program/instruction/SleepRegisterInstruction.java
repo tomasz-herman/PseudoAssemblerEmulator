@@ -5,8 +5,7 @@ import com.hermant.machine.Machine;
 public class SleepRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean execute(Machine m, boolean debug) {
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         try {
             Thread.sleep(m.getRegister().getInteger(reg1));

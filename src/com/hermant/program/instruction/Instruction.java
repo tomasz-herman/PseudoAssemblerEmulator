@@ -146,23 +146,26 @@ public abstract class Instruction implements Serializable {
 
     byte reg1;
     byte reg2;
-    Short ramOffset;
+    short ramOffset;
 
     Instruction(){}
 
-    public abstract boolean execute(Machine m, boolean debug);
+    public abstract boolean run(Machine m);
 
     /**
      * Prints debug information about this {@link Instruction} instance. It includes memory location of instruction,
      * it's code, registers and memory offset. If the instruction doesn't implement {@link OutputOperation} it will
      * yield new line at the end of debug information.
-     * @param instructionPointer points to this instruction
+     * @param m machine
      * @see OutputOperation
      */
-    public void debug(InstructionPointer instructionPointer){
-        System.out.print(String.format("%1$08X",instructionPointer.get()) + " | " + this);
-        if (this instanceof OutputOperation) return;
-        System.out.println();
+    public final boolean debug(Machine m){
+        System.out.print(String.format("%1$08X",m.getInstructionPointer().get()) + " | " + this);
+        final boolean output = this instanceof OutputOperation;
+        if (!(output)) System.out.println();
+        final boolean result = run(m);
+        if(output) System.out.println();
+        return result;
     }
 
     final void setInstructionPointer(InstructionPointer instructionPointer){
@@ -181,7 +184,7 @@ public abstract class Instruction implements Serializable {
         String hexCode = String.format("%1$02X",code());
         String r1Hex = String.format("%1$01X",reg1);
         String r2Hex = String.format("%1$01X",reg2);
-        String memHex = String.format("%1$04X",ramOffset);
+        String memHex = this instanceof MemoryOperation ? String.format("%1$04X", ramOffset) : "----";
         instCode = String.format("%-32s", instCode);
         return hexCode + " " + r1Hex + " " + r2Hex + " " + memHex + " | " + instCode;
     }

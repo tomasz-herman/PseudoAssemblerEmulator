@@ -5,8 +5,7 @@ import com.hermant.machine.Machine;
 public class TestFloatRegisterInstruction extends Instruction implements FloatArithmeticOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         compareFloat(m.getFPR().getFloat(reg1), 0f, m.getFlagsRegister());
         return true;

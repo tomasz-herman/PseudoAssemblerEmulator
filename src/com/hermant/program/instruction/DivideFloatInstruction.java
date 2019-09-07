@@ -5,8 +5,7 @@ import com.hermant.machine.Machine;
 public class DivideFloatInstruction extends Instruction implements MemoryOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getFPR().setFloat(reg1, m.getFPR().getFloat(reg1) / m.getRam().getFloat(ramAddress));

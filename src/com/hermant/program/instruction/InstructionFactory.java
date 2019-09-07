@@ -170,8 +170,8 @@ public final class InstructionFactory {
         byte reg = ram.getByte(address++);
         instruction.reg1 = (byte)(reg>>4&0xf);
         instruction.reg2 = (byte)(reg&0xf);
-        instruction.ramOffset = INSTRUCTION_LENGTHS[BYTE_TO_UNSIGNED + code] == 4 ?
-                ram.getShort(address) : null;
+        if(INSTRUCTION_LENGTHS[BYTE_TO_UNSIGNED + code] == 4)
+            instruction.ramOffset = ram.getShort(address);
         return instruction;
     }
 
@@ -185,8 +185,8 @@ public final class InstructionFactory {
         byte reg = ram.getByte(address++);
         instruction.reg1 = (byte)(reg>>4&0xf);
         instruction.reg2 = (byte)(reg&0xf);
-        instruction.ramOffset = INSTRUCTION_LENGTHS[BYTE_TO_UNSIGNED + code] == 4 ?
-                ram.getShort(address) : null;
+        if(INSTRUCTION_LENGTHS[BYTE_TO_UNSIGNED + code] == 4)
+            instruction.ramOffset = ram.getShort(address);
         return instruction;
     }
 }

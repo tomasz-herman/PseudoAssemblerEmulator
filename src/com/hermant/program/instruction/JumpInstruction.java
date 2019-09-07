@@ -5,8 +5,7 @@ import com.hermant.machine.Machine;
 public class JumpInstruction extends Instruction implements JumpOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         jump(m.getInstructionPointer(), ramAddress);
         return true;

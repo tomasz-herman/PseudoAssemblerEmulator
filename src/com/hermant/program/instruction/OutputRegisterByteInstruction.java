@@ -5,11 +5,9 @@ import com.hermant.machine.Machine;
 public class OutputRegisterByteInstruction extends Instruction implements OutputOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         System.out.print(m.getRegister().getInteger(reg1) & 0xFF);
-        if(debug) System.out.println();
         return true;
     }
 

@@ -5,8 +5,7 @@ import com.hermant.machine.*;
 public class ReturnInstruction extends Instruction implements JumpOperation{
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         jump(m.getInstructionPointer(), m.getStack().pop());
         return true;
     }

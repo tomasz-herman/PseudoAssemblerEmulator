@@ -5,8 +5,7 @@ import com.hermant.machine.*;
 public class LoadFloatInstruction extends Instruction implements MemoryOperation {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getFPR().setInteger(reg1, m.getRam().getInteger(ramAddress));

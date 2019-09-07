@@ -5,8 +5,7 @@ import com.hermant.machine.*;
 public class LoadRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
+    public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getRegister().setInteger(reg1, m.getRegister().getInteger(reg2));
         return true;
