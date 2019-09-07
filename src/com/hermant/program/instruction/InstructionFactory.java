@@ -174,4 +174,19 @@ public final class InstructionFactory {
                 ram.getShort(address) : null;
         return instruction;
     }
+
+    public static Instruction fetchNewNextInstruction(RandomAccessMemory ram, InstructionPointer instructionPointer){
+        int address = instructionPointer.get();
+        byte code = ram.getByte(address++);
+        Supplier constructor = INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED + code];
+        if(constructor == null)
+            throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",code));
+        Instruction instruction = constructor.get();
+        byte reg = ram.getByte(address++);
+        instruction.reg1 = (byte)(reg>>4&0xf);
+        instruction.reg2 = (byte)(reg&0xf);
+        instruction.ramOffset = INSTRUCTION_LENGTHS[BYTE_TO_UNSIGNED + code] == 4 ?
+                ram.getShort(address) : null;
+        return instruction;
+    }
 }
