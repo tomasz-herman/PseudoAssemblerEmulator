@@ -5,24 +5,25 @@ import com.hermant.machine.Machine;
 public class RightRotateRegisterInstruction extends Instruction implements LogicalOperation {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         m.getRegister().setInteger(reg1, logical(Integer.rotateRight(m.getRegister().getInteger(reg1), m.getRegister().getInteger(reg2)), m.getFlagsRegister()));
         return true;
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return RIGHT_ROTATE_REGISTER;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "RIGHT_ROTATE_REGISTER";
     }
 }

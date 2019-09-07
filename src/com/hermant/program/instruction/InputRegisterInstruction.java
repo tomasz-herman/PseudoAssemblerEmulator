@@ -7,8 +7,9 @@ import java.io.IOException;
 public class InputRegisterInstruction extends Instruction {
 
     @Override
-    public boolean execute(Machine m, boolean debug) {
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug) {
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         try {
             byte input;
             while(true)
@@ -27,17 +28,17 @@ public class InputRegisterInstruction extends Instruction {
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return INPUT_REGISTER;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "INPUT_REGISTER";
     }
 }

@@ -5,8 +5,9 @@ import com.hermant.machine.Machine;
 public class SleepRegisterInstruction extends Instruction {
 
     @Override
-    public boolean execute(Machine m, boolean debug) {
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug) {
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         try {
             Thread.sleep(m.getRegister().getInteger(reg1));
         } catch (InterruptedException ignored) { }
@@ -14,17 +15,17 @@ public class SleepRegisterInstruction extends Instruction {
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return SLEEP_REGISTER;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "SLEEP";
     }
 }

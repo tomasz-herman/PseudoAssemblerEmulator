@@ -28,22 +28,22 @@ public class LoadableInstruction extends Instruction {
     }
 
     @Override
-    public boolean execute(Machine m, boolean debug){
+    public final boolean execute(Machine m, boolean debug){
         throw new IllegalStateException("Can't execute loadable instruction");
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return code;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return InstructionFactory.INSTRUCTION_LENGTHS[code + 128];
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return InstructionFactory.INSTRUCTION_CODES[code + 128];
     }
 }

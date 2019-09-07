@@ -5,25 +5,26 @@ import com.hermant.machine.Machine;
 public class OutputRegisterByteInstruction extends Instruction implements OutputOperation {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         System.out.print(m.getRegister().getInteger(reg1) & 0xFF);
         if(debug) System.out.println();
         return true;
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return OUTPUT_REGISTER_BYTE;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "OUTPUT_REGISTER_BYTE";
     }
 }

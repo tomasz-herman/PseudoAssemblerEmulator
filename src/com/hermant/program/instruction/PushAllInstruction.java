@@ -7,8 +7,9 @@ import com.hermant.machine.register.Register;
 public class PushAllInstruction extends Instruction {
 
     @Override
-    public boolean execute(Machine m, boolean debug) {
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug) {
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
         Register r = m.getRegister();
         int sp = r.getInteger(Register.STACK_POINTER);
@@ -20,17 +21,17 @@ public class PushAllInstruction extends Instruction {
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return PUSH_ALL;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "PUSH_ALL";
     }
 }

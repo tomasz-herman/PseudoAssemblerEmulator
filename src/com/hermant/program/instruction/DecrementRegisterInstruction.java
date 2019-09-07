@@ -5,25 +5,26 @@ import com.hermant.machine.Machine;
 public class DecrementRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         int a = m.getRegister().getInteger(reg1);
         m.getRegister().setInteger(reg1, decrement(a, m.getFlagsRegister()));
         return true;
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return DECREMENT_REGISTER;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "DECREMENT_REGISTER";
     }
 }

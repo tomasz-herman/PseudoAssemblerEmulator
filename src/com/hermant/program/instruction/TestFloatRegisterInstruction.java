@@ -5,24 +5,25 @@ import com.hermant.machine.Machine;
 public class TestFloatRegisterInstruction extends Instruction implements FloatArithmeticOperation {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         compareFloat(m.getFPR().getFloat(reg1), 0f, m.getFlagsRegister());
         return true;
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return TEST_FLOAT_REGISTER;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "TEST_FLOAT_REGISTER";
     }
 }

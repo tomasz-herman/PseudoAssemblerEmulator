@@ -150,11 +150,7 @@ public abstract class Instruction implements Serializable {
 
     Instruction(){}
 
-    public boolean execute(Machine m, boolean debug){
-        if(debug) debug(m.getInstructionPointer());
-        setInstructionPointer(m.getInstructionPointer());
-        return true;
-    }
+    public abstract boolean execute(Machine m, boolean debug);
 
     /**
      * Prints debug information about this {@link Instruction} instance. It includes memory location of instruction,
@@ -169,7 +165,7 @@ public abstract class Instruction implements Serializable {
         System.out.println();
     }
 
-    private void setInstructionPointer(InstructionPointer instructionPointer){
+    final void setInstructionPointer(InstructionPointer instructionPointer){
         instructionPointer.set(instructionPointer.get() + instLength());
     }
 

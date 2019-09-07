@@ -7,8 +7,9 @@ import com.hermant.machine.register.Register;
 public class PopAllFloatInstruction extends Instruction {
 
     @Override
-    public boolean execute(Machine m, boolean debug) {
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug) {
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
         Register fpr = m.getFPR();
         for (int i = Register.REGISTER_SIZE - 1; i >= 0; i--) fpr.setInteger(i, s.pop());
@@ -16,17 +17,17 @@ public class PopAllFloatInstruction extends Instruction {
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return POP_ALL_FLOAT;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "POP_ALL_FLOAT";
     }
 }

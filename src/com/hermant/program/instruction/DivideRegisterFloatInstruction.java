@@ -5,24 +5,25 @@ import com.hermant.machine.Machine;
 public class DivideRegisterFloatInstruction extends Instruction {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         m.getFPR().setFloat(reg1, m.getFPR().getFloat(reg1) / m.getFPR().getFloat(reg2));
         return true;
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return DIVIDE_REGISTER_FLOAT;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "DIVIDE_REGISTER_FLOAT";
     }
 }

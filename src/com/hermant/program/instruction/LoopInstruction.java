@@ -5,26 +5,27 @@ import com.hermant.machine.Machine;
 public class LoopInstruction extends Instruction implements JumpOperation {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getRegister().setInteger(reg1, m.getRegister().getInteger(reg1) - 1);
         if(m.getRegister().getInteger(reg1)!=0) jump(m.getInstructionPointer(), ramAddress);
+        else setInstructionPointer(m.getInstructionPointer());
         return true;
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return LOOP;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 4;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "LOOP";
     }
 }

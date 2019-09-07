@@ -7,9 +7,10 @@ import static com.hermant.machine.register.Register.REMAINDER;
 public class DivideSignedInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
-        int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
+        final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         int b = m.getRam().getInteger(ramAddress);
         int a = m.getRegister().getInteger(reg1);
         DivisionResult result = divideSigned(a, b, m.getFlagsRegister());
@@ -19,17 +20,17 @@ public class DivideSignedInstruction extends Instruction implements MemoryOperat
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return DIVIDE_SIGNED;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 4;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "DIVIDE_SIGNED";
     }
 }

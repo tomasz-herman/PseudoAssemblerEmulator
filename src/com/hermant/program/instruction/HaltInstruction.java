@@ -11,8 +11,9 @@ import java.io.*;
 public class HaltInstruction extends Instruction {
 
     @Override
-    public boolean execute(Machine m, boolean debug) {
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug) {
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         FileInputStream in = new FileInputStream(FileDescriptor.in);
         try {
             int i = -1;
@@ -28,17 +29,17 @@ public class HaltInstruction extends Instruction {
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return HALT;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "HALT";
     }
 }

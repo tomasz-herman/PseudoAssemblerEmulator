@@ -6,8 +6,9 @@ import com.hermant.machine.register.Register;
 public class TimeRegisterInstruction extends Instruction {
 
     @Override
-    public boolean execute(Machine m, boolean debug) {
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug) {
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         long timeMillis = System.currentTimeMillis();
         m.getRegister().setInteger(reg1, (int)(timeMillis / 1000));
         m.getRegister().setInteger(Register.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
@@ -15,17 +16,17 @@ public class TimeRegisterInstruction extends Instruction {
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return TIME_REGISTER;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "TIME_REGISTER";
     }
 }

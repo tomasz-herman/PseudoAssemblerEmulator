@@ -1,19 +1,26 @@
 package com.hermant.program.instruction;
 
+import com.hermant.machine.Machine;
+
 public class NoOperationInstruction extends Instruction {
 
     @Override
-    public byte code() {
+    public final boolean execute(Machine m, boolean debug) {
+        return true;
+    }
+
+    @Override
+    public final byte code() {
         return NO_OPERATION;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "NO_OPERATION";
     }
 }

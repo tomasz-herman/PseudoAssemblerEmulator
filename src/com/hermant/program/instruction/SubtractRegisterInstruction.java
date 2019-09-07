@@ -5,8 +5,9 @@ import com.hermant.machine.Machine;
 public class SubtractRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
     @Override
-    public boolean execute(Machine m, boolean debug){
-        super.execute(m, debug);
+    public final boolean execute(Machine m, boolean debug){
+        if(debug) debug(m.getInstructionPointer());
+        setInstructionPointer(m.getInstructionPointer());
         int a = m.getRegister().getInteger(reg1);
         int b = m.getRegister().getInteger(reg2);
         m.getRegister().setInteger(reg1, subtract(a, b, m.getFlagsRegister()));
@@ -14,17 +15,17 @@ public class SubtractRegisterInstruction extends Instruction implements IntegerA
     }
 
     @Override
-    public byte code() {
+    public final byte code() {
         return SUBTRACT_REGISTER;
     }
 
     @Override
-    public int instLength() {
+    public final int instLength() {
         return 2;
     }
 
     @Override
-    public String instCode() {
+    public final String instCode() {
         return "SUBTRACT_REGISTER";
     }
 }
