@@ -180,12 +180,11 @@ public abstract class Instruction implements Serializable {
 
     @Override
     public String toString() {
-        String instCode = instCode();
-        String hexCode = String.format("%1$02X",code());
-        String r1Hex = String.format("%1$01X",reg1);
-        String r2Hex = String.format("%1$01X",reg2);
-        String memHex = this instanceof MemoryOperation ? String.format("%1$04X", ramOffset) : "----";
-        instCode = String.format("%-32s", instCode);
+        final String instCode = String.format("%-32s", instCode());
+        final String hexCode = String.format("%1$02X",code());
+        final String r1Hex = String.format("%1$01X",reg1);
+        final String r2Hex = String.format("%1$01X",reg2);
+        final String memHex = this instanceof MemoryOperation ? String.format("%1$04X", ramOffset) : "----";
         return hexCode + " " + r1Hex + " " + r2Hex + " " + memHex + " | " + instCode;
     }
 }
