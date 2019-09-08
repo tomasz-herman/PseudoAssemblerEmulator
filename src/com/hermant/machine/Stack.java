@@ -23,6 +23,10 @@ public class Stack {
         return reg.getInteger(STACK_POINTER);
     }
 
+    private int section() {
+        return reg.getInteger(STACK_SECTION);
+    }
+
     public void push(int val){
         int pointer = pointer();
         pointer = pointer & 0xffff0000 | (0x0000ffff & (pointer - 4));
@@ -40,9 +44,12 @@ public class Stack {
 
     @Override
     public String toString() {
+        if (((pointer() | section()) & 0b11) != 0 ||
+                ((pointer() ^ section()) & 0xffff0000) != 0)
+            return "Corrupted stack";
         return IntStream.iterate(
-                reg.getInteger(STACK_POINTER),
-                address -> address != reg.getInteger(STACK_SECTION),
+                pointer(),
+                address -> address != section(),
                 address -> address & 0xffff0000 | (0x0000ffff & (address + 4))).mapToObj(
                         address -> String.valueOf(ram.getInteger(address)) + '\n').collect(
                                 Collectors.joining("", "Stack:\n", ""));

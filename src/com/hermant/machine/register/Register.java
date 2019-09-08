@@ -42,8 +42,7 @@ public class Register{
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("num |\tinteger value\t|\tfloat value\t\t|\thex value\t|\tbit value\n");
+        StringBuilder sb = new StringBuilder("num |\tinteger value\t|\tfloat value\t\t|\thex value\t|\tbit value\n");
         for (int i = 0; i < REGISTER_SIZE; i++) {
             sb.append(i);
             sb.append("\t|\t");
@@ -66,7 +65,7 @@ public class Register{
                 }
                 sb.append(' ');
             }
-            sb.append("\n");
+            sb.append('\n');
         }
         return sb.toString();
     }
