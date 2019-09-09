@@ -21,7 +21,7 @@ public class Main {
         String output = parseArgsForOutputFile(args);
         if(output != null)serializeProgram(program, output);
         if(parseArgsForAbandon(args))System.exit(0);
-        Machine m = new Machine(parseArgsForDebug(args));
+        Machine m = new Machine(parseArgsForDebug(args), parseArgsForUnsafe(args));
         m.loadProgram(program);
         int sleep = parseArgsForSleep(args);
         m.runProgram(sleep);
@@ -91,6 +91,13 @@ public class Main {
         return sleep;
     }
 
+    private static boolean parseArgsForUnsafe(String[] args){
+        for (String arg : args)
+            if (arg.equals("--unsafe"))
+                return true;
+        return false;
+    }
+
     private static boolean parseArgsForDebug(String[] args){
         for (String arg : args)
             if (arg.equals("--debug"))
@@ -133,6 +140,7 @@ public class Main {
         System.out.println("--output=FILE\tspecify a file that binary will be saved to(optional)");
         System.out.println("--sleep=number\tspecify a time in millis to sleep in between executing instructions(optional)");
         System.out.println("--debug\t\t\tenable debug(optional)");
+        System.out.println("--unsafe\t\tdon't protect ram from leaking");
         System.out.println("--binary\t\tif input file is a binary(optional)");
         System.out.println("--abandon\t\tdon't run loaded program(optional)");
         System.out.println("--version\t\tdisplay version(optional)");

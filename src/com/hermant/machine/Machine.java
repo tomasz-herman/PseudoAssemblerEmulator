@@ -20,7 +20,7 @@ import static com.hermant.machine.register.Register.*;
  * {@link FlagsRegister}, {@link RandomAccessMemory}, {@link RandomNumberGenerator}, {@link InstructionPointer}
  * and {@link Stack}. {@link Program} might be loaded({@link Machine#loadProgram(Program)}) into {@link Machine#ram}
  * and started({@link Machine#runProgram(int sleep)}). To create a new {@link Machine} see constructor:
- * {@link Machine#Machine(boolean debug)}.
+ * {@link Machine#Machine(boolean debug, boolean unsafe)}.
  */
 public class Machine {
 
@@ -77,12 +77,13 @@ public class Machine {
      * Floating Point {@link Register}(FPR), {@link FlagsRegister}, {@link RandomAccessMemory},
      * {@link RandomNumberGenerator}, {@link InstructionPointer} and {@link Stack}.
      * @param debug if executing command should print info. Will degrade performance if true.
+     * @param unsafe if simulated ram should be protected from leaking into actual ram.
      */
-    public Machine(boolean debug){
+    public Machine(boolean debug, boolean unsafe){
         register = new Register();
         floatingPointRegister = new Register();
         flagsRegister = new FlagsRegister();
-        ram = new UnsafeRAM(RAM_SIZE);
+        ram = unsafe ? new UnsafeRAM(RAM_SIZE) : new SafeRAM(RAM_SIZE);
         rng = new RandomNumberGenerator();
         instructionPointer = new InstructionPointer(0);
         stack = new Stack(ram, register);
