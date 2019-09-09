@@ -9,7 +9,6 @@ public class DirectBufferRAM extends RandomAccessMemory {
 
     public DirectBufferRAM(Endianness endianness, int size) {
         super(endianness);
-        if(endianness == Endianness.MiddleEndian) throw new UnsupportedOperationException("");
         buffer = ByteBuffer.allocateDirect(size).order(
                 endianness == Endianness.LittleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
     }

@@ -32,33 +32,6 @@ public enum Endianness{
         }
 
     },
-    MiddleEndian {
-        @Override
-        void setShort(BiConsumer<Integer, Byte> setByte, int address, short value) {
-            setByte.accept(address++, (byte)((value & 0x000000ff)));
-            setByte.accept(address, (byte)((value & 0x0000ff00)>>8));
-        }
-
-        @Override
-        short getShort(Function<Integer, Byte> getByte, int address) {
-            return (short) ((getByte.apply(address++) & 0xff) | (getByte.apply(address) & 0xff) << 8);
-        }
-
-        @Override
-        void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
-            setByte.accept(address++, (byte)((value & 0x00ff0000)>>16));
-            setByte.accept(address++, (byte)((value & 0xff000000)>>24));
-            setByte.accept(address++, (byte)((value & 0x000000ff)));
-            setByte.accept(address, (byte)((value & 0x0000ff00)>>8));
-        }
-
-        @Override
-        int getInteger(Function<Integer, Byte> getByte, int address) {
-            return ((getByte.apply(address++)<<16)&0xff0000)|(getByte.apply(address++)<<24)|
-                    (getByte.apply(address++)&0xff)|((getByte.apply(address)<<8)&0xff00);
-        }
-
-    },
     BigEndian {
         @Override
         void setShort(BiConsumer<Integer, Byte> setByte, int address, short value) {

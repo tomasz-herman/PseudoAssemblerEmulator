@@ -9,7 +9,6 @@ public class BufferRAM extends RandomAccessMemory {
 
     public BufferRAM(Endianness endianness, int size) {
         super(endianness);
-        if(endianness == Endianness.MiddleEndian) throw new UnsupportedOperationException("");
         buffer = ByteBuffer.allocate(size).order(
                 endianness == Endianness.LittleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
     }
