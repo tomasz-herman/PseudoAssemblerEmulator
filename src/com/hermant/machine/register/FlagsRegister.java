@@ -1,66 +1,67 @@
 package com.hermant.machine.register;
 
-public class FlagsRegister {
+public final class FlagsRegister {
 
     private static final int overflowFlag = 0x0800;
     private static final int signFlag = 0x0080;
     private static final int zeroFlag = 0x0040;
-    private static final int auxiliaryFlag = 0x0010;
     private static final int parityFlag = 0x0004;
     private static final int carryFlag = 0x0001;
 
-    private int flags = 0;
+    private boolean overflow = false;
+    private boolean sign = false;
+    private boolean zero = false;
+    private boolean parity = false;
+    private boolean carry = false;
 
-    public int getFlags(){return flags;}
-    public void setFlags(int flags){this.flags = flags;}
+    public int getFlags(){
+        int flags = 0;
+        if(overflow) flags |= overflowFlag;
+        if(sign) flags |= signFlag;
+        if(zero) flags |= zeroFlag;
+        if(parity) flags |= parityFlag;
+        if(carry) flags |= carryFlag;
+        return flags;
+    }
 
-    public void setOverflowFlag(){ flags |= overflowFlag; }
-    public void resetOverflowFlag(){ flags &= ~overflowFlag; }
-    public void setSignFlag(){ flags |= signFlag; }
-    public void resetSignFlag(){ flags &= ~signFlag; }
-    public void setZeroFlag(){ flags |= zeroFlag; }
-    public void resetZeroFlag(){ flags &= ~zeroFlag; }
-    @SuppressWarnings("unused")
-    public void setAuxiliaryFlag(){ flags |= auxiliaryFlag; }
-    @SuppressWarnings("unused")
-    public void resetAuxiliaryFlag(){ flags &= ~auxiliaryFlag; }
-    public void setParityFlag(){ flags |= parityFlag; }
-    public void resetParityFlag(){ flags &= ~parityFlag; }
-    public void setCarryFlag(){ flags |= carryFlag; }
-    public void resetCarryFlag(){ flags &= ~carryFlag; }
+    public void setFlags(int flags){
+        overflow = (flags & overflowFlag) != 0;
+        sign = (flags & signFlag) != 0;
+        zero = (flags & zeroFlag) != 0;
+        parity = (flags & parityFlag) != 0;
+        carry = (flags & carryFlag) != 0;
+    }
 
-    private boolean isOverflowFlag(){ return (flags & overflowFlag) != 0; }
-    private boolean isSignFlag(){ return (flags & signFlag) != 0; }
-    private boolean isZeroFlag(){ return (flags & zeroFlag) != 0; }
-    private boolean isAuxiliaryFlag(){ return (flags & auxiliaryFlag) != 0; }
-    private boolean isParityFlag(){ return (flags & parityFlag) != 0; }
-    private boolean isCarryFlag(){ return (flags & carryFlag) != 0; }
+    public void setOverflowFlag(){ overflow = true; }
+    public void resetOverflowFlag(){ overflow = false; }
+    public void setSignFlag(){ sign = true; }
+    public void resetSignFlag(){ sign = false; }
+    public void setZeroFlag(){ zero = true; }
+    public void resetZeroFlag(){ zero = false; }
+    public void setParityFlag(){ parity = true; }
+    public void resetParityFlag(){ parity = false; }
+    public void setCarryFlag(){ carry = true; }
+    public void resetCarryFlag(){ carry = false; }
 
-    public boolean isEqual(){ return isZeroFlag(); }
-    public boolean isNotEqual(){ return !isZeroFlag(); }
-    public boolean isGreaterOrEqual(){ return isOverflowFlag() == isSignFlag(); }
-    public boolean isGreater(){ return isOverflowFlag() == isSignFlag() && !isZeroFlag(); }
-    public boolean isLesser(){ return isOverflowFlag() != isSignFlag(); }
-    public boolean isLessOrEqual(){ return isOverflowFlag() != isSignFlag() || isZeroFlag(); }
-    public boolean isAbove(){ return !isZeroFlag() && !isCarryFlag(); }
-    public boolean isBelow(){ return isCarryFlag(); }
-    public boolean isBelowOrEqual(){ return isZeroFlag() || isCarryFlag(); }
-    public boolean isAboveOrEqual(){ return !isCarryFlag(); }
-    public boolean isOverflow(){ return isOverflowFlag(); }
-    public boolean isNotOverflow(){ return !isOverflowFlag(); }
-    public boolean isSigned(){ return isSignFlag(); }
-    public boolean isNotSigned(){ return !isSignFlag(); }
-    public boolean isParityEven(){ return isParityFlag(); }
-    public boolean isParityOdd(){ return !isParityFlag(); }
+    public boolean isEqual(){ return zero; }
+    public boolean isNotEqual(){ return !zero; }
+    public boolean isGreaterOrEqual(){ return overflow == sign; }
+    public boolean isGreater(){ return overflow == sign && !zero; }
+    public boolean isLesser(){ return overflow != sign; }
+    public boolean isLessOrEqual(){ return overflow != sign || zero; }
+    public boolean isAbove(){ return !zero && !carry; }
+    public boolean isBelow(){ return carry; }
+    public boolean isBelowOrEqual(){ return zero || carry; }
+    public boolean isAboveOrEqual(){ return !carry; }
+    public boolean isOverflow(){ return overflow; }
+    public boolean isNotOverflow(){ return !overflow; }
+    public boolean isSigned(){ return sign; }
+    public boolean isNotSigned(){ return !sign; }
+    public boolean isParityEven(){ return parity; }
+    public boolean isParityOdd(){ return !parity; }
 
     @Override
     public String toString() {
-        int of = isOverflowFlag() ? 1 : 0;
-        int sf = isSignFlag() ? 1 : 0;
-        int zf = isZeroFlag() ? 1 : 0;
-        int af = isAuxiliaryFlag() ? 1 : 0;
-        int pf = isParityFlag() ? 1 : 0;
-        int cf = isCarryFlag() ? 1 : 0;
-        return "OF = " + of + ", SF = " + sf + ", ZF = " + zf + ", AF = " + af + ", PF = " + pf + ", CF = " + cf;
+        return "OF = " + overflow + ", SF = " + sign + ", ZF = " + zero + ", PF = " + parity + ", CF = " + carry;
     }
 }
