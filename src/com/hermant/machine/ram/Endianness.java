@@ -19,16 +19,16 @@ public enum Endianness{
 
         @Override
         void setInteger(BiConsumer<Integer, Byte> setByte, int address, int value) {
-            setByte.accept(address++, (byte)((value & 0x000000ff)));
-            setByte.accept(address++, (byte)((value & 0x0000ff00)>>8));
-            setByte.accept(address++, (byte)((value & 0x00ff0000)>>16));
-            setByte.accept(address, (byte)((value & 0xff000000)>>24));
+            setByte.accept(address++, (byte)(value & 0xff));
+            setByte.accept(address++, (byte)((value >> 8) & 0xff));
+            setByte.accept(address++, (byte)((value >> 16) & 0xff));
+            setByte.accept(address, (byte)((value >> 24) & 0xff));
         }
 
         @Override
         int getInteger(Function<Integer, Byte> getByte, int address) {
-            return (getByte.apply(address++)&0xff)|((getByte.apply(address++)<<8)&0xff00)|
-                    ((getByte.apply(address++)<<16)&0xff0000)|(getByte.apply(address)<<24);
+            return (getByte.apply(address++)&0xff)|((getByte.apply(address++)&0xff)<<8)|
+                    ((getByte.apply(address++)&0xff)<<16)|(getByte.apply(address)<<24);
         }
 
     },

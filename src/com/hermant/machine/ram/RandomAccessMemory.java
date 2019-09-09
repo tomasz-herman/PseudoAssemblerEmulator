@@ -12,16 +12,18 @@ public abstract class RandomAccessMemory {
 
     public abstract byte getByte(int address);
 
-    public final void setShort(int address, short value){ endianness.setShort(this::setByte, address, value); }
+    public void setShort(int address, short value){ endianness.setShort(this::setByte, address, value); }
 
-    public final short getShort(int address){ return endianness.getShort(this::getByte, address); }
+    public short getShort(int address){ return endianness.getShort(this::getByte, address); }
 
-    public final void setInteger(int address, int value){ endianness.setInteger(this::setByte, address, value); }
+    public void setInteger(int address, int value){ endianness.setInteger(this::setByte, address, value); }
 
-    public final int getInteger(int address){ return endianness.getInteger(this::getByte, address); }
+    public int getInteger(int address){ return endianness.getInteger(this::getByte, address); }
 
-    public final void setFloat(int address, Float value){ setInteger(address, Float.floatToIntBits(value)); }
+    public void setFloat(int address, float value){ setInteger(address, Float.floatToIntBits(value)); }
 
-    public final float getFloat(int address){ return Float.intBitsToFloat(getInteger(address)); }
+    public float getFloat(int address){ return Float.intBitsToFloat(getInteger(address)); }
+
+    public void free(){}
 
 }

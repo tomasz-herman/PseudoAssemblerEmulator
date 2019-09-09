@@ -82,7 +82,7 @@ public class Machine {
         register = new Register();
         floatingPointRegister = new Register();
         flagsRegister = new FlagsRegister();
-        ram = new ArrayRAM(Endianness.LittleEndian, RAM_SIZE);
+        ram = new UnsafeRAM(RAM_SIZE);
         rng = new RandomNumberGenerator();
         instructionPointer = new InstructionPointer(0);
         stack = new Stack(ram, register);
@@ -183,6 +183,14 @@ public class Machine {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException ignored) { }
+    }
+
+
+    /**
+     * Free unused resources
+     */
+    public void free(){
+        ram.free();
     }
 
     /**

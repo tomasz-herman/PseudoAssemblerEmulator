@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.36.0 beta");
+        if(parseArgsForVersion(args))System.out.println("PseudoAssembler Emulator version 2.38.0 beta");
         if(parseArgsForHelp(args))usage();
         Program program;
         String input = parseArgsForInputFile(args);
@@ -25,6 +25,7 @@ public class Main {
         m.loadProgram(program);
         int sleep = parseArgsForSleep(args);
         m.runProgram(sleep);
+        m.free();
     }
 
     private static Program deserializeBinary(String path){
