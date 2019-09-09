@@ -3,6 +3,7 @@ package com.hermant.machine.ram;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.nio.ByteOrder;
 
 /**
  * Highly experimental
@@ -17,12 +18,12 @@ public class UnsafeRAM extends RandomAccessMemory{
 
     /**
      * This method of simulating ram is superior in speed at the cost of random core dumps when accessing unallocated
-     * memory. It doesn't allow to set Endianness. Internal machine's endianness will be used instead. Should be only
+     * memory. It doesn't allow to set Endianness. Native machine's endianness will be used instead. Should be only
      * used if user knows what he is doing.
      * @param size memory to allocate
      */
     public UnsafeRAM(int size) {
-        super(null);
+        super(ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN ? Endianness.BigEndian : Endianness.LittleEndian);
         try {
             Field field = Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
@@ -30,6 +31,7 @@ public class UnsafeRAM extends RandomAccessMemory{
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+        assert unsafe != null;
         offset = unsafe.allocateMemory(size);
     }
 
