@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-import static com.hermant.machine.register.Register.REMAINDER;
+import static com.hermant.machine.register.GeneralPurposeRegister.REMAINDER;
 
 public class DivideInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
@@ -11,10 +11,10 @@ public class DivideInstruction extends Instruction implements MemoryOperation, I
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         int b = m.getRam().getInteger(ramAddress);
-        int a = m.getRegister().getInteger(reg1);
+        int a = m.getRegister().get(reg1);
         DivisionResult result = divide(a, b, m.getFlagsRegister());
-        m.getRegister().setInteger(reg1, result.result);
-        m.getRegister().setInteger(REMAINDER, result.remainder);
+        m.getRegister().set(reg1, result.result);
+        m.getRegister().set(REMAINDER, result.remainder);
         return true;
     }
 

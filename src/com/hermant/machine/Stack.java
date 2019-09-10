@@ -1,36 +1,36 @@
 package com.hermant.machine;
 
 import com.hermant.machine.ram.RandomAccessMemory;
-import com.hermant.machine.register.Register;
+import com.hermant.machine.register.GeneralPurposeRegister;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.hermant.machine.register.Register.STACK_POINTER;
-import static com.hermant.machine.register.Register.STACK_SECTION;
+import static com.hermant.machine.register.GeneralPurposeRegister.STACK_POINTER;
+import static com.hermant.machine.register.GeneralPurposeRegister.STACK_SECTION;
 
 public class Stack {
 
     private RandomAccessMemory ram;
-    private Register reg;
+    private GeneralPurposeRegister reg;
 
-    Stack(RandomAccessMemory ram, Register reg){
+    Stack(RandomAccessMemory ram, GeneralPurposeRegister reg){
         this.ram = ram;
         this.reg = reg;
     }
 
     private int pointer(){
-        return reg.getInteger(STACK_POINTER);
+        return reg.get(STACK_POINTER);
     }
 
     private int section() {
-        return reg.getInteger(STACK_SECTION);
+        return reg.get(STACK_SECTION);
     }
 
     public void push(int val){
         int pointer = pointer();
         pointer = pointer & 0xffff0000 | (0x0000ffff & (pointer - 4));
-        reg.setInteger(STACK_POINTER, pointer);
+        reg.set(STACK_POINTER, pointer);
         ram.setInteger(pointer, val);
     }
 
@@ -38,7 +38,22 @@ public class Stack {
         int pointer = pointer();
         int result = ram.getInteger(pointer);
         pointer = pointer & 0xffff0000 | (0x0000ffff & (pointer + 4));
-        reg.setInteger(STACK_POINTER, pointer);
+        reg.set(STACK_POINTER, pointer);
+        return result;
+    }
+
+    public void pushFloat(float val){
+        int pointer = pointer();
+        pointer = pointer & 0xffff0000 | (0x0000ffff & (pointer - 4));
+        reg.set(STACK_POINTER, pointer);
+        ram.setFloat(pointer, val);
+    }
+
+    public float popFloat(){
+        int pointer = pointer();
+        float result = ram.getFloat(pointer);
+        pointer = pointer & 0xffff0000 | (0x0000ffff & (pointer + 4));
+        reg.set(STACK_POINTER, pointer);
         return result;
     }
 

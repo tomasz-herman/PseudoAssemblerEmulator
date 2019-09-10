@@ -8,7 +8,7 @@ public class SleepRegisterInstruction extends Instruction {
     public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         try {
-            Thread.sleep(m.getRegister().getInteger(reg1));
+            Thread.sleep(m.getRegister().get(reg1));
         } catch (InterruptedException ignored) { }
         return true;
     }

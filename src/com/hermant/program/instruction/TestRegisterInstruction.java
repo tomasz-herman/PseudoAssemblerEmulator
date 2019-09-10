@@ -7,7 +7,7 @@ public class TestRegisterInstruction extends Instruction implements LogicalOpera
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        logical(m.getRegister().getInteger(reg1) & m.getRegister().getInteger(reg2), m.getFlagsRegister());
+        logical(m.getRegister().get(reg1) & m.getRegister().get(reg2), m.getFlagsRegister());
         return true;
     }
 

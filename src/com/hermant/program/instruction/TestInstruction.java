@@ -8,7 +8,7 @@ public class TestInstruction extends Instruction implements LogicalOperation, Me
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        logical(m.getRegister().getInteger(reg1) & m.getRam().getInteger(ramAddress), m.getFlagsRegister());
+        logical(m.getRegister().get(reg1) & m.getRam().getInteger(ramAddress), m.getFlagsRegister());
         return true;
     }
 

@@ -7,7 +7,7 @@ public class ExchangeRegisterFloatInstruction extends Instruction implements Exc
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        exchangeRegReg(m.getFPR(), reg1, reg2);
+        exchangeFloatRegReg(m.getFPR(), reg1, reg2);
         return true;
     }
 

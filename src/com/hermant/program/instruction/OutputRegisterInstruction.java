@@ -7,7 +7,7 @@ public class OutputRegisterInstruction extends Instruction implements OutputOper
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        System.out.print(Integer.toUnsignedString(m.getRegister().getInteger(reg1)));
+        System.out.print(Integer.toUnsignedString(m.getRegister().get(reg1)));
         return true;
     }
 

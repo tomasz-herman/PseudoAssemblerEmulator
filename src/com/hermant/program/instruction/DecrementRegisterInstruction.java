@@ -7,8 +7,8 @@ public class DecrementRegisterInstruction extends Instruction implements Integer
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        int a = m.getRegister().getInteger(reg1);
-        m.getRegister().setInteger(reg1, decrement(a, m.getFlagsRegister()));
+        int a = m.getRegister().get(reg1);
+        m.getRegister().set(reg1, decrement(a, m.getFlagsRegister()));
         return true;
     }
 

@@ -2,7 +2,7 @@ package com.hermant.machine.register;
 
 import java.util.Random;
 
-public class Register{
+public final class GeneralPurposeRegister {
 
     public static final int REGISTER_SIZE = 16;
     public static final int REMAINDER = 8;
@@ -14,9 +14,9 @@ public class Register{
     public static final int DATA_SECTION = 14;
     public static final int PROGRAM_SECTION = 15;
 
-    private int[] values;
+    private final int[] values;
 
-    public Register(){
+    public GeneralPurposeRegister(){
         values = new int[REGISTER_SIZE];
         Random rand = new Random();
         for (int i = 0; i < REGISTER_SIZE; i++) {
@@ -24,39 +24,30 @@ public class Register{
         }
     }
 
-    public int getInteger(int i){
+    public final int get(int i){
         return values[i];
     }
 
-    public float getFloat(int i){
-        return Float.intBitsToFloat(getInteger(i));
-    }
-
-    public void setInteger(int i, int value){
+    public final void set(int i, int value){
         values[i] = value;
-    }
-
-    public void setFloat(int i, float value){
-        values[i] = Float.floatToIntBits(value);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("num |\tinteger value\t|\tfloat value\t\t|\thex value\t|\tbit value\n");
+        StringBuilder sb = new StringBuilder("General Purpose Register:\n" +
+                "num |\tinteger value\t|\tunsigned value\t|\thex value\t|\tbit value\n");
         for (int i = 0; i < REGISTER_SIZE; i++) {
+            int asInt = get(i);
             sb.append(i);
             sb.append("\t|\t");
-            sb.append(String.format("%12d", getInteger(i)));
+            sb.append(String.format("%12d", asInt));
             sb.append("\t|\t");
-            if(getFloat(i) > 999999 || getFloat(i) < -999999 || (getFloat(i) < 0.000001f && getFloat(i) > -0.000001f && getFloat(i)!=0f))
-                sb.append(String.format("%12.6e",getFloat(i)));
-            else
-                sb.append(String.format("%12.6f",getFloat(i)));
+            sb.append(String.format("%12s", Integer.toUnsignedLong(asInt)));
             sb.append("\t|\t");
-            sb.append(String.format("%1$08X",getInteger(i)));
+            sb.append(String.format("%1$08X", asInt));
             sb.append("\t|\t");
-            int leading = Integer.numberOfLeadingZeros(getInteger(i));
-            String binary = Integer.toBinaryString(getInteger(i));
+            int leading = Integer.numberOfLeadingZeros(asInt);
+            String binary = Integer.toBinaryString(asInt);
             int rest = 0;
             for(int j = 0; j < 8; j++){
                 for (int k = 0; k < 4; k++){

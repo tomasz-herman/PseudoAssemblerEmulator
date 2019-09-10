@@ -8,7 +8,7 @@ public class CompareFloatInstruction extends Instruction implements MemoryOperat
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        compareFloat(m.getFPR().getFloat(reg1), m.getRam().getFloat(ramAddress), m.getFlagsRegister());
+        compareFloat(m.getFPR().get(reg1), m.getRam().getFloat(ramAddress), m.getFlagsRegister());
         return true;
     }
 

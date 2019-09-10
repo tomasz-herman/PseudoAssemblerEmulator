@@ -7,7 +7,7 @@ public class PushRegisterInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getStack().push(m.getRegister().getInteger(reg1));
+        m.getStack().push(m.getRegister().get(reg1));
         return true;
     }
 

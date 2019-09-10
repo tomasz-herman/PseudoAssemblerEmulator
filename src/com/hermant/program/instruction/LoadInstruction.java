@@ -8,7 +8,7 @@ public class LoadInstruction extends Instruction implements MemoryOperation {
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        m.getRegister().setInteger(reg1, m.getRam().getInteger(ramAddress));
+        m.getRegister().set(reg1, m.getRam().getInteger(ramAddress));
         return true;
     }
 

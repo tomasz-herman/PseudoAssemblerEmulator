@@ -1,9 +1,7 @@
 package com.hermant.machine;
 
 import com.hermant.machine.ram.*;
-import com.hermant.machine.register.FlagsRegister;
-import com.hermant.machine.register.InstructionPointer;
-import com.hermant.machine.register.Register;
+import com.hermant.machine.register.*;
 import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionFactory;
 import sun.misc.Signal;
@@ -13,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
 
-import static com.hermant.machine.register.Register.*;
+import static com.hermant.machine.register.GeneralPurposeRegister.*;
 
 /**
- * {@link Machine} contains General Purpose {@link Register}(GPR), Floating Point {@link Register}(FPR),
+ * {@link Machine} contains General Purpose {@link GeneralPurposeRegister}(GPR), Floating Point {@link GeneralPurposeRegister}(FPR),
  * {@link FlagsRegister}, {@link RandomAccessMemory}, {@link RandomNumberGenerator}, {@link InstructionPointer}
  * and {@link Stack}. {@link Program} might be loaded({@link Machine#loadProgram(Program)}) into {@link Machine#ram}
  * and started({@link Machine#runProgram(int sleep)}). To create a new {@link Machine} see constructor:
@@ -25,36 +23,36 @@ import static com.hermant.machine.register.Register.*;
 public class Machine {
 
     /**
-     * General Purpose {@link Register}(GPR) used for storing ints and addressing.
+     * General Purpose {@link GeneralPurposeRegister}(GPR) used for storing ints and addressing.
      */
-    private Register register;
+    private final GeneralPurposeRegister register;
     /**
-     * Floating Point {@link Register}(FPR) used for storing floats.
+     * Floating Point {@link FloatingPointRegister}(FPR) used for storing floats.
      */
-    private Register floatingPointRegister;
+    private final FloatingPointRegister floatingPointRegister;
     /**
      * {@link FlagsRegister} indicating status of last operation that affects flags. These are:
      * {@link com.hermant.program.instruction.IntegerArithmeticOperation IntegerArithmeticOperation},
      * {@link com.hermant.program.instruction.LogicalOperation LogicalOperation} and
      * {@link com.hermant.program.instruction.FloatArithmeticOperation FloatArithmeticOperation}.
      */
-    private FlagsRegister flagsRegister;
+    private final FlagsRegister flagsRegister;
     /**
      * {@link RandomAccessMemory} used for storing data that machine needs for operating.
      */
-    private RandomAccessMemory ram;
+    private final RandomAccessMemory ram;
     /**
      * {@link RandomNumberGenerator} used as a source of entropy.
      */
-    private RandomNumberGenerator rng;
+    private final RandomNumberGenerator rng;
     /**
      * Section of ram used as {@link Stack}.
      */
-    private Stack stack;
+    private final Stack stack;
     /**
      * {@link InstructionPointer} stores pointer to next Instruction that should be executed.
      */
-    private InstructionPointer instructionPointer;
+    private final InstructionPointer instructionPointer;
     /**
      * Defines section size which is equal to 2^16(64kB).
      */
@@ -66,23 +64,25 @@ public class Machine {
     /**
      * If true debug info will be printed during execution of command at cost of performance.
      */
-    private boolean debug;
+    private final boolean debug;
     /**
      * Counts how many instructions were executed during run of a program.
      */
     private long executedCounter = 0;
 
     /**
-     * Creates a new {@link Machine}. It contains General Purpose {@link Register}(GPR),
-     * Floating Point {@link Register}(FPR), {@link FlagsRegister}, {@link RandomAccessMemory},
+     * Creates a new {@link Machine}. It contains General Purpose {@link GeneralPurposeRegister}(GPR),
+     * Floating Point {@link FloatingPointRegister}(FPR), {@link FlagsRegister}, {@link RandomAccessMemory},
      * {@link RandomNumberGenerator}, {@link InstructionPointer} and {@link Stack}.
      * @param debug if executing command should print info. Will degrade performance if true.
      * @param unsafe if simulated ram should be protected from leaking into actual ram.
      */
     public Machine(boolean debug, boolean unsafe){
-        register = new Register();
-        floatingPointRegister = new Register();
+        register = new GeneralPurposeRegister();
+        floatingPointRegister = new FloatingPointRegister();
         flagsRegister = new FlagsRegister();
+        System.out.println(register);
+        System.out.println(floatingPointRegister);
         ram = unsafe ? new UnsafeRAM(RAM_SIZE) : new SafeRAM(RAM_SIZE);
         rng = new RandomNumberGenerator();
         instructionPointer = new InstructionPointer(0);
@@ -101,14 +101,14 @@ public class Machine {
      * Each section takes {@link Machine#SECTION_SIZE}(65536) bytes of ram.
      * Following registers are set:
      * <p><ul>
-     * <li>{@link Register#REMAINDER} is set to 0
-     * <li>{@link Register#POINTER} is set to 0
-     * <li>{@link Register#PROGRAM_SECTION} is set to address of program section start
-     * <li>{@link Register#DATA_SECTION} is set to address of data section start
-     * <li>{@link Register#EXTRA_DATA_SECTION} is set to address of extra data section start
-     * <li>{@link Register#STACK_SECTION} is set to address of stack section start
-     * <li>{@link Register#STACK_POINTER} is set to address of stack section start
-     * <li>{@link Register#STACK_FRAME_POINTER} is set to address of stack section start
+     * <li>{@link GeneralPurposeRegister#REMAINDER} is set to 0
+     * <li>{@link GeneralPurposeRegister#POINTER} is set to 0
+     * <li>{@link GeneralPurposeRegister#PROGRAM_SECTION} is set to address of program section start
+     * <li>{@link GeneralPurposeRegister#DATA_SECTION} is set to address of data section start
+     * <li>{@link GeneralPurposeRegister#EXTRA_DATA_SECTION} is set to address of extra data section start
+     * <li>{@link GeneralPurposeRegister#STACK_SECTION} is set to address of stack section start
+     * <li>{@link GeneralPurposeRegister#STACK_POINTER} is set to address of stack section start
+     * <li>{@link GeneralPurposeRegister#STACK_FRAME_POINTER} is set to address of stack section start
      * </ul><p>
      */
     private void setupRegisterAddresses(){
@@ -117,34 +117,34 @@ public class Machine {
         int dataSection = programSection + (1 + random.nextInt(3)) * SECTION_SIZE;
         int extendedDataSection = dataSection + (1 + random.nextInt(3)) * SECTION_SIZE;
         int stackSection = extendedDataSection + (1 + random.nextInt(3)) * SECTION_SIZE;
-        register.setInteger(REMAINDER, 0);
-        register.setInteger(POINTER, 0);
-        register.setInteger(PROGRAM_SECTION, programSection);
-        register.setInteger(DATA_SECTION, dataSection);
-        register.setInteger(EXTRA_DATA_SECTION, extendedDataSection);
-        register.setInteger(STACK_SECTION, stackSection);
-        register.setInteger(STACK_POINTER, stackSection);
-        register.setInteger(STACK_FRAME_POINTER, stackSection);
+        register.set(REMAINDER, 0);
+        register.set(POINTER, 0);
+        register.set(PROGRAM_SECTION, programSection);
+        register.set(DATA_SECTION, dataSection);
+        register.set(EXTRA_DATA_SECTION, extendedDataSection);
+        register.set(STACK_SECTION, stackSection);
+        register.set(STACK_POINTER, stackSection);
+        register.set(STACK_FRAME_POINTER, stackSection);
     }
 
     /**
      * Loads program into memory. Sections(program, data, extra data, stack) are allocated during the process
-     * and General Purpose {@link Register} {@link Machine#register}s are set up accordingly. For more info
+     * and General Purpose {@link GeneralPurposeRegister} {@link Machine#register}s are set up accordingly. For more info
      * see {@link Machine#setupRegisterAddresses()}.
-     * @param program is loaded into memory starting from address stored at {@link Register#PROGRAM_SECTION PROGRAM_SECTION}
+     * @param program is loaded into memory starting from address stored at {@link GeneralPurposeRegister#PROGRAM_SECTION PROGRAM_SECTION}
      */
     public void loadProgram(Program program){
         setupRegisterAddresses();
-        int programPointer = register.getInteger(PROGRAM_SECTION);
-        int dataPointer = register.getInteger(DATA_SECTION);
+        int programPointer = register.get(PROGRAM_SECTION);
+        int dataPointer = register.get(DATA_SECTION);
         for (var declaration : program.declarations)
             dataPointer=declaration.declare(ram, dataPointer);
         if(debug) System.out.println("Program:");
         for (var instruction : program.instructions)
             programPointer=instruction.loadIntoMemory(debug, ram, programPointer);
         if(debug) System.out.println();
-        instructionPointer.set(register.getInteger(PROGRAM_SECTION));
-        register.setInteger(POINTER, dataPointer);
+        instructionPointer.set(register.get(PROGRAM_SECTION));
+        register.set(POINTER, dataPointer);
     }
 
     /**
@@ -186,7 +186,6 @@ public class Machine {
         } catch (InterruptedException ignored) { }
     }
 
-
     /**
      * Free unused resources
      */
@@ -195,16 +194,16 @@ public class Machine {
     }
 
     /**
-     * @return Machine's General Purpose {@link Register}:{@link Machine#register}
+     * @return Machine's General Purpose {@link GeneralPurposeRegister}:{@link Machine#register}
      */
-    public Register getRegister() {
+    public GeneralPurposeRegister getRegister() {
         return register;
     }
 
     /**
-     * @return Machine's Floating Point {@link Register}:{@link Machine#floatingPointRegister}
+     * @return Machine's Floating Point {@link GeneralPurposeRegister}:{@link Machine#floatingPointRegister}
      */
-    public Register getFPR() {
+    public FloatingPointRegister getFPR() {
         return floatingPointRegister;
     }
 

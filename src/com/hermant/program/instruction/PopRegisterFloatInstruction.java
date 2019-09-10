@@ -7,7 +7,7 @@ public class PopRegisterFloatInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getFPR().setInteger(reg1, m.getStack().pop());
+        m.getFPR().set(reg1, m.getStack().popFloat());
         return true;
     }
 

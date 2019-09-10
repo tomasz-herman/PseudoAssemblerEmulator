@@ -7,7 +7,7 @@ public class LoadRegisterInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getRegister().setInteger(reg1, m.getRegister().getInteger(reg2));
+        m.getRegister().set(reg1, m.getRegister().get(reg2));
         return true;
     }
 

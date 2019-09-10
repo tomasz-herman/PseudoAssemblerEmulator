@@ -8,7 +8,7 @@ public class StoreFloatInstruction extends Instruction implements MemoryOperatio
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        m.getRam().setInteger(ramAddress, m.getFPR().getInteger(reg1));
+        m.getRam().setFloat(ramAddress, m.getFPR().get(reg1));
         return true;
     }
 

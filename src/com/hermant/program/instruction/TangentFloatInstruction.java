@@ -7,7 +7,7 @@ public class TangentFloatInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getFPR().setFloat(reg1, (float)Math.tan(m.getFPR().getFloat(reg1)));
+        m.getFPR().set(reg1, (float)Math.tan(m.getFPR().get(reg1)));
         return true;
     }
 

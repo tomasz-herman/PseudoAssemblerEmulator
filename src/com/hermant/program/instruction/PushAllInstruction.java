@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 import com.hermant.machine.Stack;
-import com.hermant.machine.register.Register;
+import com.hermant.machine.register.GeneralPurposeRegister;
 
 public class PushAllInstruction extends Instruction {
 
@@ -10,12 +10,12 @@ public class PushAllInstruction extends Instruction {
     public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
-        Register r = m.getRegister();
-        int sp = r.getInteger(Register.STACK_POINTER);
+        GeneralPurposeRegister r = m.getRegister();
+        int sp = r.get(GeneralPurposeRegister.STACK_POINTER);
         int i;
-        for (i = 0; i < Register.STACK_POINTER; i++) s.push(r.getInteger(i));
+        for (i = 0; i < GeneralPurposeRegister.STACK_POINTER; i++) s.push(r.get(i));
         s.push(sp);
-        for (i++; i < Register.REGISTER_SIZE; i++) s.push(r.getInteger(i));
+        for (i++; i < GeneralPurposeRegister.REGISTER_SIZE; i++) s.push(r.get(i));
         return true;
     }
 

@@ -1,7 +1,7 @@
 package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
-import com.hermant.machine.register.Register;
+import com.hermant.machine.register.GeneralPurposeRegister;
 
 public class TimeRegisterInstruction extends Instruction {
 
@@ -9,8 +9,8 @@ public class TimeRegisterInstruction extends Instruction {
     public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         long timeMillis = System.currentTimeMillis();
-        m.getRegister().setInteger(reg1, (int)(timeMillis / 1000));
-        m.getRegister().setInteger(Register.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
+        m.getRegister().set(reg1, (int)(timeMillis / 1000));
+        m.getRegister().set(GeneralPurposeRegister.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
         return true;
     }
 

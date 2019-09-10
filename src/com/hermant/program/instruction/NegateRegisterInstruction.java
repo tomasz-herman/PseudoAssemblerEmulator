@@ -7,8 +7,8 @@ public class NegateRegisterInstruction extends Instruction implements IntegerAri
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        int a = m.getRegister().getInteger(reg1);
-        m.getRegister().setInteger(reg1, negate(a, m.getFlagsRegister()));
+        int a = m.getRegister().get(reg1);
+        m.getRegister().set(reg1, negate(a, m.getFlagsRegister()));
         return true;
     }
 

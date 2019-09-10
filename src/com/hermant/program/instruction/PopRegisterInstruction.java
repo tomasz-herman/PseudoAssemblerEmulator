@@ -7,7 +7,7 @@ public class PopRegisterInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getRegister().setInteger(reg1, m.getStack().pop());
+        m.getRegister().set(reg1, m.getStack().pop());
         return true;
     }
 

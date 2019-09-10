@@ -8,7 +8,7 @@ public class ExchangeFloatInstruction extends Instruction implements ExchangeOpe
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        exchangeRegMem(m.getFPR(), reg1, m.getRam(), ramAddress);
+        exchangeFloatRegMem(m.getFPR(), reg1, m.getRam(), ramAddress);
         return true;
     }
 

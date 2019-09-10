@@ -7,7 +7,7 @@ public class MultiplyRegisterFloatInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getFPR().setFloat(reg1, m.getFPR().getFloat(reg1) * m.getFPR().getFloat(reg2));
+        m.getFPR().set(reg1, m.getFPR().get(reg1) * m.getFPR().get(reg2));
         return true;
     }
 

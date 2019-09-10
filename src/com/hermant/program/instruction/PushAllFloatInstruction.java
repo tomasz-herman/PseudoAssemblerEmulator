@@ -2,7 +2,8 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 import com.hermant.machine.Stack;
-import com.hermant.machine.register.Register;
+import com.hermant.machine.register.FloatingPointRegister;
+import com.hermant.machine.register.GeneralPurposeRegister;
 
 public class PushAllFloatInstruction extends Instruction {
 
@@ -10,8 +11,8 @@ public class PushAllFloatInstruction extends Instruction {
     public final boolean run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
-        Register fpr = m.getFPR();
-        for (int i = 0; i < Register.REGISTER_SIZE; i++) s.push(fpr.getInteger(i));
+        FloatingPointRegister fpr = m.getFPR();
+        for (int i = 0; i < FloatingPointRegister.REGISTER_SIZE; i++) s.pushFloat(fpr.get(i));
         return true;
     }
 

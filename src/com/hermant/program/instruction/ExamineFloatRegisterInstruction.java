@@ -7,7 +7,7 @@ public class ExamineFloatRegisterInstruction extends Instruction implements Floa
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        examineFloat(m.getFPR().getFloat(reg1), m.getFlagsRegister());
+        examineFloat(m.getFPR().get(reg1), m.getFlagsRegister());
         return true;
     }
 

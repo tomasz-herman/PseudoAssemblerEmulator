@@ -7,7 +7,7 @@ public class TestFloatRegisterInstruction extends Instruction implements FloatAr
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        compareFloat(m.getFPR().getFloat(reg1), 0f, m.getFlagsRegister());
+        compareFloat(m.getFPR().get(reg1), 0f, m.getFlagsRegister());
         return true;
     }
 

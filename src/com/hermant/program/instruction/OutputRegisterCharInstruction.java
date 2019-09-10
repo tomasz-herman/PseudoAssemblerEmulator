@@ -7,7 +7,7 @@ public class OutputRegisterCharInstruction extends Instruction implements Output
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        System.out.print((char)(byte)m.getRegister().getInteger(reg1));
+        System.out.print((char)(byte)m.getRegister().get(reg1));
         return true;
     }
 

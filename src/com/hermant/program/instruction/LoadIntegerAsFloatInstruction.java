@@ -8,7 +8,7 @@ public class LoadIntegerAsFloatInstruction extends Instruction implements Memory
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        m.getFPR().setFloat(reg1, m.getRam().getInteger(ramAddress));
+        m.getFPR().set(reg1, m.getRam().getInteger(ramAddress));
         return true;
     }
 

@@ -7,7 +7,7 @@ public class OutputRegisterFloatInstruction extends Instruction implements Outpu
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        System.out.print(m.getFPR().getFloat(reg1));
+        System.out.print(m.getFPR().get(reg1));
         return true;
     }
 

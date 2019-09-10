@@ -1,7 +1,7 @@
 package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
-import com.hermant.machine.register.Register;
+import com.hermant.machine.register.GeneralPurposeRegister;
 
 public class TimeInstruction extends Instruction implements MemoryOperation {
 
@@ -11,7 +11,7 @@ public class TimeInstruction extends Instruction implements MemoryOperation {
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         long timeMillis = System.currentTimeMillis();
         m.getRam().setInteger(ramAddress, (int)(timeMillis / 1000));
-        m.getRegister().setInteger(Register.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
+        m.getRegister().set(GeneralPurposeRegister.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
         return true;
     }
 

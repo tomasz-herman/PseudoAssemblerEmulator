@@ -7,7 +7,7 @@ public class CompareRegisterFloatInstruction extends Instruction implements Floa
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        compareFloat(m.getFPR().getFloat(reg1), m.getFPR().getFloat(reg2), m.getFlagsRegister());
+        compareFloat(m.getFPR().get(reg1), m.getFPR().get(reg2), m.getFlagsRegister());
         return true;
     }
 

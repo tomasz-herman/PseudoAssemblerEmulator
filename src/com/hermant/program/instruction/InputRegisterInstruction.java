@@ -17,7 +17,7 @@ public class InputRegisterInstruction extends Instruction {
                     break;
                 }
                 else Thread.sleep(1);
-            m.getRegister().setInteger(reg1, input);
+            m.getRegister().set(reg1, input);
         }
         catch (IOException e) {
             e.printStackTrace();

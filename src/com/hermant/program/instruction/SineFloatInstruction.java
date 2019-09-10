@@ -7,7 +7,7 @@ public class SineFloatInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getFPR().setFloat(reg1, (float)Math.sin(m.getFPR().getFloat(reg1)));
+        m.getFPR().set(reg1, (float)Math.sin(m.getFPR().get(reg1)));
         return true;
     }
 

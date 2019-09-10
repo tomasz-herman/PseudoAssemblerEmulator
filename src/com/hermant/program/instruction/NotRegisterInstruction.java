@@ -7,7 +7,7 @@ public class NotRegisterInstruction extends Instruction {
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        m.getRegister().setInteger(reg1, ~m.getRegister().getInteger(reg1));
+        m.getRegister().set(reg1, ~m.getRegister().get(reg1));
         return true;
     }
 

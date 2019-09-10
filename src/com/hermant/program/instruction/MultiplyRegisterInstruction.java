@@ -7,9 +7,9 @@ public class MultiplyRegisterInstruction extends Instruction implements IntegerA
     @Override
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
-        int a = m.getRegister().getInteger(reg1);
-        int b = m.getRegister().getInteger(reg2);
-        m.getRegister().setInteger(reg1, multiply(a, b, m.getFlagsRegister()));
+        int a = m.getRegister().get(reg1);
+        int b = m.getRegister().get(reg2);
+        m.getRegister().set(reg1, multiply(a, b, m.getFlagsRegister()));
         return true;
     }
 

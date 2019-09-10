@@ -8,7 +8,7 @@ public class SubtractFloatInstruction extends Instruction implements MemoryOpera
     public final boolean run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
-        m.getFPR().setFloat(reg1, m.getFPR().getFloat(reg1) - m.getRam().getFloat(ramAddress));
+        m.getFPR().set(reg1, m.getFPR().get(reg1) - m.getRam().getFloat(ramAddress));
         return true;
     }
 
