@@ -5,10 +5,9 @@ import com.hermant.machine.Machine;
 public class NotRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getRegister().set(reg1, ~m.getRegister().get(reg1));
-        return true;
     }
 
     @Override

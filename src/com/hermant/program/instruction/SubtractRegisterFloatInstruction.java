@@ -5,10 +5,9 @@ import com.hermant.machine.Machine;
 public class SubtractRegisterFloatInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getFPR().set(reg1, m.getFPR().get(reg1) - m.getFPR().get(reg2));
-        return true;
     }
 
     @Override

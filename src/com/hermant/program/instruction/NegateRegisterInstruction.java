@@ -5,11 +5,10 @@ import com.hermant.machine.Machine;
 public class NegateRegisterInstruction extends Instruction implements IntegerArithmeticOperation{
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         int a = m.getRegister().get(reg1);
         m.getRegister().set(reg1, negate(a, m.getFlagsRegister()));
-        return true;
     }
 
     @Override

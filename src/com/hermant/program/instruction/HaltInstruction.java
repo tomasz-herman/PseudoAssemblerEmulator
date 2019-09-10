@@ -11,7 +11,7 @@ import java.io.*;
 public class HaltInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         FileInputStream in = new FileInputStream(FileDescriptor.in);
         try {
@@ -24,7 +24,6 @@ public class HaltInstruction extends Instruction {
             e.printStackTrace();
         }
         catch (InterruptedException ignored) { }
-        return true;
     }
 
     @Override

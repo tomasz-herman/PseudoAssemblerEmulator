@@ -9,7 +9,6 @@ import sun.misc.Signal;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.IntConsumer;
 
 import static com.hermant.machine.register.GeneralPurposeRegister.*;
 
@@ -71,6 +70,11 @@ public class Machine {
     private long executedCounter = 0;
 
     /**
+     * Indicates if program is running
+     */
+    private final AtomicBoolean running;
+
+    /**
      * Creates a new {@link Machine}. It contains General Purpose {@link GeneralPurposeRegister}(GPR),
      * Floating Point {@link FloatingPointRegister}(FPR), {@link FlagsRegister}, {@link RandomAccessMemory},
      * {@link RandomNumberGenerator}, {@link InstructionPointer} and {@link Stack}.
@@ -81,13 +85,12 @@ public class Machine {
         register = new GeneralPurposeRegister();
         floatingPointRegister = new FloatingPointRegister();
         flagsRegister = new FlagsRegister();
-        System.out.println(register);
-        System.out.println(floatingPointRegister);
         ram = unsafe ? new UnsafeRAM(RAM_SIZE) : new SafeRAM(RAM_SIZE);
         rng = new RandomNumberGenerator();
         instructionPointer = new InstructionPointer(0);
         stack = new Stack(ram, register);
         this.debug = debug;
+        running = new AtomicBoolean(false);
     }
 
     /**
@@ -155,25 +158,38 @@ public class Machine {
      */
     public void runProgram(int sleep){
         System.out.println("Program has started");
-        IntConsumer next = (i) -> executedCounter++;
-        if(sleep > 0) next = next.andThen(this::sleep);
-        var running = new AtomicBoolean(true);
-        Thread t = Thread.currentThread();
-        Signal.handle(new Signal("INT"), sig -> {
-            running.set(false);
-            t.interrupt();
-        });
+        running.set(true);
+        setSignalHandling();
         final long start = System.nanoTime();
         if(debug)
-            while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).debug(this))
-                next.accept(sleep);
+            do {
+                InstructionFactory.fetchNextInstruction(ram, instructionPointer).debug(this);
+                executedCounter++;
+                sleep(sleep);
+            } while(running.get());
+        else if(sleep <= 0)
+            do {
+                InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
+                executedCounter++;
+            } while(running.get());
         else
-            while(running.get() && InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this))
-                next.accept(sleep);
+            do{
+                InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
+                executedCounter++;
+                sleep(sleep);
+            } while(running.get());
         final long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         System.out.println();
         System.out.println("Executed " + Long.toUnsignedString(executedCounter) + " instructions in " + millis + "ms.");
         executedCounter = 0;
+    }
+
+    private void setSignalHandling(){
+        Thread t = Thread.currentThread();
+        Signal.handle(new Signal("INT"), sig -> {
+            stop();
+            t.interrupt();
+        });
     }
 
     /**
@@ -191,6 +207,13 @@ public class Machine {
      */
     public void free(){
         ram.free();
+    }
+
+    /**
+     * Stops execution of the program
+     */
+    public void stop(){
+        running.set(false);
     }
 
     /**

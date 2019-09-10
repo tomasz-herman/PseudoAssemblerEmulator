@@ -5,10 +5,9 @@ import com.hermant.machine.Machine;
 public class OutputRegisterInstruction extends Instruction implements OutputOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         System.out.print(Integer.toUnsignedString(m.getRegister().get(reg1)));
-        return true;
     }
 
     @Override

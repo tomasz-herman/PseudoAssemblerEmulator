@@ -7,14 +7,13 @@ import static com.hermant.machine.register.GeneralPurposeRegister.REMAINDER;
 public class DivideSignedRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         int b = m.getRegister().get(reg2);
         int a = m.getRegister().get(reg1);
         DivisionResult result = divideSigned(a, b, m.getFlagsRegister());
         m.getRegister().set(reg1, result.result);
         m.getRegister().set(REMAINDER, result.remainder);
-        return true;
     }
 
     @Override

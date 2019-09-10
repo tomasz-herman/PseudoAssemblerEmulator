@@ -5,9 +5,7 @@ import com.hermant.machine.Machine;
 public class NoOperationInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
-        return true;
-    }
+    public final void run(Machine m) { }
 
     @Override
     public final byte code() {

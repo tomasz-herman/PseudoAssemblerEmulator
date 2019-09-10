@@ -5,11 +5,10 @@ import com.hermant.machine.Machine;
 public class IncrementRegisterInstruction extends Instruction implements IntegerArithmeticOperation{
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         int a = m.getRegister().get(reg1);
         m.getRegister().set(reg1, increment(a, m.getFlagsRegister()));
-        return true;
     }
 
     @Override

@@ -8,12 +8,11 @@ import com.hermant.machine.register.GeneralPurposeRegister;
 public class PopAllFloatInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
         FloatingPointRegister fpr = m.getFPR();
         for (int i = GeneralPurposeRegister.REGISTER_SIZE - 1; i >= 0; i--) fpr.set(i, s.popFloat());
-        return true;
     }
 
     @Override

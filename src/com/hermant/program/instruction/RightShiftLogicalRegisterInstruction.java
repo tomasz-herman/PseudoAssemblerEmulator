@@ -5,10 +5,9 @@ import com.hermant.machine.Machine;
 public class RightShiftLogicalRegisterInstruction extends Instruction implements LogicalOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getRegister().set(reg1, logical(m.getRegister().get(reg1) >>> m.getRegister().get(reg2), m.getFlagsRegister()));
-        return true;
     }
 
     @Override

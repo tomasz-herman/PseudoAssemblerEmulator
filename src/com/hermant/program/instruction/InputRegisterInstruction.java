@@ -7,7 +7,7 @@ import java.io.IOException;
 public class InputRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         try {
             byte input;
@@ -23,7 +23,6 @@ public class InputRegisterInstruction extends Instruction {
             e.printStackTrace();
         }
         catch (InterruptedException ignored) { }
-        return true;
     }
 
     @Override

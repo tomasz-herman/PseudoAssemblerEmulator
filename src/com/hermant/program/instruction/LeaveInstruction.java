@@ -8,11 +8,10 @@ import static com.hermant.machine.register.GeneralPurposeRegister.STACK_POINTER;
 public class LeaveInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getRegister().set(STACK_POINTER, m.getRegister().get(STACK_FRAME_POINTER));
         m.getRegister().set(STACK_FRAME_POINTER, m.getStack().pop());
-        return true;
     }
 
     @Override

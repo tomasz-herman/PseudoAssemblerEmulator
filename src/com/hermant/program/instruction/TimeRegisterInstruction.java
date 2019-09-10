@@ -6,12 +6,11 @@ import com.hermant.machine.register.GeneralPurposeRegister;
 public class TimeRegisterInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         long timeMillis = System.currentTimeMillis();
         m.getRegister().set(reg1, (int)(timeMillis / 1000));
         m.getRegister().set(GeneralPurposeRegister.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
-        return true;
     }
 
     @Override

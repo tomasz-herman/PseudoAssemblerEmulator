@@ -7,7 +7,7 @@ import java.io.IOException;
 public class InputInstruction extends Instruction implements MemoryOperation {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         try {
@@ -24,7 +24,6 @@ public class InputInstruction extends Instruction implements MemoryOperation {
             e.printStackTrace();
         }
         catch (InterruptedException ignored) { }
-        return true;
     }
 
     @Override

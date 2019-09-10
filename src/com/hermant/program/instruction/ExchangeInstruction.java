@@ -5,11 +5,10 @@ import com.hermant.machine.Machine;
 public class ExchangeInstruction extends Instruction implements ExchangeOperation, MemoryOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         exchangeRegMem(m.getRegister(), reg1, m.getRam(), ramAddress);
-        return true;
     }
 
     @Override

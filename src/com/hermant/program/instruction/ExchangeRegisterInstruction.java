@@ -5,10 +5,9 @@ import com.hermant.machine.Machine;
 public class ExchangeRegisterInstruction extends Instruction implements ExchangeOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         exchangeRegReg(m.getRegister(), reg1, reg2);
-        return true;
     }
 
     @Override

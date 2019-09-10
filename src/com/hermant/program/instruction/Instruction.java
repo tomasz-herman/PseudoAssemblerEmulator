@@ -150,7 +150,7 @@ public abstract class Instruction implements Serializable {
 
     Instruction(){}
 
-    public abstract boolean run(Machine m);
+    public abstract void run(Machine m);
 
     /**
      * Prints debug information about this {@link Instruction} instance. It includes memory location of instruction,
@@ -159,13 +159,12 @@ public abstract class Instruction implements Serializable {
      * @param m machine
      * @see OutputOperation
      */
-    public final boolean debug(Machine m){
+    public final void debug(Machine m){
         System.out.print(String.format("%1$08X",m.getInstructionPointer().get()) + " | " + this);
         final boolean output = this instanceof OutputOperation;
         if (!(output)) System.out.println();
-        final boolean result = run(m);
+        run(m);
         if(output) System.out.println();
-        return result;
     }
 
     final void setInstructionPointer(InstructionPointer instructionPointer){

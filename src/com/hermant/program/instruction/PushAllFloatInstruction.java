@@ -8,12 +8,11 @@ import com.hermant.machine.register.GeneralPurposeRegister;
 public class PushAllFloatInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
         FloatingPointRegister fpr = m.getFPR();
         for (int i = 0; i < FloatingPointRegister.REGISTER_SIZE; i++) s.pushFloat(fpr.get(i));
-        return true;
     }
 
     @Override

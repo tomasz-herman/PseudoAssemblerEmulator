@@ -7,7 +7,7 @@ import com.hermant.machine.register.GeneralPurposeRegister;
 public class PopAllInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
         GeneralPurposeRegister r = m.getRegister();
@@ -15,7 +15,6 @@ public class PopAllInstruction extends Instruction {
         for (i = GeneralPurposeRegister.REGISTER_SIZE - 1; i > GeneralPurposeRegister.STACK_POINTER; i--) r.set(i, s.pop());
         s.pop();
         for (i--; i >= 0; i--) r.set(i, s.pop());
-        return true;
     }
 
     @Override

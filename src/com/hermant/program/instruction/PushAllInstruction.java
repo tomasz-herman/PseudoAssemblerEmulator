@@ -7,7 +7,7 @@ import com.hermant.machine.register.GeneralPurposeRegister;
 public class PushAllInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         Stack s = m.getStack();
         GeneralPurposeRegister r = m.getRegister();
@@ -16,7 +16,6 @@ public class PushAllInstruction extends Instruction {
         for (i = 0; i < GeneralPurposeRegister.STACK_POINTER; i++) s.push(r.get(i));
         s.push(sp);
         for (i++; i < GeneralPurposeRegister.REGISTER_SIZE; i++) s.push(r.get(i));
-        return true;
     }
 
     @Override

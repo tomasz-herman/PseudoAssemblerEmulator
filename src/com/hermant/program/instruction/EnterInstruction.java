@@ -8,11 +8,10 @@ import static com.hermant.machine.register.GeneralPurposeRegister.STACK_POINTER;
 public class EnterInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getStack().push(m.getRegister().get(STACK_FRAME_POINTER));
         m.getRegister().set(STACK_FRAME_POINTER, m.getRegister().get(STACK_POINTER));
-        return true;
     }
 
     @Override

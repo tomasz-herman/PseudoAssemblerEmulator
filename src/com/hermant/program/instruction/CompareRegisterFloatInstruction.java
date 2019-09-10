@@ -5,10 +5,9 @@ import com.hermant.machine.Machine;
 public class CompareRegisterFloatInstruction extends Instruction implements FloatArithmeticOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         compareFloat(m.getFPR().get(reg1), m.getFPR().get(reg2), m.getFlagsRegister());
-        return true;
     }
 
     @Override

@@ -5,8 +5,8 @@ import com.hermant.machine.Machine;
 public class ExitInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m){
-        return false;
+    public final void run(Machine m){
+        m.stop();
     }
 
     @Override

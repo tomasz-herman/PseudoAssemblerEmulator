@@ -5,13 +5,12 @@ import com.hermant.machine.Machine;
 public class CompareInstruction extends Instruction implements MemoryOperation, IntegerArithmeticOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         int a = m.getRegister().get(reg1);
         int b = m.getRam().getInteger(ramAddress);
         compare(a, b, m.getFlagsRegister(), (x, y) -> x - y);
-        return true;
     }
 
     @Override

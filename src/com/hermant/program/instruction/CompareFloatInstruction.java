@@ -5,11 +5,10 @@ import com.hermant.machine.Machine;
 public class CompareFloatInstruction extends Instruction implements MemoryOperation, FloatArithmeticOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         compareFloat(m.getFPR().get(reg1), m.getRam().getFloat(ramAddress), m.getFlagsRegister());
-        return true;
     }
 
     @Override

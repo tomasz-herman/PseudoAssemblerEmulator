@@ -5,12 +5,11 @@ import com.hermant.machine.Machine;
 public class MultiplyRegisterInstruction extends Instruction implements IntegerArithmeticOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         int a = m.getRegister().get(reg1);
         int b = m.getRegister().get(reg2);
         m.getRegister().set(reg1, multiply(a, b, m.getFlagsRegister()));
-        return true;
     }
 
     @Override

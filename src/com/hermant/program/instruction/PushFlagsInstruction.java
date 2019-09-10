@@ -5,10 +5,9 @@ import com.hermant.machine.Machine;
 public class PushFlagsInstruction extends Instruction {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         m.getStack().push(m.getFlagsRegister().getFlags());
-        return true;
     }
 
     @Override

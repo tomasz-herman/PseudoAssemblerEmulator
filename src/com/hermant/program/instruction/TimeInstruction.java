@@ -6,13 +6,12 @@ import com.hermant.machine.register.GeneralPurposeRegister;
 public class TimeInstruction extends Instruction implements MemoryOperation {
 
     @Override
-    public final boolean run(Machine m) {
+    public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         long timeMillis = System.currentTimeMillis();
         m.getRam().setInteger(ramAddress, (int)(timeMillis / 1000));
         m.getRegister().set(GeneralPurposeRegister.REMAINDER, (int) Long.remainderUnsigned(timeMillis, 1000));
-        return true;
     }
 
     @Override

@@ -28,7 +28,7 @@ public class LoadableInstruction extends Instruction {
     }
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         throw new IllegalStateException("Can't execute loadable instruction");
     }
 

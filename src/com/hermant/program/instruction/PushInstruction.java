@@ -5,11 +5,10 @@ import com.hermant.machine.Machine;
 public class PushInstruction extends Instruction implements MemoryOperation {
 
     @Override
-    public final boolean run(Machine m){
+    public final void run(Machine m){
         setInstructionPointer(m.getInstructionPointer());
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         m.getStack().push(m.getRam().getInteger(ramAddress));
-        return true;
     }
 
     @Override
