@@ -6,9 +6,11 @@ import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionFactory;
 import sun.misc.Signal;
 
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.hermant.machine.register.GeneralPurposeRegister.*;
 
@@ -68,11 +70,18 @@ public class Machine {
      * Counts how many instructions were executed during run of a program.
      */
     private long executedCounter = 0;
-
     /**
-     * Indicates if program is running
+     * Indicates if program is running.
      */
-    private final AtomicBoolean running;
+    private volatile boolean running = false;
+    /**
+     * Indicates if program is paused(only debug mode).
+     */
+    private volatile boolean paused = false;
+    /**
+     * For synchronizing pause.
+     */
+    private final Object MONITOR = new Object();
 
     /**
      * Creates a new {@link Machine}. It contains General Purpose {@link GeneralPurposeRegister}(GPR),
@@ -90,7 +99,6 @@ public class Machine {
         instructionPointer = new InstructionPointer(0);
         stack = new Stack(ram, register);
         this.debug = debug;
-        running = new AtomicBoolean(false);
     }
 
     /**
@@ -157,38 +165,136 @@ public class Machine {
      * @param sleep time in milliseconds to sleep in between instructions
      */
     public void runProgram(int sleep){
-        System.out.println("Program has started");
-        running.set(true);
-        setSignalHandling();
-        final long start = System.nanoTime();
-        if(debug)
-            do {
-                InstructionFactory.fetchNextInstruction(ram, instructionPointer).debug(this);
-                executedCounter++;
-                sleep(sleep);
-            } while(running.get());
-        else if(sleep <= 0)
-            do {
-                InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
-                executedCounter++;
-            } while(running.get());
-        else
-            do{
-                InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
-                executedCounter++;
-                sleep(sleep);
-            } while(running.get());
-        final long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-        System.out.println();
-        System.out.println("Executed " + Long.toUnsignedString(executedCounter) + " instructions in " + millis + "ms.");
+        System.out.print("Program has started\n");
+        running = true;
+        if(debug) setDebugSignalHandling(); else setSignalHandling();
+        long millis;
+        if(debug) millis = debug(sleep);
+        else if(sleep > 0) millis = run(sleep);
+        else millis = run();
+        System.out.printf("\nExecuted %s instructions in %dms.\n",
+                Long.toUnsignedString(executedCounter), millis);
         executedCounter = 0;
     }
 
-    private void setSignalHandling(){
-        Thread t = Thread.currentThread();
+    /**
+     * Runs program in debug mode, with optional sleep.
+     * @param sleep time in milliseconds to sleep in between instructions
+     * @return time this program was running
+     */
+    private long debug(int sleep){
+        final long start = System.nanoTime();
+        do {
+            InstructionFactory.fetchNextInstruction(ram, instructionPointer).debug(this);
+            executedCounter++;
+            checkForPaused();
+            sleep(sleep);
+        } while(running);
+        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+    }
+
+    /**
+     * Runs program in run mode, without sleep.
+     * @return time this program was running
+     */
+    private long run(){
+        final long start = System.nanoTime();
+        do {
+            InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
+            executedCounter++;
+        } while(running);
+        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+    }
+
+    /**
+     * Runs program in run mode, with sleep.
+     * @param sleep time in milliseconds to sleep in between instructions
+     * @return time this program was running
+     */
+    private long run(int sleep){
+        final long start = System.nanoTime();
+        do {
+            InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
+            executedCounter++;
+            sleep(sleep);
+        } while(running);
+        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+    }
+
+    /**
+     * Checks if program is paused(ie. {@link Machine#paused} is set to true). If it is paused it waits until paused
+     * is again set to false.
+     */
+    private void checkForPaused() {
+        synchronized (MONITOR){
+            while(paused){
+                try{
+                    MONITOR.wait();
+                } catch (InterruptedException ignored) {}
+            }
+        }
+    }
+
+    /**
+     * Will set {@link Machine#paused} to true. If machine's is in debug mode the execution of the program will pause.
+     */
+    private void pauseThread() {
+        paused = true;
+    }
+
+    /**
+     * Will set {@link Machine#paused} to false. If machine's is in debug mode the execution of the program will resume.
+     */
+    private void resumeThread() {
+        synchronized (MONITOR) {
+            paused = false;
+            MONITOR.notify();
+        }
+    }
+
+    /**
+     * Sets handling of SIGINT. The behaviour is as follows:
+     * <p><ul>
+     * <li>Execution of program is paused
+     * <li>Handler waits for input.
+     * <li>If it receives input, execution is resumed.
+     * <li>If it receives another SIGINT the execution is stopped.
+     * </ul><p>
+     */
+    private void setDebugSignalHandling(){
+        Thread mainThread = Thread.currentThread();
         Signal.handle(new Signal("INT"), sig -> {
+            pauseThread();
+            Thread signalThread = Thread.currentThread();
+            Signal.handle(new Signal("INT"), s -> {
+                signalThread.interrupt();
+                mainThread.interrupt();
+                stop();
+            });
+            FileInputStream in = new FileInputStream(FileDescriptor.in);
+            try {
+                int i = -1;
+                while(i != 10)
+                    if (in.available() > 0) i = in.read();
+                    else Thread.sleep(1);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (InterruptedException ignored) { }
+            setDebugSignalHandling();
+            resumeThread();
+        });
+    }
+
+    /**
+     * Sets handling of SIGINT which behaviour is to stop execution of the program.
+     */
+    private void setSignalHandling(){
+        Thread mainThread = Thread.currentThread();
+        Signal.handle(new Signal("INT"), sig -> {
+            mainThread.interrupt();
             stop();
-            t.interrupt();
         });
     }
 
@@ -213,7 +319,7 @@ public class Machine {
      * Stops execution of the program
      */
     public void stop(){
-        running.set(false);
+        running = false;
     }
 
     /**
