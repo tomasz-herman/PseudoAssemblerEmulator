@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.register.FlagsRegister;
 
-public interface FloatArithmeticOperation {
+public interface FloatArithmeticOperation extends ModifiesFlagsOperation {
 
     default void compareFloat(float a, float b, FlagsRegister flags){
         flags.resetSignFlag();

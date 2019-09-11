@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.register.FlagsRegister;
 
-public interface LogicalOperation {
+public interface LogicalOperation extends ModifiesFlagsOperation {
 
     default int logical(int result, FlagsRegister flags){
         if((result & 0x80000000) != 0)flags.setSignFlag();

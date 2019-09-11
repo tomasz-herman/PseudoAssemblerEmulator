@@ -4,7 +4,7 @@ import com.hermant.machine.register.FlagsRegister;
 
 import java.util.function.BiFunction;
 
-public interface IntegerArithmeticOperation {
+public interface IntegerArithmeticOperation extends ModifiesFlagsOperation {
 
     default void compare(int a, int b, FlagsRegister flags, BiFunction<Long, Long, Long> bi){
         long signed = bi.apply((long)a, (long)b);

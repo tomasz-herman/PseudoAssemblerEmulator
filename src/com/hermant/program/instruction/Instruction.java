@@ -165,6 +165,7 @@ public abstract class Instruction implements Serializable {
         if (!(output)) System.out.println();
         run(m);
         if(output) System.out.println();
+        if(this instanceof ModifiesFlagsOperation) System.out.println(m.getFlagsRegister());
     }
 
     final void setInstructionPointer(InstructionPointer instructionPointer){
