@@ -2,7 +2,6 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
 import com.hermant.machine.ram.RandomAccessMemory;
-import com.hermant.machine.register.InstructionPointer;
 
 public class LoadableInstruction extends Instruction {
 
@@ -22,7 +21,7 @@ public class LoadableInstruction extends Instruction {
 
         if(length==4) ram.setShort(address + 2, ramOffset);
 
-        if(debug) System.out.println(String.format("%1$08X",address) + " | " + InstructionFactory.fetchNextInstruction(ram, new InstructionPointer(address)));
+        if(debug) System.out.println(String.format("%1$08X",address) + " | " + InstructionFactory.fetchInstruction(ram, address));
 
         return address + length;
     }

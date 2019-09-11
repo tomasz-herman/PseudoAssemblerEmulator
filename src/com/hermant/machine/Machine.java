@@ -185,7 +185,7 @@ public class Machine {
     private long debug(int sleep){
         final long start = System.nanoTime();
         do {
-            InstructionFactory.fetchNextInstruction(ram, instructionPointer).debug(this);
+            InstructionFactory.fetchInstruction(ram, instructionPointer.get()).debug(this);
             executedCounter++;
             checkForPaused();
             sleep(sleep);
@@ -200,7 +200,7 @@ public class Machine {
     private long run(){
         final long start = System.nanoTime();
         do {
-            InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
+            InstructionFactory.fetchInstruction(ram, instructionPointer.get()).run(this);
             executedCounter++;
         } while(running);
         return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
@@ -214,7 +214,7 @@ public class Machine {
     private long run(int sleep){
         final long start = System.nanoTime();
         do {
-            InstructionFactory.fetchNextInstruction(ram, instructionPointer).run(this);
+            InstructionFactory.fetchInstruction(ram, instructionPointer.get()).run(this);
             executedCounter++;
             sleep(sleep);
         } while(running);

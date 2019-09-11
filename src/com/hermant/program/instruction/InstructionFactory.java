@@ -161,8 +161,7 @@ public final class InstructionFactory {
         }
     }
 
-    public static Instruction fetchNextInstruction(RandomAccessMemory ram, InstructionPointer instructionPointer){
-        int address = instructionPointer.get();
+    public static Instruction fetchInstruction(RandomAccessMemory ram, int address){
         final int code = BYTE_TO_UNSIGNED & ram.getByte(address++);
         final Instruction instruction = INSTRUCTIONS[code];
         if(instruction == null)
@@ -175,8 +174,7 @@ public final class InstructionFactory {
         return instruction;
     }
 
-    public static Instruction fetchNewNextInstruction(RandomAccessMemory ram, InstructionPointer instructionPointer){
-        int address = instructionPointer.get();
+    public static Instruction fetchNewInstruction(RandomAccessMemory ram, int address){
         final int code = BYTE_TO_UNSIGNED & ram.getByte(address++);
         final Supplier constructor = INSTRUCTION_CONSTRUCTORS[code];
         if(constructor == null)
