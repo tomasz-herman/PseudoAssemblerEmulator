@@ -39,11 +39,11 @@ public class LoadableInstruction extends Instruction {
 
     @Override
     public final int instLength() {
-        return InstructionFactory.INSTRUCTION_LENGTHS[code + 128];
+        return InstructionFactory.INSTRUCTION_LENGTHS[code & 255];
     }
 
     @Override
     public final String instCode() {
-        return InstructionFactory.INSTRUCTION_CODES[code + 128];
+        return InstructionFactory.INSTRUCTION_CODES[code & 255];
     }
 }
