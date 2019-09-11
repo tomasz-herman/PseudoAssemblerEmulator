@@ -62,6 +62,7 @@ public final class FlagsRegister {
 
     @Override
     public String toString() {
-        return "OF = " + overflow + ", SF = " + sign + ", ZF = " + zero + ", PF = " + parity + ", CF = " + carry;
+        return "OF = " + (overflow ? 1 : 0) + ", SF = " + (sign ? 1 : 0) + ", ZF = " + (zero ? 1 : 0) +
+                ", PF = " + (parity ? 1 : 0) + ", CF = " + (carry ? 1 : 0);
     }
 }
