@@ -1,6 +1,5 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.register.InstructionPointer;
 import com.hermant.machine.ram.RandomAccessMemory;
 
 import static com.hermant.program.instruction.Instruction.*;
@@ -159,6 +158,10 @@ public final class InstructionFactory {
             INSTRUCTION_LENGTHS[i] = instruction.instLength();
             INSTRUCTION_CODES[i] = instruction.instCode();
         }
+    }
+
+    public static int getInstructionLength(byte code){
+        return INSTRUCTION_LENGTHS[code & BYTE_TO_UNSIGNED];
     }
 
     public static Instruction fetchInstruction(RandomAccessMemory ram, int address){

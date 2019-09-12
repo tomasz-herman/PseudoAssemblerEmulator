@@ -26,6 +26,16 @@ public class LoadableInstruction extends Instruction {
         return address + length;
     }
 
+    public byte[] toByteArray(){
+        byte[] array = new byte[instLength()];
+        array[0] = code;
+        array[1] = (byte)(((reg1 & 0xf)<<4) | (reg2 & 0xf));
+        if(instLength() == 2) return array;
+        array[2] = (byte)ramOffset;
+        array[3] = (byte)(ramOffset >> 8);
+        return array;
+    }
+
     @Override
     public final void run(Machine m){
         throw new IllegalStateException("Can't execute loadable instruction");

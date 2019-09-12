@@ -4,6 +4,7 @@ import com.hermant.cli.*;
 import com.hermant.machine.Machine;
 import com.hermant.parser.Parser;
 import com.hermant.program.Program;
+import com.hermant.serializer.Serializer;
 
 public class Main {
 
