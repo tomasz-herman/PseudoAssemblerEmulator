@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import static com.hermant.machine.Machine.SECTION_SIZE;
 import static com.hermant.machine.register.GeneralPurposeRegister.DATA_SECTION;
 import static com.hermant.machine.register.GeneralPurposeRegister.PROGRAM_SECTION;
-import static com.hermant.program.declaration.Declaration.Type.*;
 
 public class Parser {
 
@@ -441,6 +440,48 @@ public class Parser {
                              int lineNum) throws ParseException;
     }
 
+    enum DeclarationType {
+        anInteger{
+            @Override
+            public Declaration create(int count, String value) {
+                return (value == null) ?
+                        new IntegerDeclaration(count, null) :
+                        new IntegerDeclaration(count, parseInt(value));
+            }
+        },
+        aFloat {
+            @Override
+            public Declaration create(int count, String value) {
+                return (value == null) ?
+                        new FloatDeclaration(count, null) :
+                        new FloatDeclaration(count, parseFloat(value));
+            }
+        },
+        aByte {
+            @Override
+            public Declaration create(int count, String value) {
+                return (value == null) ?
+                        new ByteDeclaration(count, null) :
+                        new ByteDeclaration(count, (byte)parseInt(value));
+            }
+        },
+        aChar {
+            @Override
+            public Declaration create(int count, String value) {
+                return (value == null) ?
+                        new CharDeclaration(count, null) :
+                        new CharDeclaration(count, processCharValue(value));
+            }
+        },
+        aString {
+            @Override
+            public Declaration create(int count, String value) {
+                return new StringDeclaration(value);
+            }
+        };
+        public abstract Declaration create(int count, String value);
+    }
+
     public static Program parse(String path){
         Program program = new Program();
         try {
@@ -568,49 +609,35 @@ public class Parser {
         if (words.length != 2 || !validateDeclaringConstant(words[1]))
             throw new ParseException("illegal declaration parameters", lineNum);
         String value = retrieveDeclaredValue(words[1]);
-        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
-                aFloat : words[1].contains(BYTE) ? aByte : words[1].contains(CHAR) ? aChar : aString;
-        if(type==aString){
+        DeclarationType type = words[1].contains(INTEGER) ?
+                DeclarationType.anInteger : words[1].contains(FLOAT) ?
+                DeclarationType.aFloat : words[1].contains(BYTE) ?
+                DeclarationType.aByte : words[1].contains(CHAR) ?
+                DeclarationType.aChar : DeclarationType.aString;
+        if(type== DeclarationType.aString){
             value = removeFirstAndLastChar(value);
             if(!validateStringValue(value)) throw new ParseException("illegal string value", lineNum);
             value = processEscapedCharacters(value, '"');
         }
         if(startsWithPositiveShortNumber(words[1])){
             int count = Integer.parseInt(words[1].split("\\*")[0]);
-            switch (type){
-                case anInteger -> program.addDeclaration(new IntegerDeclaration(count, parseInt(value)));
-                case aFloat -> program.addDeclaration(new FloatDeclaration(count, parseFloat(value)));
-                case aByte -> program.addDeclaration(new ByteDeclaration(count, (byte)parseInt(value)));
-                case aChar -> program.addDeclaration(new CharDeclaration(count, processCharValue(value)));
-            }
-        } else switch (type) {
-            case anInteger -> program.addDeclaration(new IntegerDeclaration(1, parseInt(value)));
-            case aFloat -> program.addDeclaration(new FloatDeclaration(1, parseFloat(value)));
-            case aByte -> program.addDeclaration(new ByteDeclaration(1, (byte)parseInt(value)));
-            case aChar -> program.addDeclaration(new CharDeclaration(1, processCharValue(value)));
-            case aString -> program.addDeclaration(new StringDeclaration(value));
-        }
+            program.addDeclaration(type.create(count, value));
+        } else
+            program.addDeclaration(type.create(1, value));
     }
 
     private static void declareSpace(String[] words, Program program, int lineNum) throws ParseException {
         if (words.length != 2 || !validateDeclaringSpace(words[1]))
             throw new ParseException("illegal declaration parameters", lineNum);
-        Declaration.Type type = words[1].contains(INTEGER) ? anInteger : words[1].contains(FLOAT) ?
-                aFloat : words[1].contains(BYTE) ? aByte : aChar;
+        DeclarationType type = words[1].contains(INTEGER) ?
+                DeclarationType.anInteger : words[1].contains(FLOAT) ?
+                DeclarationType.aFloat : words[1].contains(BYTE) ?
+                DeclarationType.aByte : DeclarationType.aChar;
         if(startsWithPositiveShortNumber(words[1])){
             int count = Integer.parseInt(words[1].split("\\*")[0]);
-            switch (type){
-                case anInteger-> program.addDeclaration(new IntegerDeclaration(count, null));
-                case aFloat -> program.addDeclaration(new FloatDeclaration(count, null));
-                case aByte -> program.addDeclaration(new ByteDeclaration(count, null));
-                case aChar -> program.addDeclaration(new CharDeclaration(count, null));
-            }
-        } else switch (type){
-            case anInteger -> program.addDeclaration(new IntegerDeclaration(1, null));
-            case aFloat -> program.addDeclaration(new FloatDeclaration(1, null));
-            case aByte -> program.addDeclaration(new ByteDeclaration(1, null));
-            case aChar -> program.addDeclaration(new CharDeclaration(1, null));
-        }
+            program.addDeclaration(type.create(count, null));
+        } else
+            program.addDeclaration(type.create(1, null));
     }
 
     private static void loadNoParametersInstruction(byte code, String[] words, Program program, int lineNum) throws ParseException {
@@ -898,13 +925,14 @@ public class Parser {
             char c = s.charAt(i);
             if(c=='\\'){
                 char escaped = s.charAt(i+1);
-                switch(escaped){
-                    case 'n' -> sb.append('\n');
-                    case 't' -> sb.append('\t');
-                    case '\\' -> sb.append('\\');
-                }
-                if(escaped==quote) sb.append(quote);
-                if(Character.isDigit(escaped)){
+                if (escaped == 'n') {
+                    sb.append('\n');
+                } else if (escaped == 't') {
+                    sb.append('\t');
+                } else if (escaped == '\\') {
+                    sb.append('\\');
+                } else if(escaped==quote) sb.append(quote);
+                else if(Character.isDigit(escaped)){
                     StringBuilder number = new StringBuilder(4);
                     int value = escaped - '0';
                     number.append(escaped);

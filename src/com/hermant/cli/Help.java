@@ -3,7 +3,7 @@ package com.hermant.cli;
 public class Help {
 
     public static void printUsage(){
-        System.out.println("Usage:\njava --enable-preview -jar PseudoAssemblerEmulator.jar <options> ");
+        System.out.println("Usage:\njava -jar PseudoAssemblerEmulator.jar <options> ");
         System.out.println("Options:");
         System.out.println("--input=FILE\t-i FILE\tspecify input file(required)");
         System.out.println("--output=FILE\t-o FILE\tspecify a file that binary will be saved to(optional)");
