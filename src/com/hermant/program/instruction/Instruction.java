@@ -5,7 +5,7 @@ import com.hermant.machine.register.InstructionPointer;
 
 import java.io.Serializable;
 
-public abstract class Instruction implements Serializable {
+public abstract class Instruction {
 
     //instruction codes
     public static final byte EXIT = (byte)0;

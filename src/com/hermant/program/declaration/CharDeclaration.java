@@ -32,7 +32,7 @@ public class CharDeclaration implements Declaration<Character>{
     }
 
     @Override
-    public byte[] toByteArray() {
+    public byte[] serialize() {
         boolean many = count != 1;
         boolean hasValue = value != null;
         byte[] array = new byte[1 + (many ? 2 : 0) + (hasValue ? BYTES : 0)];

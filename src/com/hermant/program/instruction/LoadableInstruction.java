@@ -2,8 +2,9 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
 import com.hermant.machine.ram.RandomAccessMemory;
+import com.hermant.serializer.Serializable;
 
-public class LoadableInstruction extends Instruction {
+public class LoadableInstruction extends Instruction implements Serializable {
 
     private byte code;
 
@@ -26,7 +27,7 @@ public class LoadableInstruction extends Instruction {
         return address + length;
     }
 
-    public byte[] toByteArray(){
+    public byte[] serialize(){
         byte[] array = new byte[instLength()];
         array[0] = code;
         array[1] = (byte)(((reg1 & 0xf)<<4) | (reg2 & 0xf));

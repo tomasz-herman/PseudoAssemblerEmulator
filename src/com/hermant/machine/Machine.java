@@ -148,10 +148,10 @@ public class Machine {
         setupRegisterAddresses();
         int programPointer = register.get(PROGRAM_SECTION);
         int dataPointer = register.get(DATA_SECTION);
-        for (var declaration : program.declarations)
+        for (var declaration : program.getDeclarations())
             dataPointer=declaration.declare(ram, dataPointer);
         if(debug) System.out.println("Program:");
-        for (var instruction : program.instructions)
+        for (var instruction : program.getInstructions())
             programPointer=instruction.loadIntoMemory(debug, ram, programPointer);
         if(debug) System.out.println();
         instructionPointer.set(register.get(PROGRAM_SECTION));

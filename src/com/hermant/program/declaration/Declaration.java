@@ -1,8 +1,7 @@
 package com.hermant.program.declaration;
 
 import com.hermant.machine.ram.RandomAccessMemory;
-
-import java.io.Serializable;
+import com.hermant.serializer.Serializable;
 
 public interface Declaration<T> extends Serializable {
 
@@ -15,6 +14,4 @@ public interface Declaration<T> extends Serializable {
     T getValue();
 
     int getCount();
-
-    byte[] toByteArray();
 }

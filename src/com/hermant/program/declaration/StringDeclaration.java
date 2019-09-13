@@ -32,7 +32,7 @@ public class StringDeclaration implements Declaration<String>{
     }
 
     @Override
-    public byte[] toByteArray() {
+    public byte[] serialize() {
         byte[] array = new byte[count + 2];
         array[0] = (byte)Serializer.DeclarationType.STRING.ordinal();
         array[1] = (byte)count;

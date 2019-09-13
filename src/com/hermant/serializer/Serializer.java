@@ -5,7 +5,6 @@ import com.hermant.program.declaration.*;
 import com.hermant.program.instruction.InstructionFactory;
 import com.hermant.program.instruction.LoadableInstruction;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -107,14 +106,8 @@ public class Serializer {
     }
 
     public static void serializeProgram(Program program, String path){
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int declarations = program.declarations.size();
-        buffer.write((byte)declarations);
-        buffer.write(declarations >> 8);
-        for (Declaration d : program.declarations) buffer.writeBytes(d.toByteArray());
-        for (LoadableInstruction inst : program.instructions) buffer.writeBytes(inst.toByteArray());
         try {
-            Files.write(Paths.get(path), buffer.toByteArray());
+            Files.write(Paths.get(path), program.serialize());
         } catch (IOException e) {
             e.printStackTrace();
         }
