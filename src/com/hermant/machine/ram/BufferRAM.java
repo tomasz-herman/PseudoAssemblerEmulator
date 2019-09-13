@@ -2,6 +2,7 @@ package com.hermant.machine.ram;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Random;
 
 public class BufferRAM extends RandomAccessMemory {
 
@@ -11,6 +12,14 @@ public class BufferRAM extends RandomAccessMemory {
         super(endianness);
         buffer = ByteBuffer.allocate(size).order(
                 endianness == Endianness.LittleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+        Random random = new Random();
+        for (int i = 0; i < size; ) {
+            int rand = random.nextInt();
+            for (int j = 0; j < 4 & i < size ; j++, i++) {
+                buffer.put(i, (byte)rand);
+                rand >>= 8;
+            }
+        }
     }
 
     @Override

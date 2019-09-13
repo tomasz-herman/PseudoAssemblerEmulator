@@ -4,6 +4,7 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.nio.ByteOrder;
+import java.util.Random;
 
 /**
  * Highly experimental
@@ -33,6 +34,14 @@ public class UnsafeRAM extends RandomAccessMemory{
         }
         assert unsafe != null;
         offset = unsafe.allocateMemory(size);
+        Random random = new Random();
+        for (int i = 0; i < size; ) {
+            int rand = random.nextInt();
+            for (int j = 0; j < 4 & i < size ; j++, i++) {
+                setByte(i, (byte)rand);
+                rand >>= 8;
+            }
+        }
     }
 
     @Override
