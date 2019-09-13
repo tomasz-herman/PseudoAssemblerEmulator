@@ -265,120 +265,180 @@ public class Parser {
         tokens.put(DECLARE_SPACE, (words, labels, program, lineNum) -> declareSpace(words, program, lineNum));
     }
 
-    private static final Map<String, instructionType> INSTRUCTION_TYPES;
+    private static final Map<String, InstructionType> INSTRUCTION_TYPES;
 
     static {
-        final Map<String, instructionType> instruction_types = new HashMap<>();
+        final Map<String, InstructionType> instruction_types = new HashMap<>();
         INSTRUCTION_TYPES = Collections.unmodifiableMap(instruction_types);
-        instruction_types.put(EXIT, instructionType.instruction2Bytes1Word);
-        instruction_types.put(RETURN, instructionType.instruction2Bytes1Word);
-        instruction_types.put(HALT, instructionType.instruction2Bytes1Word);
-        instruction_types.put(PUSH_ALL, instructionType.instruction2Bytes1Word);
-        instruction_types.put(PUSH_ALL_FLOAT, instructionType.instruction2Bytes1Word);
-        instruction_types.put(POP_ALL, instructionType.instruction2Bytes1Word);
-        instruction_types.put(POP_ALL_FLOAT, instructionType.instruction2Bytes1Word);
-        instruction_types.put(PUSH_FLAGS, instructionType.instruction2Bytes1Word);
-        instruction_types.put(POP_FLAGS, instructionType.instruction2Bytes1Word);
-        instruction_types.put(ENTER, instructionType.instruction2Bytes1Word);
-        instruction_types.put(LEAVE, instructionType.instruction2Bytes1Word);
-        instruction_types.put(NO_OPERATION, instructionType.instruction2Bytes1Word);
-        instruction_types.put(LOAD, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(LOAD_FLOAT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(STORE, instructionType.instruction4Bytes3Words);
-        instruction_types.put(STORE_FLOAT, instructionType.instruction4Bytes3Words);
-        instruction_types.put(LOAD_ADDRESS, instructionType.instruction4Bytes3Words);
-        instruction_types.put(EXCHANGE, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(EXCHANGE_FLOAT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(INPUT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(TIME, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(SLEEP, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(PUSH, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(PUSH_FLOAT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(POP, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(POP_FLOAT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(LOAD_BYTE, instructionType.instruction4Bytes3Words);
-        instruction_types.put(LOAD_BYTE_UNSIGNED, instructionType.instruction4Bytes3Words);
-        instruction_types.put(STORE_BYTE, instructionType.instruction4Bytes3Words);
-        instruction_types.put(LOAD_INTEGER_AS_FLOAT, instructionType.instruction4Bytes3Words);
-        instruction_types.put(STORE_FLOAT_AS_INTEGER, instructionType.instruction4Bytes3Words);
-        instruction_types.put(RANDOM, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(ADD, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(ADD_FLOAT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(SUBTRACT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(SUBTRACT_FLOAT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(MULTIPLY, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(MULTIPLY_FLOAT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(DIVIDE, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(DIVIDE_SIGNED, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(DIVIDE_FLOAT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(COMPARE, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(COMPARE_FLOAT, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(NEGATE, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(INCREMENT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(DECREMENT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(ABSOLUTE_FLOAT, instructionType.instruction2Bytes2Words);
-        instruction_types.put(SQUARE_ROOT_FLOAT, instructionType.instruction2Bytes2Words);
-        instruction_types.put(SINE_FLOAT, instructionType.instruction2Bytes2Words);
-        instruction_types.put(COSINE_FLOAT, instructionType.instruction2Bytes2Words);
-        instruction_types.put(TANGENT_FLOAT, instructionType.instruction2Bytes2Words);
-        instruction_types.put(EXAMINE_FLOAT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(TEST_FLOAT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(AND, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(OR, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(XOR, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(TEST, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(NOT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(RIGHT_SHIFT_LOGICAL, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(LEFT_SHIFT_LOGICAL, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(RIGHT_SHIFT_ARITHMETIC, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(LEFT_SHIFT_ARITHMETIC, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(RIGHT_ROTATE, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(LEFT_ROTATE, instructionType.instruction2or4Bytes3Words);
-        instruction_types.put(JUMP, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_ZERO, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_ZERO, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_LESS_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_GREATER, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_LESS, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_GREATER_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_GREATER_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_LESSER, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_GREATER, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_LESS_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_BELOW_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_ABOVE, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_BELOW, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_ABOVE_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_CARRY, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_BELOW, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_ABOVE_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_CARRY, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_ABOVE, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_BELOW_OR_EQUAL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_OVERFLOW, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_OVERFLOW, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_SIGNED, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_SIGNED, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_PARITY, instructionType.instruction4Bytes2Words);
-        instruction_types.put(JUMP_NOT_PARITY, instructionType.instruction4Bytes2Words);
-        instruction_types.put(LOOP, instructionType.instruction4Bytes3Words);
-        instruction_types.put(CALL, instructionType.instruction4Bytes2Words);
-        instruction_types.put(OUTPUT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(OUTPUT_SIGNED, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(OUTPUT_FLOAT, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(OUTPUT_BYTE, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(OUTPUT_CHAR, instructionType.instruction2or4Bytes2Words);
-        instruction_types.put(DECLARE_CONSTANT, instructionType.declaration);
-        instruction_types.put(DECLARE_SPACE, instructionType.declaration);
+        instruction_types.put(EXIT, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(RETURN, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(HALT, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(PUSH_ALL, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(PUSH_ALL_FLOAT, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(POP_ALL, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(POP_ALL_FLOAT, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(PUSH_FLAGS, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(POP_FLAGS, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(ENTER, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(LEAVE, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(NO_OPERATION, InstructionType.instruction2Bytes1Word);
+        instruction_types.put(LOAD, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LOAD_FLOAT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(STORE, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(STORE_FLOAT, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(LOAD_ADDRESS, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(EXCHANGE, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(EXCHANGE_FLOAT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(INPUT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(TIME, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(SLEEP, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(PUSH, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(PUSH_FLOAT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(POP, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(POP_FLOAT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(LOAD_BYTE, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(LOAD_BYTE_UNSIGNED, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(STORE_BYTE, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(LOAD_INTEGER_AS_FLOAT, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(STORE_FLOAT_AS_INTEGER, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(RANDOM, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(ADD, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(ADD_FLOAT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(SUBTRACT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(SUBTRACT_FLOAT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(MULTIPLY, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(MULTIPLY_FLOAT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(DIVIDE, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(DIVIDE_SIGNED, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(DIVIDE_FLOAT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(COMPARE, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(COMPARE_FLOAT, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(NEGATE, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(INCREMENT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(DECREMENT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(ABSOLUTE_FLOAT, InstructionType.instruction2Bytes2Words);
+        instruction_types.put(SQUARE_ROOT_FLOAT, InstructionType.instruction2Bytes2Words);
+        instruction_types.put(SINE_FLOAT, InstructionType.instruction2Bytes2Words);
+        instruction_types.put(COSINE_FLOAT, InstructionType.instruction2Bytes2Words);
+        instruction_types.put(TANGENT_FLOAT, InstructionType.instruction2Bytes2Words);
+        instruction_types.put(EXAMINE_FLOAT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(TEST_FLOAT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(AND, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(OR, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(XOR, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(TEST, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(NOT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(RIGHT_SHIFT_LOGICAL, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LEFT_SHIFT_LOGICAL, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(RIGHT_SHIFT_ARITHMETIC, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LEFT_SHIFT_ARITHMETIC, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(RIGHT_ROTATE, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(LEFT_ROTATE, InstructionType.instruction2or4Bytes3Words);
+        instruction_types.put(JUMP, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_ZERO, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_ZERO, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_LESS_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_GREATER, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_LESS, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_GREATER_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_GREATER_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_LESSER, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_GREATER, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_LESS_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_BELOW_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_ABOVE, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_BELOW, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_ABOVE_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_CARRY, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_BELOW, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_ABOVE_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_CARRY, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_ABOVE, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_BELOW_OR_EQUAL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_OVERFLOW, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_OVERFLOW, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_SIGNED, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_SIGNED, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_PARITY, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(JUMP_NOT_PARITY, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(LOOP, InstructionType.instruction4Bytes3Words);
+        instruction_types.put(CALL, InstructionType.instruction4Bytes2Words);
+        instruction_types.put(OUTPUT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_SIGNED, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_FLOAT, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_BYTE, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(OUTPUT_CHAR, InstructionType.instruction2or4Bytes2Words);
+        instruction_types.put(DECLARE_CONSTANT, InstructionType.declaration);
+        instruction_types.put(DECLARE_SPACE, InstructionType.declaration);
     }
 
-    public enum instructionType {
-        declaration,
-        instruction2or4Bytes2Words, instruction2or4Bytes3Words,
-        instruction2Bytes1Word, instruction2Bytes2Words,
-        instruction4Bytes2Words, instruction4Bytes3Words
+    public enum InstructionType {
+        declaration{
+            @Override
+            int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
+                if(programSection>0)throw new ParseException("illegal declaration after instructions" ,lineNum);
+                if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
+                storeLabels(labels, labelMemoryTranslation, DATA_SECTION, dataSection, lineNum);
+                return getDeclarationSize(words[1], lineNum);
+            }
+        },
+        instruction2or4Bytes2Words {
+            @Override
+            int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSectionint, int lineNum) throws ParseException {
+                if(words.length != 2)throw new ParseException("illegal instruction parameters",lineNum);
+                storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                return validateRegister(words[1]) ? 2 : 4;
+            }
+        },
+        instruction2or4Bytes3Words {
+            @Override
+            int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
+                if(words.length != 3)throw new ParseException("illegal instruction parameters",lineNum);
+                storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                return validateRegister(words[2]) ? 2 : 4;
+            }
+        },
+        instruction2Bytes1Word {
+            @Override
+            int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
+                if(words.length != 1)throw new ParseException("illegal instruction parameters", lineNum);
+                storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                return 2;
+            }
+        },
+        instruction2Bytes2Words {
+            @Override
+            int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
+                if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
+                storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                return 2;
+            }
+        },
+        instruction4Bytes2Words {
+            @Override
+            int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
+                if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
+                storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                return 4;
+            }
+        },
+        instruction4Bytes3Words {
+            @Override
+            int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
+                if(words.length != 3)throw new ParseException("illegal instruction parameters", lineNum);
+                storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
+                return 4;
+            }
+        };
+
+        abstract int analyze(String[] words,
+                             Stack<String> labels,
+                             Map<String, String> labelMemoryTranslation,
+                             int programSection,
+                             int dataSection,
+                             int lineNum) throws ParseException;
     }
 
     public static Program parse(String path){
@@ -425,51 +485,16 @@ public class Parser {
             line = processLabels(line, labels, lineNum);
             if(line.isBlank())continue;
             String[] words = extractWords(line, lineNum);
-            instructionType type = INSTRUCTION_TYPES.get(words[0]);
+            InstructionType type = INSTRUCTION_TYPES.get(words[0]);
             if(type == null) throw new ParseException("Unrecognizable OP code", lineNum);
-            switch (INSTRUCTION_TYPES.get(words[0])){
-                case declaration -> {
-                    if(programSection>0)throw new ParseException("illegal declaration after instructions" ,lineNum);
-                    if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
-                    storeLabels(labels, labelMemoryTranslation, DATA_SECTION, dataSection, lineNum);
-                    dataSection += getDeclarationSize(words[1], lineNum);
-                }
-                case instruction2Bytes1Word -> {
-                    if(words.length != 1)throw new ParseException("illegal instruction parameters", lineNum);
-                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                    programSection+=2;
-                }
-                case instruction2Bytes2Words -> {
-                    if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
-                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                    programSection+=2;
-                }
-                case instruction4Bytes2Words -> {
-                    if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
-                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                    programSection+=4;
-                }
-                case instruction4Bytes3Words -> {
-                    if(words.length != 3)throw new ParseException("illegal instruction parameters", lineNum);
-                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                    programSection+=4;
-                }
-                case instruction2or4Bytes2Words -> {
-                    if(words.length != 2)throw new ParseException("illegal instruction parameters",lineNum);
-                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                    if(validateRegister(words[1]))programSection +=2;
-                    else programSection+=4;
-                }
-                case instruction2or4Bytes3Words -> {
-                    if(words.length != 3)throw new ParseException("illegal instruction parameters",lineNum);
-                    storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-                    if(validateRegister(words[2]))programSection+=2;
-                    else programSection+=4;
-                }
-            }
+            if(type == InstructionType.declaration)
+                dataSection += type.analyze(words, labels, labelMemoryTranslation, programSection, dataSection, lineNum);
+            else
+                programSection += type.analyze(words, labels, labelMemoryTranslation, programSection, dataSection, lineNum);
             if(dataSection > SECTION_SIZE) throw new IllegalStateException("exceeded maximum data section size");
             if(programSection > SECTION_SIZE) throw new IllegalStateException("exceeded maximum instruction section size");
         }
+        storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
         reader.close();
         printLabelsInfo(labelMemoryTranslation, programSection, dataSection);
         return labelMemoryTranslation;
