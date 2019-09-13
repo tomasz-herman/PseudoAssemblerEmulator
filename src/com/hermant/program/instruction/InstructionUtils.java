@@ -4,9 +4,9 @@ import com.hermant.machine.ram.RandomAccessMemory;
 
 import static com.hermant.program.instruction.Instruction.*;
 
-public final class InstructionFactory {
+public final class InstructionUtils {
 
-    private InstructionFactory() {}
+    private InstructionUtils() {}
 
     public interface Supplier{ Instruction get(); }
 
@@ -14,8 +14,8 @@ public final class InstructionFactory {
 
     private static final Supplier[] INSTRUCTION_CONSTRUCTORS;
     private static final Instruction[] INSTRUCTIONS;
-    static final int[] INSTRUCTION_LENGTHS;
-    static final String[] INSTRUCTION_CODES;
+    private static final int[] INSTRUCTION_LENGTHS;
+    private static final String[] INSTRUCTION_CODES;
 
     static {
         int BYTES_QUANTITY = 256;
@@ -162,6 +162,19 @@ public final class InstructionFactory {
 
     public static int getInstructionLength(byte code){
         return INSTRUCTION_LENGTHS[code & BYTE_TO_UNSIGNED];
+    }
+
+    static String getInstructionCode(byte code){
+        return INSTRUCTION_CODES[code & BYTE_TO_UNSIGNED];
+    }
+
+    public static Instruction getInstruction(byte code){
+        Supplier constructor = INSTRUCTION_CONSTRUCTORS[code & BYTE_TO_UNSIGNED];
+        return constructor == null ? null :constructor.get();
+    }
+
+    static Instruction getInstructionInstance(byte code){
+        return INSTRUCTIONS[code & BYTE_TO_UNSIGNED];
     }
 
     public static Instruction fetchInstruction(RandomAccessMemory ram, int address){

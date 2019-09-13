@@ -3,7 +3,7 @@ package com.hermant.machine;
 import com.hermant.machine.ram.*;
 import com.hermant.machine.register.*;
 import com.hermant.program.Program;
-import com.hermant.program.instruction.InstructionFactory;
+import com.hermant.program.instruction.InstructionUtils;
 import sun.misc.Signal;
 
 import java.io.FileDescriptor;
@@ -185,7 +185,7 @@ public class Machine {
     private long debug(int sleep){
         final long start = System.nanoTime();
         do {
-            InstructionFactory.fetchInstruction(ram, instructionPointer.get()).debug(this);
+            InstructionUtils.fetchInstruction(ram, instructionPointer.get()).debug(this);
             executedCounter++;
             checkForPaused();
             sleep(sleep);
@@ -200,7 +200,7 @@ public class Machine {
     private long run(){
         final long start = System.nanoTime();
         do {
-            InstructionFactory.fetchInstruction(ram, instructionPointer.get()).run(this);
+            InstructionUtils.fetchInstruction(ram, instructionPointer.get()).run(this);
             executedCounter++;
         } while(running);
         return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
@@ -214,7 +214,7 @@ public class Machine {
     private long run(int sleep){
         final long start = System.nanoTime();
         do {
-            InstructionFactory.fetchInstruction(ram, instructionPointer.get()).run(this);
+            InstructionUtils.fetchInstruction(ram, instructionPointer.get()).run(this);
             executedCounter++;
             sleep(sleep);
         } while(running);

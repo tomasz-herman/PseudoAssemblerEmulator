@@ -22,7 +22,8 @@ public class LoadableInstruction extends Instruction implements Serializable {
 
         if(length==4) ram.setShort(address + 2, ramOffset);
 
-        if(debug) System.out.println(String.format("%1$08X",address) + " | " + InstructionFactory.fetchInstruction(ram, address));
+        if(debug) System.out.println(String.format("%1$08X",address) + " | " +
+                InstructionUtils.getInstructionInstance(code));
 
         return address + length;
     }
@@ -49,11 +50,11 @@ public class LoadableInstruction extends Instruction implements Serializable {
 
     @Override
     public final int instLength() {
-        return InstructionFactory.INSTRUCTION_LENGTHS[code & 255];
+        return InstructionUtils.getInstructionLength(code);
     }
 
     @Override
     public final String instCode() {
-        return InstructionFactory.INSTRUCTION_CODES[code & 255];
+        return InstructionUtils.getInstructionCode(code);
     }
 }

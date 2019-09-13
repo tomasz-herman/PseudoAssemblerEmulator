@@ -2,7 +2,7 @@ package com.hermant.serializer;
 
 import com.hermant.program.Program;
 import com.hermant.program.declaration.*;
-import com.hermant.program.instruction.InstructionFactory;
+import com.hermant.program.instruction.InstructionUtils;
 import com.hermant.program.instruction.LoadableInstruction;
 
 import java.io.IOException;
@@ -115,7 +115,7 @@ public class Serializer {
 
     private static LoadableInstruction deserializeInstruction(ByteBuffer buffer){
         byte code = buffer.get();
-        int instructionLength = InstructionFactory.getInstructionLength(code);
+        int instructionLength = InstructionUtils.getInstructionLength(code);
         byte reg = buffer.get();
         byte reg1 = (byte)(reg>>4&0xf);
         byte reg2 = (byte)(reg&0xf);
