@@ -38,7 +38,7 @@ public class UnsafeRAM extends RandomAccessMemory{
         for (int i = 0; i < size; ) {
             int rand = random.nextInt();
             for (int j = 0; j < 4 & i < size ; j++, i++) {
-                setByte(i, (byte)rand);
+                unsafe.putByte(offset + i, (byte)rand);
                 rand >>= 8;
             }
         }
