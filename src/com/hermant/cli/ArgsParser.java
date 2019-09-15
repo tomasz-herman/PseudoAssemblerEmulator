@@ -67,7 +67,7 @@ public class ArgsParser {
             if(opt.length == 1) throw new IllegalArgumentException("Option --" + opt[0] + " requires value");
             option.apply(options, opt[1]);
         } else {
-            if(opt.length == 2) throw new IllegalArgumentException("Option --" + opt[0] + " doesn't requires value");
+            if(opt.length == 2) throw new IllegalArgumentException("Option --" + opt[0] + " doesn't require value");
             option.apply(options, "");
         }
     }

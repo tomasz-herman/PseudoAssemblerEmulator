@@ -378,7 +378,7 @@ public class Parser {
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
                 if(programSection>0)throw new ParseException("illegal declaration after instructions" ,lineNum);
-                if(words.length != 2)throw new ParseException("illegal declaration parameters", lineNum);
+                if(words.length != 2)throw new ParseException("illegal words number(expected 3, got " + words.length +")", lineNum);
                 storeLabels(labels, labelMemoryTranslation, DATA_SECTION, dataSection, lineNum);
                 return getDeclarationSize(words[1], lineNum);
             }
@@ -386,7 +386,7 @@ public class Parser {
         instruction2or4Bytes2Words {
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSectionint, int lineNum) throws ParseException {
-                if(words.length != 2)throw new ParseException("illegal instruction parameters",lineNum);
+                if(words.length != 2)throw new ParseException("illegal words number(expected 2, got "+ words.length +")",lineNum);
                 storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                 return validateRegister(words[1]) ? 2 : 4;
             }
@@ -394,7 +394,7 @@ public class Parser {
         instruction2or4Bytes3Words {
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
-                if(words.length != 3)throw new ParseException("illegal instruction parameters",lineNum);
+                if(words.length != 3)throw new ParseException("illegal words number(expected 3, got "+ words.length +")",lineNum);
                 storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                 return validateRegister(words[2]) ? 2 : 4;
             }
@@ -402,7 +402,7 @@ public class Parser {
         instruction2Bytes1Word {
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
-                if(words.length != 1)throw new ParseException("illegal instruction parameters", lineNum);
+                if(words.length != 1)throw new ParseException("illegal words number(expected 1, got "+ words.length +")", lineNum);
                 storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                 return 2;
             }
@@ -410,7 +410,7 @@ public class Parser {
         instruction2Bytes2Words {
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
-                if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
+                if(words.length != 2)throw new ParseException("illegal words number(expected 2, got "+ words.length +")", lineNum);
                 storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                 return 2;
             }
@@ -418,7 +418,7 @@ public class Parser {
         instruction4Bytes2Words {
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
-                if(words.length != 2)throw new ParseException("illegal instruction parameters", lineNum);
+                if(words.length != 2)throw new ParseException("illegal words number(expected 2, got "+ words.length +")", lineNum);
                 storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                 return 4;
             }
@@ -426,7 +426,7 @@ public class Parser {
         instruction4Bytes3Words {
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
-                if(words.length != 3)throw new ParseException("illegal instruction parameters", lineNum);
+                if(words.length != 3)throw new ParseException("illegal words number(expected 3, got "+ words.length +")", lineNum);
                 storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
                 return 4;
             }
@@ -504,7 +504,7 @@ public class Parser {
             if(line.isBlank())continue;
             var words = extractWords(line, lineNum);
             ParseMethod method = TOKENS.get(words[0]);
-            if(method==null) throw new ParseException("unknown token", lineNum);
+            if(method==null) throw new ParseException("unknown token: " + words[0], lineNum);
             method.parse(words, labelMemoryTranslation, program, lineNum);
         }
         reader.close();
@@ -527,13 +527,13 @@ public class Parser {
             if(line.isBlank())continue;
             String[] words = extractWords(line, lineNum);
             InstructionType type = INSTRUCTION_TYPES.get(words[0]);
-            if(type == null) throw new ParseException("Unrecognizable OP code", lineNum);
+            if(type == null) throw new ParseException("unknown token: " + words[0], lineNum);
             if(type == InstructionType.declaration)
                 dataSection += type.analyze(words, labels, labelMemoryTranslation, programSection, dataSection, lineNum);
             else
                 programSection += type.analyze(words, labels, labelMemoryTranslation, programSection, dataSection, lineNum);
-            if(dataSection > SECTION_SIZE) throw new IllegalStateException("exceeded maximum data section size");
-            if(programSection > SECTION_SIZE) throw new IllegalStateException("exceeded maximum instruction section size");
+            if(dataSection > SECTION_SIZE) throw new ParseException("exceeded maximum data section size", lineNum);
+            if(programSection > SECTION_SIZE) throw new ParseException("exceeded maximum instruction section size", lineNum);
         }
         storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
         reader.close();
@@ -565,12 +565,12 @@ public class Parser {
             }
             throw new ParseException("Illegal string value " + value, lineNum);
         } else {
-            if(!startsWithPositiveShortNumber(declaration))throw new ParseException("Illegal declaration", lineNum);
+            if(!startsWithPositiveShortNumber(declaration))throw new ParseException("Illegal declaration: " + declaration, lineNum);
             String num = declaration.replaceFirst("\\*.*", "");
             if(declaration.contains(INTEGER) || declaration.contains(FLOAT))return Integer.parseInt(num) * 4;
             else if(declaration.contains(BYTE) || declaration.contains(CHAR))return Integer.parseInt(num);
         }
-        throw new ParseException("Illegal declaration", lineNum);
+        throw new ParseException("Illegal declaration: " + declaration, lineNum);
     }
 
     private static void storeLabels(Stack<String> labels, Map<String, String> labelMemoryTranslation, int reg, int address, int lineNum) throws ParseException {
@@ -587,10 +587,10 @@ public class Parser {
                 line = line.replace(",", " ");
                 words = splitByWhiteSpaces(line);
             }
-            else throw new ParseException("illegal syntax", lineNum);
+            else throw new ParseException("illegal syntax: " + line, lineNum);
         else{
             words = splitByWhiteSpaces(line);
-            if(words.length > 2) throw new ParseException("illegal syntax", lineNum);
+            if(words.length > 2) throw new ParseException("illegal syntax: " + line + "\n(missing comma?)", lineNum);
         }
         words[0] = words[0].toUpperCase(Locale.ROOT);
         return words;
@@ -599,15 +599,18 @@ public class Parser {
     private static String processLabels(String line, Stack<String> labels, int lineNum) throws ParseException {
         while(hasLabel(line)){
             labels.push(label(line));
-            if(!validateLabel(labels.peek()))throw new ParseException("illegal label", lineNum);
+            if(!validateLabel(labels.peek()))throw new ParseException("illegal label " + labels.peek(), lineNum);
             line = removeLabel(line);
         }
         return line;
     }
 
     private static void declareConstant(String[] words, Program program, int lineNum) throws ParseException {
-        if (words.length != 2 || !validateDeclaringConstant(words[1]))
-            throw new ParseException("illegal declaration parameters", lineNum);
+        if (words.length != 2) {
+            throw new ParseException("illegal words number(expected 2, got "+ words.length +")", lineNum);
+        } else if (!validateDeclaringConstant(words[1])) {
+            throw new ParseException("illegal declaration " + words[1], lineNum);
+        }
         String value = retrieveDeclaredValue(words[1]);
         DeclarationType type = words[1].contains(INTEGER) ?
                 DeclarationType.anInteger : words[1].contains(FLOAT) ?
@@ -616,7 +619,7 @@ public class Parser {
                 DeclarationType.aChar : DeclarationType.aString;
         if(type== DeclarationType.aString){
             value = removeFirstAndLastChar(value);
-            if(!validateStringValue(value)) throw new ParseException("illegal string value", lineNum);
+            if(!validateStringValue(value)) throw new ParseException("illegal string value: " + value, lineNum);
             value = processEscapedCharacters(value, '"');
         }
         if(startsWithPositiveShortNumber(words[1])){
@@ -627,8 +630,11 @@ public class Parser {
     }
 
     private static void declareSpace(String[] words, Program program, int lineNum) throws ParseException {
-        if (words.length != 2 || !validateDeclaringSpace(words[1]))
-            throw new ParseException("illegal declaration parameters", lineNum);
+        if (words.length != 2) {
+            throw new ParseException("illegal words number(expected 2, got "+ words.length +")", lineNum);
+        } else if (!validateDeclaringSpace(words[1])) {
+            throw new ParseException("illegal declaration " + words[1], lineNum);
+        }
         DeclarationType type = words[1].contains(INTEGER) ?
                 DeclarationType.anInteger : words[1].contains(FLOAT) ?
                 DeclarationType.aFloat : words[1].contains(BYTE) ?
@@ -641,12 +647,12 @@ public class Parser {
     }
 
     private static void loadNoParametersInstruction(byte code, String[] words, Program program, int lineNum) throws ParseException {
-        if(words.length != 1)throw new ParseException("illegal parameters number", lineNum);
+        if(words.length != 1)throw new ParseException("illegal words number(expected 1, got "+ words.length +")", lineNum);
         program.addInstruction(new LoadableInstruction(code, (byte)0, (byte)0, (short)0));
     }
 
     private static void loadRegOrMemInstruction(byte codeMem, byte codeReg, String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException {
-        if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
+        if(words.length != 2)throw new ParseException("illegal words number(expected 2, got "+ words.length +")", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
             program.addInstruction(new LoadableInstruction(codeReg, (byte)reg, (byte)0, (short)0));
@@ -654,22 +660,23 @@ public class Parser {
     }
 
     private static void loadRegInstruction(byte code, String[] words, Program program, int lineNum) throws ParseException {
-        if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
+        if(words.length != 2)throw new ParseException("illegal words number(expected 2, got "+ words.length +")", lineNum);
         if(validateRegister(words[1])){
             int reg = Integer.parseInt(words[1]);
             program.addInstruction(new LoadableInstruction(code, (byte)reg, (byte)0, (short)0));
             return;
         }
-        throw new ParseException("illegal arguments", lineNum);
+        throw new ParseException("illegal argument: " + words[1], lineNum);
     }
 
     private static void loadMemInstruction(byte code, String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException {
-        if(words.length != 2)throw new ParseException("illegal parameters number", lineNum);
+        if(words.length != 2)throw new ParseException("illegal words number(expected 2, got "+ words.length +")", lineNum);
         int reg1 = 0;
         int reg2, mem;
         if(validateLabel(words[1])){
-            words[1] = labels.get(words[1]);
-            if(words[1]==null) throw new ParseException("unknown label", lineNum);
+            String labelTranslation = labels.get(words[1]);
+            if(labelTranslation==null) throw new ParseException("unknown label: " + words[1], lineNum);
+            words[1] = labelTranslation;
         }
         if(validateMemoryAddress(words[1])) {
             var numbers = words[1].split("([()])");
@@ -678,17 +685,18 @@ public class Parser {
             program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
-        throw new ParseException("illegal arguments", lineNum);
+        throw new ParseException("illegal arguments:" + words[1], lineNum);
     }
 
     private static void loadRegMemInstruction(byte code, String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException {
-        if(words.length != 3)throw new ParseException("illegal parameters number",lineNum);
+        if(words.length != 3)throw new ParseException("illegal words number(expected 3, got "+ words.length +")",lineNum);
         if(!validateRegister(words[1])) throw new ParseException("illegal arguments", lineNum);
         int reg1 = Integer.parseInt(words[1]);
         int reg2, mem;
         if(validateLabel(words[2])){
-            words[2] = labels.get(words[2]);
-            if(words[2]==null) throw new ParseException("unknown label", lineNum);
+            String labelTranslation = labels.get(words[2]);
+            if(labelTranslation==null) throw new ParseException("unknown label: " + words[2], lineNum);
+            words[2] = labelTranslation;
         }
         if(validateMemoryAddress(words[2])) {
             var numbers = words[2].split("([()])");
@@ -697,17 +705,18 @@ public class Parser {
             program.addInstruction(new LoadableInstruction(code, (byte)reg1, (byte)reg2, (short)mem));
             return;
         }
-        throw new ParseException("illegal arguments", lineNum);
+        throw new ParseException("illegal arguments: " + words[2], lineNum);
     }
 
     private static void loadRegMemOrRegRegInstruction(byte codeRegMem, byte codeRegReg, String[] words, Map<String, String> labels, Program program, int lineNum) throws ParseException {
-        if(words.length != 3)throw new ParseException("illegal parameters number", lineNum);
-        if(!validateRegister(words[1])) throw new ParseException("illegal arguments", lineNum);
+        if(words.length != 3)throw new ParseException("illegal words number(expected 3, got "+ words.length +")", lineNum);
+        if(!validateRegister(words[1])) throw new ParseException("illegal arguments: " + words[1] + " is not a valid register", lineNum);
         int reg1 = Integer.parseInt(words[1]);
         int reg2, mem;
         if(validateLabel(words[2])){
-            words[2] = labels.get(words[2]);
-            if(words[2]==null) throw new ParseException("unknown label", lineNum);
+            String labelTranslation = labels.get(words[2]);
+            if(labelTranslation==null) throw new ParseException("unknown label: " + words[2], lineNum);
+            words[2] = labelTranslation;
         }
         if(validateMemoryAddress(words[2])) {
             var numbers = words[2].split("([()])");
@@ -721,7 +730,7 @@ public class Parser {
             program.addInstruction(new LoadableInstruction(codeRegReg, (byte)reg1, (byte)reg2, (short)0));
             return;
         }
-        throw new ParseException("illegal arguments", lineNum);
+        throw new ParseException("illegal arguments: " + words[2], lineNum);
     }
 
     /**
