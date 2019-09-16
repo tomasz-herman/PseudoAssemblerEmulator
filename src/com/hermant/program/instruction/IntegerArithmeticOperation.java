@@ -17,7 +17,7 @@ public interface IntegerArithmeticOperation extends ModifiesFlagsOperation {
         else flags.resetOverflowFlag();
         if((unsigned & 0x100000000L) != 0)flags.setCarryFlag();
         else flags.resetCarryFlag();
-        if((Integer.bitCount((int)signed)&0x1)==0)flags.setParityFlag();
+        if((InstructionUtils.getPopulationCount((int)signed & 0xff) & 0x1)==0)flags.setParityFlag();
         else flags.resetParityFlag();
     }
 
@@ -27,7 +27,7 @@ public interface IntegerArithmeticOperation extends ModifiesFlagsOperation {
         else flags.resetZeroFlag();
         if(a == Integer.MIN_VALUE) flags.setOverflowFlag();
         else flags.resetOverflowFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
+        if((InstructionUtils.getPopulationCount(result & 0xff) & 0x1)==0)flags.setParityFlag();
         else flags.resetParityFlag();
         if((result & 0x80000000) != 0)flags.setSignFlag();
         else flags.resetSignFlag();
@@ -40,7 +40,7 @@ public interface IntegerArithmeticOperation extends ModifiesFlagsOperation {
         else flags.resetZeroFlag();
         if(a == Integer.MAX_VALUE) flags.setOverflowFlag();
         else flags.resetOverflowFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
+        if((InstructionUtils.getPopulationCount(result & 0xff) & 0x1)==0)flags.setParityFlag();
         else flags.resetParityFlag();
         if((result & 0x80000000) != 0)flags.setSignFlag();
         else flags.resetSignFlag();
@@ -111,7 +111,7 @@ public interface IntegerArithmeticOperation extends ModifiesFlagsOperation {
         }
         if(a == Integer.MIN_VALUE) flags.setOverflowFlag();
         else flags.resetOverflowFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
+        if((InstructionUtils.getPopulationCount(result & 0xff) & 0x1)==0)flags.setParityFlag();
         else flags.resetParityFlag();
         if((result & 0x80000000) != 0)flags.setSignFlag();
         else flags.resetSignFlag();

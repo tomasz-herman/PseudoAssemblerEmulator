@@ -9,7 +9,7 @@ public interface LogicalOperation extends ModifiesFlagsOperation {
         else flags.resetSignFlag();
         if(result == 0)flags.setZeroFlag();
         else flags.resetZeroFlag();
-        if((Integer.bitCount(result)&0x1)==0)flags.setParityFlag();
+        if((InstructionUtils.getPopulationCount(result & 0xff) & 0x1)==0)flags.setParityFlag();
         else flags.resetParityFlag();
         flags.resetOverflowFlag();
         flags.resetCarryFlag();

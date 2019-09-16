@@ -17,8 +17,11 @@ public final class InstructionUtils {
     private static final int[] INSTRUCTION_LENGTHS;
     private static final String[] INSTRUCTION_CODES;
 
+    private static final int[] POPULATION_COUNT;
+
     static {
         int BYTES_QUANTITY = 256;
+        POPULATION_COUNT = new int[BYTES_QUANTITY];
         INSTRUCTION_LENGTHS  = new int[BYTES_QUANTITY];
         INSTRUCTION_CODES  = new String[BYTES_QUANTITY];
         INSTRUCTIONS = new Instruction[BYTES_QUANTITY];
@@ -152,12 +155,17 @@ public final class InstructionUtils {
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED & SLEEP] = SleepInstruction::new;
         INSTRUCTION_CONSTRUCTORS[BYTE_TO_UNSIGNED & SLEEP_REGISTER] = SleepRegisterInstruction::new;
         for (int i = 0; i < BYTES_QUANTITY; i++) {
+            POPULATION_COUNT[i] = Integer.bitCount(i);
             if(INSTRUCTION_CONSTRUCTORS[i]==null) continue;
             final Instruction instruction = INSTRUCTION_CONSTRUCTORS[i].get();
             INSTRUCTIONS[i] = instruction;
             INSTRUCTION_LENGTHS[i] = instruction.instLength();
             INSTRUCTION_CODES[i] = instruction.instCode();
         }
+    }
+
+    static int getPopulationCount(int i){
+        return POPULATION_COUNT[i];
     }
 
     public static int getInstructionLength(byte code){
