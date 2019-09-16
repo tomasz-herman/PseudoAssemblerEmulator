@@ -103,15 +103,15 @@ public class Machine {
 
     /**
      * Allocates memory sections that might be used by running program. The sections are:
-     * <p><ul>
+     * <ul>
      * <li>Program section
      * <li>Data section
      * <li>Extra data section
      * <li>Stack section
-     * </ul><p>
+     * </ul>
      * Each section takes {@link Machine#SECTION_SIZE}(65536) bytes of ram.
      * Following registers are set:
-     * <p><ul>
+     * <ul>
      * <li>{@link GeneralPurposeRegister#REMAINDER} is set to 0
      * <li>{@link GeneralPurposeRegister#POINTER} is set to 0
      * <li>{@link GeneralPurposeRegister#PROGRAM_SECTION} is set to address of program section start
@@ -120,7 +120,7 @@ public class Machine {
      * <li>{@link GeneralPurposeRegister#STACK_SECTION} is set to address of stack section start
      * <li>{@link GeneralPurposeRegister#STACK_POINTER} is set to address of stack section start
      * <li>{@link GeneralPurposeRegister#STACK_FRAME_POINTER} is set to address of stack section start
-     * </ul><p>
+     * </ul>
      */
     private void setupRegisterAddresses(){
         Random random = new Random();
@@ -254,12 +254,12 @@ public class Machine {
 
     /**
      * Sets handling of SIGINT. The behaviour is as follows:
-     * <p><ul>
+     * <ul>
      * <li>Execution of program is paused
      * <li>Handler waits for input.
      * <li>If it receives input, execution is resumed.
      * <li>If it receives another SIGINT the execution is stopped.
-     * </ul><p>
+     * </ul>
      */
     private void setDebugSignalHandling(){
         Thread mainThread = Thread.currentThread();
@@ -330,7 +330,7 @@ public class Machine {
     }
 
     /**
-     * @return Machine's Floating Point {@link GeneralPurposeRegister}:{@link Machine#floatingPointRegister}
+     * @return Machine's Floating Point {@link FloatingPointRegister}:{@link Machine#floatingPointRegister}
      */
     public FloatingPointRegister getFPR() {
         return floatingPointRegister;
