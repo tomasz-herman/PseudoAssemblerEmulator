@@ -9,7 +9,7 @@ TEN:        DC      INTEGER(10)
 MAIN:
             XOR     1, 1
 CLOCK:
-            HLT
+            HALT
             TIME    0
             ADD     0, UTC
             DIV     0, DAY

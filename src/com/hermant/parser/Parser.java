@@ -48,10 +48,10 @@ public class Parser {
     private static final String LOAD_INTEGER_AS_FLOAT = "FILD";
     private static final String STORE_FLOAT_AS_INTEGER = "FIST";
     private static final String RANDOM = "RND";
-    private static final String HALT = "HLT";
+    private static final String HALT = "HALT";
     private static final String TIME = "TIME";
     private static final String INPUT = "IN";
-    private static final String SLEEP = "SLP";
+    private static final String SLEEP = "SLEEP";
 
     private static final String PUSH = "PUSH";
     private static final String PUSH_FLOAT = "FPUSH";
