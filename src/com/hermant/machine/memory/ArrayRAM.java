@@ -1,4 +1,4 @@
-package com.hermant.machine.ram;
+package com.hermant.machine.memory;
 
 import java.util.Random;
 

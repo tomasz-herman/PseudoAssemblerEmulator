@@ -1,6 +1,6 @@
 package com.hermant.machine;
 
-import com.hermant.machine.ram.RandomAccessMemory;
+import com.hermant.machine.memory.RandomAccessMemory;
 import com.hermant.machine.register.GeneralPurposeRegister;
 
 import java.util.stream.Collectors;

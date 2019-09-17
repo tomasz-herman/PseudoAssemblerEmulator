@@ -1,6 +1,6 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.ram.RandomAccessMemory;
+import com.hermant.machine.memory.RandomAccessMemory;
 import com.hermant.machine.register.FloatingPointRegister;
 import com.hermant.machine.register.GeneralPurposeRegister;
 

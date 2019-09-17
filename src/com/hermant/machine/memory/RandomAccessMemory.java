@@ -1,6 +1,6 @@
-package com.hermant.machine.ram;
+package com.hermant.machine.memory;
 
-public abstract class RandomAccessMemory {
+public abstract class RandomAccessMemory implements Memory{
 
     private Endianness endianness;
 

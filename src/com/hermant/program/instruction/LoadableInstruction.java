@@ -1,7 +1,7 @@
 package com.hermant.program.instruction;
 
 import com.hermant.machine.*;
-import com.hermant.machine.ram.RandomAccessMemory;
+import com.hermant.machine.memory.RandomAccessMemory;
 import com.hermant.serializer.Serializable;
 
 public class LoadableInstruction extends Instruction implements Serializable {

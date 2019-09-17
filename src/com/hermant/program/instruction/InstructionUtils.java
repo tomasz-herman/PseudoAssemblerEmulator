@@ -1,6 +1,6 @@
 package com.hermant.program.instruction;
 
-import com.hermant.machine.ram.RandomAccessMemory;
+import com.hermant.machine.memory.Memory;
 
 import static com.hermant.program.instruction.Instruction.*;
 
@@ -185,30 +185,30 @@ public final class InstructionUtils {
         return INSTRUCTIONS[code & BYTE_TO_UNSIGNED];
     }
 
-    public static Instruction fetchInstruction(RandomAccessMemory ram, int address){
-        final int code = BYTE_TO_UNSIGNED & ram.getByte(address++);
+    public static Instruction fetchInstruction(Memory memory, int address){
+        final int code = BYTE_TO_UNSIGNED & memory.getByte(address++);
         final Instruction instruction = INSTRUCTIONS[code];
         if(instruction == null)
             throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",(byte)code));
-        final byte reg = ram.getByte(address++);
+        final byte reg = memory.getByte(address++);
         instruction.reg1 = (byte)(reg>>4&0xf);
         instruction.reg2 = (byte)(reg&0xf);
         if(INSTRUCTION_LENGTHS[code] == 4)
-            instruction.ramOffset = ram.getShort(address);
+            instruction.ramOffset = memory.getShort(address);
         return instruction;
     }
 
-    public static Instruction fetchNewInstruction(RandomAccessMemory ram, int address){
-        final int code = BYTE_TO_UNSIGNED & ram.getByte(address++);
+    public static Instruction fetchNewInstruction(Memory memory, int address){
+        final int code = BYTE_TO_UNSIGNED & memory.getByte(address++);
         final Supplier constructor = INSTRUCTION_CONSTRUCTORS[code];
         if(constructor == null)
             throw new IllegalStateException("Unrecognizable instruction code: " + String.format("%1$02X",(byte)code));
         final Instruction instruction = constructor.get();
-        final byte reg = ram.getByte(address++);
+        final byte reg = memory.getByte(address++);
         instruction.reg1 = (byte)(reg>>4&0xf);
         instruction.reg2 = (byte)(reg&0xf);
         if(INSTRUCTION_LENGTHS[code] == 4)
-            instruction.ramOffset = ram.getShort(address);
+            instruction.ramOffset = memory.getShort(address);
         return instruction;
     }
 }

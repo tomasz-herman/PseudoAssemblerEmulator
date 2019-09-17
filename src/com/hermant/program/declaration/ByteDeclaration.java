@@ -1,6 +1,6 @@
 package com.hermant.program.declaration;
 
-import com.hermant.machine.ram.RandomAccessMemory;
+import com.hermant.machine.memory.RandomAccessMemory;
 import com.hermant.serializer.Serializer;
 
 public class ByteDeclaration implements Declaration<Byte>{

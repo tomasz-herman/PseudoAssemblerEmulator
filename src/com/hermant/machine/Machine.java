@@ -1,6 +1,6 @@
 package com.hermant.machine;
 
-import com.hermant.machine.ram.*;
+import com.hermant.machine.memory.*;
 import com.hermant.machine.register.*;
 import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionUtils;
