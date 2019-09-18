@@ -74,7 +74,7 @@ EQUALITY:
 
 
 GENERATE_NUMBER:
-                RND     1
+                RAND    1
                 DIV     1, 0
                 LD      1, 8
                 INC     1

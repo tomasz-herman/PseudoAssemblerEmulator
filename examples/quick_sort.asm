@@ -35,8 +35,8 @@ INIT_TAB:
             PUSH    1
             LD      4, 3
             SUB     4, 2
-L1:         RND     5
-            DIV    5, 4
+L1:         RAND    5
+            DIV     5, 4
             LD      5, 8
             ADD     5, 2
             ST      5, 0(0)

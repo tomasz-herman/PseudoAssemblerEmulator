@@ -37,7 +37,7 @@ INIT_TAB:
         DIV     1, 2
         LDA     2, WEKTOR
         XOR     3, 3
-NEXT:   RND     4
+NEXT:   RAND    4
         DIV     4, 0
         LD      4, 8
         SUB     4, STO

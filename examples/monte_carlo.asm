@@ -109,7 +109,7 @@ RANDOM_POINT:
 ;ZWRACA:
 ;REJESTR F0 - LICZBA Z PRZEDZIAŁU <0,1)
 RANDOM_FLOAT:
-                RND     0
+                RAND    0
                 AND     0, RANDOM_MASK
                 PUSH    0
                 FPOP    0
