@@ -221,7 +221,7 @@ public class Parser {
         tokens.put(RIGHT_SHIFT_LOGICAL, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_SHIFT_LOGICAL, Instruction.RIGHT_SHIFT_LOGICAL_REGISTER, words, labels, program, lineNum));
         tokens.put(LEFT_SHIFT_LOGICAL, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LEFT_SHIFT_LOGICAL, Instruction.LEFT_SHIFT_LOGICAL_REGISTER, words, labels, program, lineNum));
         tokens.put(RIGHT_SHIFT_ARITHMETIC, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_SHIFT_ARITHMETIC, Instruction.RIGHT_SHIFT_ARITHMETIC_REGISTER, words, labels, program, lineNum));
-        tokens.put(LEFT_SHIFT_ARITHMETIC, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LEFT_SHIFT_ARITHMETIC, Instruction.LEFT_SHIFT_ARITHMETIC_REGISTER, words, labels, program, lineNum));
+        tokens.put(LEFT_SHIFT_ARITHMETIC, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LEFT_SHIFT_LOGICAL, Instruction.LEFT_SHIFT_LOGICAL_REGISTER, words, labels, program, lineNum));
         tokens.put(RIGHT_ROTATE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.RIGHT_ROTATE, Instruction.RIGHT_ROTATE_REGISTER, words, labels, program, lineNum));
         tokens.put(LEFT_ROTATE, (words, labels, program, lineNum) -> loadRegMemOrRegRegInstruction(Instruction.LEFT_ROTATE, Instruction.LEFT_ROTATE_REGISTER, words, labels, program, lineNum));
         tokens.put(JUMP, (words, labels, program, lineNum) -> loadMemInstruction(Instruction.JUMP, words, labels, program, lineNum));

@@ -109,7 +109,6 @@ public abstract class Instruction {
     public static final byte RIGHT_SHIFT_LOGICAL = (byte)-45;
     public static final byte LEFT_SHIFT_LOGICAL = (byte)-46;
     public static final byte RIGHT_SHIFT_ARITHMETIC = (byte)-47;
-    public static final byte LEFT_SHIFT_ARITHMETIC = (byte)-48;
     public static final byte RIGHT_ROTATE = (byte)-49;
     public static final byte LEFT_ROTATE = (byte)-50;
     public static final byte AND_REGISTER = (byte)50;
@@ -120,7 +119,6 @@ public abstract class Instruction {
     public static final byte RIGHT_SHIFT_LOGICAL_REGISTER = (byte)55;
     public static final byte LEFT_SHIFT_LOGICAL_REGISTER = (byte)56;
     public static final byte RIGHT_SHIFT_ARITHMETIC_REGISTER = (byte)57;
-    public static final byte LEFT_SHIFT_ARITHMETIC_REGISTER = (byte)58;
     public static final byte RIGHT_ROTATE_REGISTER = (byte)59;
     public static final byte LEFT_ROTATE_REGISTER = (byte)60;
 
