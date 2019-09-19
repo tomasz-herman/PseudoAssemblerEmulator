@@ -750,17 +750,14 @@ public class Parser {
      * @return output string line with comments removed.
      */
     private static String removeComment(String s){
-        while(s.replaceAll("((?<![\\\\])['\"])((?:.(?!(?<![\\\\])\\1))*.?)\\1", "").contains(";")){
-            StringBuilder sb = new StringBuilder();
-            sb.append(s);
-            sb = sb.reverse();
-            s = sb.toString();
-            s = s.replaceFirst("[^;]*;", "");
-            sb = new StringBuilder();
-            sb.append(s);
-            sb = sb.reverse();
-            s = sb.toString();
+        int comment = -1;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(c == ';') { comment = i; break; }
+            else if(c == '\'') { for (i++; i < s.length(); i++) if (s.charAt(i) == '\'') break; }
+            else if(c == '\"') { for (i++; i < s.length(); i++) if (s.charAt(i) == '\"') break; }
         }
+        if(comment != -1) s = s.substring(0, comment);
         return s;
     }
 
