@@ -554,6 +554,8 @@ public class Parser {
     }
 
     private static int getDeclarationSize(String declaration, int lineNum) throws ParseException {
+        if(!(validateDeclaringSpace(declaration) || validateDeclaringConstant(declaration)))
+            throw new ParseException("Illegal declaration: " + declaration, lineNum);
         if(declaration.startsWith(INTEGER) || declaration.startsWith(FLOAT))return 4;
         else if(declaration.startsWith(BYTE) || declaration.startsWith(CHAR))return 1;
         else if(declaration.startsWith(STRING)){
@@ -754,8 +756,11 @@ public class Parser {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if(c == ';') { comment = i; break; }
-            else if(c == '\'') { for (i++; i < s.length(); i++) if (s.charAt(i) == '\'') break; }
-            else if(c == '\"') { for (i++; i < s.length(); i++) if (s.charAt(i) == '\"') break; }
+            else if(c == '\'' || c == '\"') for (i++; i < s.length(); i++) {
+                char ignored = s.charAt(i);
+                if (ignored == '\\') i++;
+                else if (ignored == c) break;
+            }
         }
         if(comment != -1) s = s.substring(0, comment);
         return s;
