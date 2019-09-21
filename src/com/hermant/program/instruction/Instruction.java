@@ -160,7 +160,8 @@ public abstract class Instruction {
     public final void debug(Machine m){
         System.out.print(String.format("%1$08X",m.getInstructionPointer().get()) + " | " + this);
         final boolean output = this instanceof OutputOperation;
-        if (!(output)) System.out.println();
+        final boolean modifiesFlags = this instanceof ModifiesFlagsOperation;
+        if (!(output || modifiesFlags)) System.out.println();
         run(m);
         if(output) System.out.println();
         if(this instanceof ModifiesFlagsOperation) System.out.println(m.getFlagsRegister());
