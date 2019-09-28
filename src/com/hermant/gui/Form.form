@@ -9,7 +9,7 @@
     <border type="none"/>
     <children>
       <grid id="ce918" binding="secondary" layout-manager="GridLayoutManager" row-count="12" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="2" left="2" bottom="2" right="2"/>
+        <margin top="8" left="0" bottom="2" right="8"/>
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <minimum-size width="100" height="-1"/>
@@ -24,6 +24,7 @@
             </constraints>
             <properties>
               <text value="Select Input File"/>
+              <toolTipText value="specifing input file is mandatory."/>
             </properties>
           </component>
           <component id="368a2" class="javax.swing.JButton" binding="run_button">
@@ -32,6 +33,7 @@
             </constraints>
             <properties>
               <text value="Run"/>
+              <toolTipText value="start your program."/>
             </properties>
           </component>
           <component id="d6ea7" class="javax.swing.JCheckBox" binding="unsafeCheckBox" default-binding="true">
@@ -40,6 +42,7 @@
             </constraints>
             <properties>
               <text value="Unsafe"/>
+              <toolTipText value="If machine can access memory, that doesn't belong to it."/>
             </properties>
           </component>
           <component id="8b048" class="javax.swing.JCheckBox" binding="abandonCheckBox" default-binding="true">
@@ -48,6 +51,7 @@
             </constraints>
             <properties>
               <text value="Abandon"/>
+              <toolTipText value="If the program should not run."/>
             </properties>
           </component>
           <component id="56bae" class="javax.swing.JCheckBox" binding="binaryCheckBox" default-binding="true">
@@ -56,6 +60,7 @@
             </constraints>
             <properties>
               <text value="Binary"/>
+              <toolTipText value="If input is a binary file."/>
             </properties>
           </component>
           <component id="8acfd" class="javax.swing.JSlider" binding="sleep_slider">
@@ -70,6 +75,7 @@
               <paintLabels value="false"/>
               <paintTicks value="true"/>
               <paintTrack value="true"/>
+              <toolTipText value="slide to setup the number of milliseconds to sleep in between commands."/>
               <value value="0"/>
               <valueIsAdjusting value="false"/>
             </properties>
@@ -80,28 +86,41 @@
             </constraints>
             <properties>
               <text value="Select Output File"/>
+              <toolTipText value="specifing output file is optional."/>
             </properties>
           </component>
           <component id="b194e" class="javax.swing.JComboBox" binding="routine">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <toolTipText value="setup routine for your program."/>
+            </properties>
           </component>
           <component id="65aaf" class="javax.swing.JLabel" binding="input">
             <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <minimum-size width="100" height="-1"/>
+                <preferred-size width="100" height="-1"/>
+                <maximum-size width="100" height="-1"/>
+              </grid>
             </constraints>
             <properties>
-              <text value="Input File"/>
+              <horizontalAlignment value="10"/>
+              <text value=""/>
+              <toolTipText value="specified input file"/>
             </properties>
           </component>
           <component id="d177f" class="javax.swing.JLabel" binding="output">
             <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="100" height="-1"/>
+                <maximum-size width="100" height="-1"/>
+              </grid>
             </constraints>
             <properties>
-              <text value="Output File"/>
+              <text value=""/>
+              <toolTipText value="specified output file"/>
             </properties>
           </component>
           <vspacer id="1f930">
@@ -115,6 +134,7 @@
             </constraints>
             <properties>
               <text value="Sleep:0"/>
+              <toolTipText value="amount in milliseconds to sleep."/>
             </properties>
           </component>
         </children>
