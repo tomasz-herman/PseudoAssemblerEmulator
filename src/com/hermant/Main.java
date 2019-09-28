@@ -1,6 +1,8 @@
 package com.hermant;
 
 import com.hermant.cli.*;
+import com.hermant.gui.Form;
+import com.hermant.gui.Window;
 import com.hermant.machine.Machine;
 import com.hermant.parser.Parser;
 import com.hermant.program.Program;
@@ -9,6 +11,9 @@ import com.hermant.serializer.Serializer;
 public class Main {
 
     public static void main(String[] args) {
+        Window window;
+        if(args.length == 0) window = new Window();
+
         Options options = ArgsParser.parse(args);
         if(options.version())Version.print();
         if(options.help()) Help.printUsage();
