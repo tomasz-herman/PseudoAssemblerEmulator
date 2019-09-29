@@ -13,7 +13,7 @@ public class HaltInstruction extends Instruction {
     @Override
     public final void run(Machine m) {
         setInstructionPointer(m.getInstructionPointer());
-        FileInputStream in = new FileInputStream(FileDescriptor.in);
+        InputStream in = System.in;
         try {
             int i = -1;
             while(i != 10)
