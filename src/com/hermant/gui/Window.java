@@ -4,10 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Window {
-    private Form form;
     public Window(){
         JFrame frame = new JFrame("gui");
-        form = new Form();
+        Form form = new Form();
         frame.setContentPane(form.getMain());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -15,9 +14,5 @@ public class Window {
         frame.setMinimumSize(new Dimension(640, 480));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    public Form getForm(){
-        return form;
     }
 }

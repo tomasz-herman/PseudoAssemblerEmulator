@@ -6,11 +6,7 @@ import com.hermant.program.Program;
 import com.hermant.serializer.Serializer;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -26,12 +22,10 @@ public class Form {
     private JSlider sleep_slider;
     private JButton selectOutputFileButton;
     private JPanel main;
-    private JPanel secondary;
     private JComboBox<Combo> routine;
     private JLabel input;
     private JLabel output;
     private JLabel sleep;
-
     private JFileChooser inputChooser;
     private JFileChooser outputChooser;
     private JScrollPane scroll;
@@ -60,17 +54,25 @@ public class Form {
         );
         JTextArea terminal = new JTextArea();
         disableArrowKeys(terminal.getInputMap());
-        terminal.setFont(new Font("Monospace", Font.BOLD, 18));
+        terminal.setFont(new Font("DejaVu Sans Mono", Font.PLAIN, 20));
         scroll.setViewportView(terminal);
         routine.addItem(new Combo(0, "Run"));
         routine.addItem(new Combo(1, "Debug"));
         routine.addActionListener(e -> run_button.setText(Objects.requireNonNull(routine.getSelectedItem()).toString()));
 
+        CustomInputStream streamer = new CustomInputStream();
+        terminal.addKeyListener(streamer);
+        System.setIn(streamer);
+        CustomOutputStream outputStream = new CustomOutputStream(terminal);
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+
         run_button.addActionListener(e -> {
             Thread t = new Thread(() -> {
                 running = true;
                 terminal.setText("");
-                run_button.setEnabled(false);
+                outputStream.reset();
+                setControlsEnabled(false);
                 boolean unsafe = unsafeCheckBox.isSelected();
                 boolean abandon = abandonCheckBox.isSelected();
                 boolean binary = binaryCheckBox.isSelected();
@@ -78,35 +80,43 @@ public class Form {
                 int sleep = sleep_slider.getValue() * 10;
                 String inputFile = input.getText();
                 String outputFile = output.getText();
-                if(inputFile.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "You must provide input file!");
-                } else {
+                if(debug && sleep == 0)
+                    JOptionPane.showMessageDialog(null, "Debugging without sleep is not recommended!");
+                if(inputFile.isEmpty()) JOptionPane.showMessageDialog(null, "You must provide input file!");
+                else {
                     Program program = binary ?
                             Serializer.deserializeBinary(inputFile) : Parser.parse(inputFile);
                     if(!outputFile.isEmpty()) Serializer.serializeProgram(program, outputFile);
-                    if(abandon)System.exit(0);
                     Machine m = new Machine(debug, unsafe);
                     m.loadProgram(program);
-                    m.runProgram(sleep);
+                    if(!abandon) m.runProgram(sleep);
                     m.free();
                 }
-                run_button.setEnabled(true);
+                setControlsEnabled(true);
                 running = false;
             });
             if(!running)
                 t.start();
             else JOptionPane.showMessageDialog(null, "Some program is already running!");
         });
-        TextFieldStreamer streamer = new TextFieldStreamer();
-        terminal.addKeyListener(streamer);
-        System.setIn(streamer);
-        PrintStream printStream = new PrintStream(new CustomOutputStream(terminal));
-        System.setOut(printStream);
-        terminal.getDocument().addDocumentListener(new LimitLinesDocumentListener(256));
+    }
+
+    private void setControlsEnabled(boolean enable){
+        run_button.setEnabled(enable);
+        sleep_slider.setEnabled(enable);
+        select_input.setEnabled(enable);
+        selectOutputFileButton.setEnabled(enable);
+        input.setEnabled(enable);
+        output.setEnabled(enable);
+        routine.setEnabled(enable);
+        sleep.setEnabled(enable);
+        abandonCheckBox.setEnabled(enable);
+        binaryCheckBox.setEnabled(enable);
+        unsafeCheckBox.setEnabled(enable);
     }
 
     private void disableArrowKeys(InputMap inputMap) {
-        String[] keys = {"UP", "DOWN", "LEFT", "RIGHT", "HOME"};
+        String[] keys = {"UP", "DOWN", "LEFT", "RIGHT", "HOME", "ENTER"};
         for (String key : keys) {
             inputMap.put(KeyStroke.getKeyStroke(key), "none");
         }
@@ -139,29 +149,43 @@ public class Form {
 
         private JTextArea area;
         private StringBuilder line = new StringBuilder();
+        private int lines = 0;
+        private static final int MAX_LINES = 32000;
+        private static final int TRUNK = 4000;
 
         CustomOutputStream(JTextArea area) {
             this.area = area;
+        }
+
+        void reset(){
+            lines = 0;
         }
 
         @Override
         public void write(int b) {
             line.append((char)b);
             if(b==10){
+                if(lines > MAX_LINES) try {
+                    area.replaceRange("", 0, area.getLineEndOffset(TRUNK - 1));
+                    lines -= TRUNK;
+                } catch (BadLocationException e){
+                    e.printStackTrace();
+                }
                 area.append(line.toString());
                 area.setCaretPosition(area.getDocument().getLength());
                 line = new StringBuilder();
+                lines++;
             }
         }
     }
 
-    static class TextFieldStreamer extends InputStream implements KeyListener {
+    static class CustomInputStream extends InputStream implements KeyListener {
 
         private String str = "";
         private StringBuilder buffer = new StringBuilder();
         private int pos = 0;
 
-        TextFieldStreamer() {
+        CustomInputStream() {
         }
 
         @Override
@@ -203,8 +227,8 @@ public class Form {
         @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                System.err.println(buffer);
                 pos = 0;
+                System.out.print('\n');
                 buffer.append('\n');
                 str = buffer.toString();
                 buffer = new StringBuilder();
@@ -225,123 +249,6 @@ public class Form {
         @Override
         public void keyReleased(KeyEvent e) {
 
-        }
-    }
-
-    public static class LimitLinesDocumentListener implements DocumentListener
-    {
-        private int maximumLines;
-        private boolean isRemoveFromStart;
-
-        /*
-         *  Specify the number of lines to be stored in the Document.
-         *  Extra lines will be removed from the start of the Document.
-         */
-        LimitLinesDocumentListener(int maximumLines)
-        {
-            this(maximumLines, true);
-        }
-
-        /*
-         *  Specify the number of lines to be stored in the Document.
-         *  Extra lines will be removed from the start or end of the Document,
-         *  depending on the boolean value specified.
-         */
-        LimitLinesDocumentListener(int maximumLines, boolean isRemoveFromStart)
-        {
-            setLimitLines(maximumLines);
-            this.isRemoveFromStart = isRemoveFromStart;
-        }
-
-        /*
-         *  Set the maximum number of lines to be stored in the Document
-         */
-        void setLimitLines(int maximumLines)
-        {
-            if (maximumLines < 1)
-            {
-                String message = "Maximum lines must be greater than 0";
-                throw new IllegalArgumentException(message);
-            }
-
-            this.maximumLines = maximumLines;
-        }
-
-        //  Handle insertion of new text into the Document
-
-        public void insertUpdate(final DocumentEvent e)
-        {
-            //  Changes to the Document can not be done within the listener
-            //  so we need to add the processing to the end of the EDT
-
-            SwingUtilities.invokeLater(() -> removeLines(e));
-        }
-
-        public void removeUpdate(DocumentEvent e) {}
-        public void changedUpdate(DocumentEvent e) {}
-
-        /*
-         *  Remove lines from the Document when necessary
-         */
-        private void removeLines(DocumentEvent e)
-        {
-            //  The root Element of the Document will tell us the total number
-            //  of line in the Document.
-
-            Document document = e.getDocument();
-            Element root = document.getDefaultRootElement();
-
-            while (root.getElementCount() > maximumLines)
-            {
-                if (isRemoveFromStart)
-                {
-                    removeFromStart(document, root);
-                }
-                else
-                {
-                    removeFromEnd(document, root);
-                }
-            }
-        }
-
-        /*
-         *  Remove lines from the start of the Document
-         */
-        private void removeFromStart(Document document, Element root)
-        {
-            Element line = root.getElement(0);
-            int end = line.getEndOffset();
-
-            try
-            {
-                document.remove(0, end);
-            }
-            catch(BadLocationException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        /*
-         *  Remove lines from the end of the Document
-         */
-        private void removeFromEnd(Document document, Element root)
-        {
-            //  We use start minus 1 to make sure we remove the newline
-            //  character of the previous line
-
-            Element line = root.getElement(root.getElementCount() - 1);
-            int start = line.getStartOffset();
-            int end = line.getEndOffset();
-
-            try
-            {
-                document.remove(start - 1, end - start);
-            }
-            catch(BadLocationException e)
-            {
-                e.printStackTrace();
-            }
         }
     }
 }
