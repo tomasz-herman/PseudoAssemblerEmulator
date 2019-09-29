@@ -14,5 +14,6 @@ Also many functions was simplified for easier use, got more obvious names and in
 # How to use?
 Since program was designed for beginner programmers helper scripts was provided to make easier access to it's functionality.
 Java 12+ is required to run emulator.
-On Windows double-click run.bat to run a program or debug.bat to debug a program.
-On Linux/MacOS run run.sh/debug.sh in terminal to get started(remember to make it executable).
+Since version 3.1.0 graphical interface is provided.
+On Windows double-click run.bat to run a program or debug.bat to debug or gui.bat to run emulator in graphical mode.
+On Linux/MacOS/Windows(with bash installed) run run.sh/debug.sh/gui.sh in terminal to get started(remember to make it executable).

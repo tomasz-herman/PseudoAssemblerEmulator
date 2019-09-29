@@ -482,15 +482,8 @@ public class Parser {
         public abstract Declaration create(int count, String value);
     }
 
-    public static Program parse(String path){
-        Program program = new Program();
-        try {
-            program = parse(path, analyzeLabels(path));
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return program;
+    public static Program parse(String path) throws IOException, ParseException {
+        return parse(path, analyzeLabels(path));
     }
 
     private static Program parse(String path, Map<String, String> labelMemoryTranslation) throws ParseException, IOException {

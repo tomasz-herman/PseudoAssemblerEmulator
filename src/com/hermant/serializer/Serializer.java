@@ -78,39 +78,30 @@ public class Serializer {
         abstract Declaration deserialize(ByteBuffer buffer);
     }
 
-    public static Program deserializeBinary(String path){
+    public static Program deserializeBinary(String path) throws IOException, SerializationException, BufferUnderflowException {
         Program program = new Program();
-        try {
-            byte[] bytes = Files.readAllBytes(Paths.get(path));
-            ByteBuffer buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-            if(buffer.remaining() < 2)throw new SerializationException("File is too small.");
-            int declarations = Short.toUnsignedInt(buffer.getShort());
-            int maxDeclarationType = DeclarationType.values().length - 1;
-            while(declarations > 0 && buffer.hasRemaining()){
-                int typeIndex = buffer.get();
-                if(typeIndex > maxDeclarationType || typeIndex < 0)
-                    throw new SerializationException("invalid internal structure");
-                DeclarationType type = DeclarationType.values()[typeIndex];
-                program.addDeclaration(type.deserialize(buffer));
-                declarations--;
-            }
-            if(declarations > 0) throw new SerializationException("invalid internal structure");
-            while(buffer.hasRemaining()){
-                program.addInstruction(deserializeInstruction(buffer));
-            }
-        } catch (IOException | SerializationException | BufferUnderflowException e) {
-            e.printStackTrace();
-            System.exit(1);
+        byte[] bytes = Files.readAllBytes(Paths.get(path));
+        ByteBuffer buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
+        if(buffer.remaining() < 2)throw new SerializationException("File is too small.");
+        int declarations = Short.toUnsignedInt(buffer.getShort());
+        int maxDeclarationType = DeclarationType.values().length - 1;
+        while(declarations > 0 && buffer.hasRemaining()){
+            int typeIndex = buffer.get();
+            if(typeIndex > maxDeclarationType || typeIndex < 0)
+                throw new SerializationException("invalid internal structure");
+            DeclarationType type = DeclarationType.values()[typeIndex];
+            program.addDeclaration(type.deserialize(buffer));
+            declarations--;
+        }
+        if(declarations > 0) throw new SerializationException("invalid internal structure");
+        while(buffer.hasRemaining()){
+            program.addInstruction(deserializeInstruction(buffer));
         }
         return program;
     }
 
-    public static void serializeProgram(Program program, String path){
-        try {
-            Files.write(Paths.get(path), program.serialize());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void serializeProgram(Program program, String path) throws IOException {
+        Files.write(Paths.get(path), program.serialize());
     }
 
     private static LoadableInstruction deserializeInstruction(ByteBuffer buffer){

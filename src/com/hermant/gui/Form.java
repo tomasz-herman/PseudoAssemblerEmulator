@@ -1,8 +1,10 @@
 package com.hermant.gui;
 
 import com.hermant.machine.Machine;
+import com.hermant.parser.ParseException;
 import com.hermant.parser.Parser;
 import com.hermant.program.Program;
+import com.hermant.serializer.SerializationException;
 import com.hermant.serializer.Serializer;
 
 import javax.swing.*;
@@ -40,6 +42,7 @@ public class Form {
             if(returnVal == JFileChooser.APPROVE_OPTION){
                 File file = inputChooser.getSelectedFile();
                 input.setText(file.getPath());
+                input.setToolTipText(file.getPath());
             }
         });
         selectOutputFileButton.addActionListener(e -> {
@@ -47,6 +50,7 @@ public class Form {
             if(returnVal == JFileChooser.APPROVE_OPTION){
                 File file = outputChooser.getSelectedFile();
                 output.setText(file.getPath());
+                output.setToolTipText(file.getPath());
             }
         });
         sleep_slider.addChangeListener(
@@ -60,18 +64,20 @@ public class Form {
         routine.addItem(new Combo(1, "Debug"));
         routine.addActionListener(e -> run_button.setText(Objects.requireNonNull(routine.getSelectedItem()).toString()));
 
-        CustomInputStream streamer = new CustomInputStream();
-        terminal.addKeyListener(streamer);
-        System.setIn(streamer);
+        CustomInputStream inputStream = new CustomInputStream();
+        terminal.addKeyListener(inputStream);
+        System.setIn(inputStream);
         CustomOutputStream outputStream = new CustomOutputStream(terminal);
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
+        System.setErr(printStream);
 
         run_button.addActionListener(e -> {
             Thread t = new Thread(() -> {
                 running = true;
                 terminal.setText("");
                 outputStream.reset();
+                inputStream.reset();
                 setControlsEnabled(false);
                 boolean unsafe = unsafeCheckBox.isSelected();
                 boolean abandon = abandonCheckBox.isSelected();
@@ -80,16 +86,42 @@ public class Form {
                 int sleep = sleep_slider.getValue() * 10;
                 String inputFile = input.getText();
                 String outputFile = output.getText();
-                if(debug && sleep == 0)
-                    JOptionPane.showMessageDialog(null, "Debugging without sleep is not recommended!");
+                int warning = JOptionPane.OK_OPTION;
+                if(!abandon && debug && sleep == 0)
+                    warning = JOptionPane.showConfirmDialog(null,
+                            "Debugging without sleep is not recommended!\n Continue?",
+                            "Confirm", JOptionPane.YES_NO_OPTION);
+                if(warning == JOptionPane.NO_OPTION){
+                    setControlsEnabled(true);
+                    running = false;
+                    return;
+                }
                 if(inputFile.isEmpty()) JOptionPane.showMessageDialog(null, "You must provide input file!");
                 else {
-                    Program program = binary ?
-                            Serializer.deserializeBinary(inputFile) : Parser.parse(inputFile);
-                    if(!outputFile.isEmpty()) Serializer.serializeProgram(program, outputFile);
+                    Program program;
+                    try {
+                        program = binary ?
+                                Serializer.deserializeBinary(inputFile) : Parser.parse(inputFile);
+                    } catch (IOException | SerializationException | ParseException ex) {
+                        ex.printStackTrace();
+                        setControlsEnabled(true);
+                        running = false;
+                        return;
+                    }
+                    if(!outputFile.isEmpty()) {
+                        try {
+                            Serializer.serializeProgram(program, outputFile);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
                     Machine m = new Machine(debug, unsafe);
                     m.loadProgram(program);
-                    if(!abandon) m.runProgram(sleep);
+                    if(!abandon)
+                        try { m.runProgram(sleep); }
+                        catch (Exception ex){
+                            ex.printStackTrace();
+                        }
                     m.free();
                 }
                 setControlsEnabled(true);
@@ -185,7 +217,10 @@ public class Form {
         private StringBuilder buffer = new StringBuilder();
         private int pos = 0;
 
-        CustomInputStream() {
+        public void reset(){
+            str = "";
+            pos = 0;
+            buffer = new StringBuilder();
         }
 
         @Override

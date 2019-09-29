@@ -1,11 +1,13 @@
 package com.hermant.gui;
 
+import com.hermant.cli.Version;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Window {
     public Window(){
-        JFrame frame = new JFrame("gui");
+        JFrame frame = new JFrame(Version.getFull());
         Form form = new Form();
         frame.setContentPane(form.getMain());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
