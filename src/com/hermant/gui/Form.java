@@ -90,16 +90,6 @@ public class Form {
                 int sleep = sleep_slider.getValue() * sleep_slider.getValue();
                 String inputFile = input.getText();
                 String outputFile = output.getText();
-                int warning = JOptionPane.OK_OPTION;
-                if(!abandon && debug && sleep == 0)
-                    warning = JOptionPane.showConfirmDialog(null,
-                            "Debugging without sleep is not recommended!\n Continue?",
-                            "Confirm", JOptionPane.YES_NO_OPTION);
-                if(warning == JOptionPane.NO_OPTION){
-                    setControlsEnabled(true);
-                    running = false;
-                    return;
-                }
                 if(inputFile.isEmpty()) JOptionPane.showMessageDialog(null, "You must provide input file!");
                 else {
                     Program program;
@@ -286,9 +276,7 @@ public class Form {
         }
 
         @Override
-        public void keyTyped(KeyEvent e) {
-
-        }
+        public void keyTyped(KeyEvent e) { }
 
         @Override
         public void keyPressed(KeyEvent e) {
@@ -308,18 +296,12 @@ public class Form {
                 Signal.raise(new Signal("INT"));
             } else {
                 char c = e.getKeyChar();
-                if(c >= 32 && c < 127) {
-                    buffer.append(c);
-                    System.out.print(c);
-                    System.out.flush();
-                }
+                if(c >= 32 && c < 127) buffer.append(c);
             }
 
         }
 
         @Override
-        public void keyReleased(KeyEvent e) {
-
-        }
+        public void keyReleased(KeyEvent e) { }
     }
 }
