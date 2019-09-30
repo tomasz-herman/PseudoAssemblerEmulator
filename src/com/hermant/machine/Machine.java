@@ -6,9 +6,7 @@ import com.hermant.program.Program;
 import com.hermant.program.instruction.InstructionUtils;
 import sun.misc.Signal;
 
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -271,7 +269,7 @@ public class Machine {
                 mainThread.interrupt();
                 stop();
             });
-            FileInputStream in = new FileInputStream(FileDescriptor.in);
+            InputStream in = System.in;
             try {
                 int i = -1;
                 while(i != 10)

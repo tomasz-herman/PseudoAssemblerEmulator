@@ -6,6 +6,7 @@ import com.hermant.parser.Parser;
 import com.hermant.program.Program;
 import com.hermant.serializer.SerializationException;
 import com.hermant.serializer.Serializer;
+import sun.misc.Signal;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -72,6 +73,8 @@ public class Form {
         System.setOut(printStream);
         System.setErr(printStream);
 
+        setSignalHandling();
+
         run_button.addActionListener(e -> {
             Thread t = new Thread(() -> {
                 running = true;
@@ -124,6 +127,8 @@ public class Form {
                         }
                     m.free();
                 }
+                outputStream.flush();
+                setSignalHandling();
                 setControlsEnabled(true);
                 running = false;
             });
@@ -131,6 +136,10 @@ public class Form {
                 t.start();
             else JOptionPane.showMessageDialog(null, "Some program is already running!");
         });
+    }
+
+    private void setSignalHandling(){
+        Signal.handle(new Signal("INT"), sig -> {});
     }
 
     private void setControlsEnabled(boolean enable){
@@ -212,6 +221,23 @@ public class Form {
                 lines++;
             }
         }
+
+        @Override
+        public void flush() {
+            try {
+                if(lines > MAX_LINES) {
+                    area.replaceRange("", 0, area.getLineEndOffset(TRUNK - 1));
+                    lines -= TRUNK;
+                    Thread.sleep(1);
+                } else if((lines & 0xff) == 0)Thread.sleep(0, 1);
+            } catch (BadLocationException | InterruptedException e){
+                e.printStackTrace();
+            }
+            area.append(line.toString());
+            area.setCaretPosition(area.getDocument().getLength());
+            line = new StringBuilder();
+            lines++;
+        }
     }
 
     static class CustomInputStream extends InputStream implements KeyListener {
@@ -276,6 +302,8 @@ public class Form {
             } else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                 if(buffer.length() > 0)
                     buffer.deleteCharAt(buffer.length() - 1);
+            } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_C){
+                Signal.raise(new Signal("INT"));
             } else {
                 char c = e.getKeyChar();
                 if(c >= 32 && c < 127)
