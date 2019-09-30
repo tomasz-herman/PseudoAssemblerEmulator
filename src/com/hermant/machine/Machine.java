@@ -268,6 +268,7 @@ public class Machine {
                 signalThread.interrupt();
                 mainThread.interrupt();
                 stop();
+                ignoreSigint();
             });
             InputStream in = System.in;
             try {
@@ -293,7 +294,12 @@ public class Machine {
         Signal.handle(new Signal("INT"), sig -> {
             mainThread.interrupt();
             stop();
+            ignoreSigint();
         });
+    }
+
+    private void ignoreSigint(){
+        Signal.handle(new Signal("INT"), sig -> {});
     }
 
     /**

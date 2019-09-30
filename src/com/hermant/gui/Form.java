@@ -128,7 +128,6 @@ public class Form {
                     m.free();
                 }
                 outputStream.flush();
-                setSignalHandling();
                 setControlsEnabled(true);
                 running = false;
             });
@@ -212,13 +211,13 @@ public class Form {
                         lines -= TRUNK;
                         Thread.sleep(1);
                     } else if((lines & 0xff) == 0)Thread.sleep(0, 1);
-                } catch (BadLocationException | InterruptedException e){
+                    area.append(line.toString());
+                    area.setCaretPosition(area.getDocument().getLength());
+                    line = new StringBuilder();
+                    lines++;
+                } catch (BadLocationException e){
                     e.printStackTrace();
-                }
-                area.append(line.toString());
-                area.setCaretPosition(area.getDocument().getLength());
-                line = new StringBuilder();
-                lines++;
+                } catch (InterruptedException | Error ignored) {}
             }
         }
 
@@ -230,13 +229,13 @@ public class Form {
                     lines -= TRUNK;
                     Thread.sleep(1);
                 } else if((lines & 0xff) == 0)Thread.sleep(0, 1);
-            } catch (BadLocationException | InterruptedException e){
+                area.append(line.toString());
+                area.setCaretPosition(area.getDocument().getLength());
+                line = new StringBuilder();
+                lines++;
+            } catch (BadLocationException e){
                 e.printStackTrace();
-            }
-            area.append(line.toString());
-            area.setCaretPosition(area.getDocument().getLength());
-            line = new StringBuilder();
-            lines++;
+            } catch (InterruptedException | Error ignored){}
         }
     }
 
