@@ -55,11 +55,12 @@ public class Form {
             }
         });
         sleep_slider.addChangeListener(
-            e -> sleep.setText("Sleep:" + sleep_slider.getValue() * 10)
+            e -> sleep.setText("Sleep:" + sleep_slider.getValue() * sleep_slider.getValue())
         );
         JTextArea terminal = new JTextArea();
         disableArrowKeys(terminal.getInputMap());
         terminal.setFont(new Font("DejaVu Sans Mono", Font.PLAIN, 20));
+        terminal.setEditable(false);
         scroll.setViewportView(terminal);
         routine.addItem(new Combo(0, "Run"));
         routine.addItem(new Combo(1, "Debug"));
@@ -86,7 +87,7 @@ public class Form {
                 boolean abandon = abandonCheckBox.isSelected();
                 boolean binary = binaryCheckBox.isSelected();
                 boolean debug = Objects.requireNonNull(routine.getSelectedItem()).toString().equals("Debug");
-                int sleep = sleep_slider.getValue() * 10;
+                int sleep = sleep_slider.getValue() * sleep_slider.getValue();
                 String inputFile = input.getText();
                 String outputFile = output.getText();
                 int warning = JOptionPane.OK_OPTION;
@@ -229,10 +230,12 @@ public class Form {
                     lines -= TRUNK;
                     Thread.sleep(1);
                 } else if((lines & 0xff) == 0)Thread.sleep(0, 1);
+                String s = line.toString();
                 area.append(line.toString());
                 area.setCaretPosition(area.getDocument().getLength());
                 line = new StringBuilder();
-                lines++;
+                if(s.contains("\n"))
+                    lines++;
             } catch (BadLocationException e){
                 e.printStackTrace();
             } catch (InterruptedException | Error ignored){}
@@ -305,8 +308,11 @@ public class Form {
                 Signal.raise(new Signal("INT"));
             } else {
                 char c = e.getKeyChar();
-                if(c >= 32 && c < 127)
+                if(c >= 32 && c < 127) {
                     buffer.append(c);
+                    System.out.print(c);
+                    System.out.flush();
+                }
             }
 
         }

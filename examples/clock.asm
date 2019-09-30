@@ -3,6 +3,7 @@ MINUTE:     DC      INTEGER(60)
 HOUR:       DC      INTEGER(3600)
 DAY:        DC      INTEGER(86400)
 UTC:        DC      INTEGER(7200)
+NEWLINE:    DC      CHAR('\n')
 SEPARATOR:  DC      CHAR(':')
 TEN:        DC      INTEGER(10)
 
@@ -34,4 +35,5 @@ M:
             OUT     1
 S:
             OUT     8
+            COUT    NEWLINE
             JMP     CLOCK
