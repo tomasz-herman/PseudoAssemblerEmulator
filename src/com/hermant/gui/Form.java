@@ -238,6 +238,7 @@ public class Form {
         private StringBuilder buffer = new StringBuilder();
         private int pos = 0;
 
+        @Override
         public void reset(){
             str = "";
             pos = 0;
@@ -253,15 +254,15 @@ public class Form {
         public int read() {
             //test if the available input has reached its end
             //and the EOS should be returned
-            if(str != null && pos == str.length()){
-                str =null;
+            if(!str.isEmpty() && pos == str.length()){
+                str = "";
                 //this is supposed to return -1 on "end of stream"
                 //but I'm having a hard time locating the constant
                 return java.io.StreamTokenizer.TT_EOF;
             }
             //no input available, block until more is available because that's
             //the behavior specified in the Javadocs
-            while (str == null || pos >= str.length()) {
+            while (str.isEmpty() || pos >= str.length()) {
                 try {
                     //according to the docs read() should block until new input is available
                     synchronized (this) {
@@ -281,10 +282,11 @@ public class Form {
         @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                str = str.substring(pos);
                 pos = 0;
                 System.out.print('\n');
                 buffer.append('\n');
-                str = buffer.toString();
+                str += buffer.toString();
                 buffer = new StringBuilder();
                 synchronized (this) {
                     this.notifyAll();

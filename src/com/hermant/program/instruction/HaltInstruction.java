@@ -15,10 +15,13 @@ public class HaltInstruction extends Instruction {
         setInstructionPointer(m.getInstructionPointer());
         InputStream in = System.in;
         try {
+            while (in.available() > 0) m.getBuffer().put((byte)in.read());
             int i = -1;
-            while(i != 10)
-                if (in.available() > 0) i = in.read();
-                else Thread.sleep(1);
+            while(i != '\n')
+                if (in.available() > 0) {
+                    i = in.read();
+                    if (i != -1 && i != '\n') m.getBuffer().put((byte) i);
+                } else Thread.sleep(1);
         }
         catch (IOException e) {
             e.printStackTrace();

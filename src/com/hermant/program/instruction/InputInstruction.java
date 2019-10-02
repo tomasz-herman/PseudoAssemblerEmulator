@@ -12,7 +12,9 @@ public class InputInstruction extends Instruction implements MemoryOperation {
         final int ramAddress = getMemoryAddress(m.getRegister(), reg2, ramOffset);
         try {
             byte input;
-            while(true)
+            if(m.getBuffer().available() > 0){
+                input = m.getBuffer().get();
+            } else while(true)
                 if (System.in.available() > 0) {
                     input = (byte)System.in.read();
                     break;

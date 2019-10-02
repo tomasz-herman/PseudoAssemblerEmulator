@@ -21,6 +21,7 @@ import static com.hermant.machine.register.GeneralPurposeRegister.*;
  */
 public class Machine {
 
+    private final InputBuffer buffer = new InputBuffer();
     /**
      * General Purpose {@link GeneralPurposeRegister}(GPR) used for storing ints and addressing.
      */
@@ -272,10 +273,13 @@ public class Machine {
             });
             InputStream in = System.in;
             try {
+                while (in.available() > 0) buffer.put((byte)in.read());
                 int i = -1;
-                while(i != 10)
-                    if (in.available() > 0) i = in.read();
-                    else Thread.sleep(1);
+                while(i != '\n')
+                    if (in.available() > 0) {
+                        i = in.read();
+                        if (i != -1 && i != '\n') buffer.put((byte) i);
+                    } else Thread.sleep(1);
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -373,6 +377,39 @@ public class Machine {
      */
     public InstructionPointer getInstructionPointer(){
         return instructionPointer;
+    }
+
+    public InputBuffer getBuffer(){
+        return buffer;
+    }
+
+    public static class InputBuffer {
+        private int capacity = 8192;
+        private byte[] buffer = new byte[capacity];
+        private int available = 0;
+
+        private int getter = 0;
+        private int putter = 0;
+
+        public synchronized int available(){
+            return available;
+        }
+
+        public synchronized byte get(){
+            if (available == 0) throw new RuntimeException("Input buffer is empty, tried to get from it.");
+            byte b = buffer[getter++];
+            if(getter > capacity) getter = 0;
+            available--;
+            return b;
+        }
+
+        public synchronized void put(byte b){
+            if (available == capacity) throw new RuntimeException("Exceeded input buffer capacity.");
+            buffer[putter++] = b;
+            if(putter > capacity) putter = 0;
+            available++;
+        }
+
     }
 
 }
