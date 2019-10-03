@@ -40,8 +40,8 @@ public class Form {
             "program to specified file in machine code, allowing for later use. It may be used\n" +
             "as an input file later, but \"binary\" box must be checked, so instead of assembling\n" +
             "your program will be directly loaded into memory. The option \"unsafe\" allows the\n" +
-            "program to read/write memory freely, but it may also read/write others program's\n" +
-            "memory witch may result in unexpected crash for the price of 10-20% of improved\n" +
+            "program to read/write memory freely, but it may also read/write other program's\n" +
+            "memory witch may result in an unexpected crash for the price of 10-20% of improved\n" +
             "performance. It should only be used when you are sure the program only reads/writes\n" +
             "to it's own memory. The option \"abandon\" causes the program to assemble, but\n" +
             "run/debug part is skipped. Sleep slider allows to slow down the program, by sleeping\n" +

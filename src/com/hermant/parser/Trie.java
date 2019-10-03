@@ -22,6 +22,8 @@ public class Trie<V> extends AbstractMap<String, V> implements Map<String, V> {
         if(!(key instanceof String))throw new IllegalArgumentException();
         String k = (String)key;
         for (int i = 0; i < k.length(); i++) {
+            int idx = k.charAt(i) - 'A';
+            if(idx < 0 || idx >= CHARS) return null;
             current = current.children.get(k.charAt(i) - 'A');
             if(current == null) return null;
         }
