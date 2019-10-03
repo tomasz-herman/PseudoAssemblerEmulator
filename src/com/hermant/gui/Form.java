@@ -33,6 +33,48 @@ public class Form {
     private JFileChooser outputChooser;
     private JScrollPane scroll;
 
+    private static final String HELP =
+            "This is an emulation environment for Pseudo-Assembler programs. Select input file\n" +
+            "containing your program, choose if it should be run/debugged and click run/debug\n" +
+            "to start your program. Selecting output file is optional. It will save assembled\n" +
+            "program to specified file in machine code, allowing for later use. It may be used\n" +
+            "as an input file later, but \"binary\" box must be checked, so instead of assembling\n" +
+            "your program will be directly loaded into memory. The option \"unsafe\" allows the\n" +
+            "program to read/write memory freely, but it may also read/write others program's\n" +
+            "memory witch may result in unexpected crash for the price of 10-20% of improved\n" +
+            "performance. It should only be used when you are sure the program only reads/writes\n" +
+            "to it's own memory. The option \"abandon\" causes the program to assemble, but\n" +
+            "run/debug part is skipped. Sleep slider allows to slow down the program, by sleeping\n" +
+            "specified amount of milliseconds in between executing instructions.\n" +
+            "\n" +
+            "The project is open sourced, available under MIT Licence provided below. The source\n" +
+            "code is available at: \"https://github.com/tomasz-herman/PseudoAssemblerEmulator\".\n" +
+            "Documentation of the language should be bundled with this program.\n" +
+            "Feel free to report noticed issues. Good luck and have fun learning.";
+
+    private static final String LICENSE =
+            "MIT License\n" +
+            "\n" +
+            "Copyright (c) 2019 Tomasz Herman\n" +
+            "\n" +
+            "Permission is hereby granted, free of charge, to any person obtaining a copy\n" +
+            "of this software and associated documentation files (the \"Software\"), to deal\n" +
+            "in the Software without restriction, including without limitation the rights\n" +
+            "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n" +
+            "copies of the Software, and to permit persons to whom the Software is\n" +
+            "furnished to do so, subject to the following conditions:\n" +
+            "\n" +
+            "The above copyright notice and this permission notice shall be included in all\n" +
+            "copies or substantial portions of the Software.\n" +
+            "\n" +
+            "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
+            "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n" +
+            "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
+            "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n" +
+            "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n" +
+            "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n" +
+            "SOFTWARE.";
+
     private volatile boolean running = false;
 
     Form() {
@@ -75,6 +117,8 @@ public class Form {
         System.setErr(printStream);
 
         setSignalHandling();
+
+        terminal.setText(HELP + "\n\n" + LICENSE);
 
         run_button.addActionListener(e -> {
             Thread t = new Thread(() -> {
