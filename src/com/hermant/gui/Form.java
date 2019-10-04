@@ -17,21 +17,25 @@ import java.io.*;
 import java.util.Objects;
 
 public class Form {
-    private JButton select_input;
+    private JButton select_input_button;
     private JButton run_button;
     private JCheckBox unsafeCheckBox;
     private JCheckBox abandonCheckBox;
     private JCheckBox binaryCheckBox;
     private JSlider sleep_slider;
-    private JButton selectOutputFileButton;
+    private JButton select_output_button;
     private JPanel main;
     private JComboBox<Combo> routine;
     private JLabel input;
     private JLabel output;
     private JLabel sleep;
-    private JFileChooser inputChooser;
-    private JFileChooser outputChooser;
     private JScrollPane scroll;
+    private JFileChooser inputChooser = new JFileChooser();
+    private JFileChooser outputChooser = new JFileChooser();
+    private JTextArea terminal;
+
+    private CustomInputStream inputStream;
+    private CustomOutputStream outputStream;
 
     private static final String HELP =
             "This is an emulation environment for Pseudo-Assembler programs. Select input file\n" +
@@ -78,9 +82,48 @@ public class Form {
     private volatile boolean running = false;
 
     Form() {
-        inputChooser = new JFileChooser();
-        outputChooser = new JFileChooser();
-        select_input.addActionListener(e -> {
+        setupInputOutputButtons();
+        setupComboBox();
+        setupSleepSlider();
+        terminal = createTerminal();
+        inputStream = (CustomInputStream)createInputStream(terminal);
+        outputStream = (CustomOutputStream)createOutputStream(terminal);
+        setSignalHandling();
+        setupRunButton();
+    }
+
+    private Options getOptions(){
+        Options options = new Options();
+        options.unsafe = unsafeCheckBox.isSelected();
+        options.abandon = abandonCheckBox.isSelected();
+        options.binary = binaryCheckBox.isSelected();
+        options.debug = Objects.requireNonNull(routine.getSelectedItem()).toString().equals("Debug");
+        options.sleep = getSleep();
+        options.input = input.getText();
+        options.output = output.getText();
+        return options;
+    }
+
+    private int getSleep(){
+        return sleep_slider.getValue() * sleep_slider.getValue();
+    }
+
+    private void setupSleepSlider(){
+        sleep_slider.addChangeListener(
+                e -> sleep.setText("Sleep:" + getSleep())
+        );
+    }
+
+    private void setupRunButton(){
+        run_button.addActionListener(e -> {
+            Thread t = new Thread(this::run);
+            if(!running) t.start();
+            else JOptionPane.showMessageDialog(null, "Some program is already running!");
+        });
+    }
+
+    private void setupInputOutputButtons(){
+        select_input_button.addActionListener(e -> {
             int returnVal = inputChooser.showOpenDialog(null);
             if(returnVal == JFileChooser.APPROVE_OPTION){
                 File file = inputChooser.getSelectedFile();
@@ -88,7 +131,7 @@ public class Form {
                 input.setToolTipText(file.getPath());
             }
         });
-        selectOutputFileButton.addActionListener(e -> {
+        select_output_button.addActionListener(e -> {
             int returnVal = outputChooser.showSaveDialog(null);
             if(returnVal == JFileChooser.APPROVE_OPTION){
                 File file = outputChooser.getSelectedFile();
@@ -96,80 +139,37 @@ public class Form {
                 output.setToolTipText(file.getPath());
             }
         });
-        sleep_slider.addChangeListener(
-            e -> sleep.setText("Sleep:" + sleep_slider.getValue() * sleep_slider.getValue())
-        );
+    }
+
+    private void setupComboBox(){
+        routine.addItem(new Combo(0, "Run"));
+        routine.addItem(new Combo(1, "Debug"));
+        routine.addActionListener(e -> run_button.setText(Objects.requireNonNull(routine.getSelectedItem()).toString()));
+    }
+
+    private InputStream createInputStream(JTextArea terminal){
+        CustomInputStream inputStream = new CustomInputStream();
+        terminal.addKeyListener(inputStream);
+        System.setIn(inputStream);
+        return inputStream;
+    }
+
+    private OutputStream createOutputStream(JTextArea terminal){
+        CustomOutputStream outputStream = new CustomOutputStream(terminal);
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+        System.setErr(printStream);
+        return outputStream;
+    }
+
+    private JTextArea createTerminal(){
         JTextArea terminal = new JTextArea();
         disableArrowKeys(terminal.getInputMap());
         terminal.setFont(new Font("DejaVu Sans Mono", Font.PLAIN, 20));
         terminal.setEditable(false);
         scroll.setViewportView(terminal);
-        routine.addItem(new Combo(0, "Run"));
-        routine.addItem(new Combo(1, "Debug"));
-        routine.addActionListener(e -> run_button.setText(Objects.requireNonNull(routine.getSelectedItem()).toString()));
-
-        CustomInputStream inputStream = new CustomInputStream();
-        terminal.addKeyListener(inputStream);
-        System.setIn(inputStream);
-        CustomOutputStream outputStream = new CustomOutputStream(terminal);
-        PrintStream printStream = new PrintStream(outputStream);
-        System.setOut(printStream);
-        System.setErr(printStream);
-
-        setSignalHandling();
-
         terminal.setText(HELP + "\n\n" + LICENSE);
-
-        run_button.addActionListener(e -> {
-            Thread t = new Thread(() -> {
-                running = true;
-                terminal.setText("");
-                outputStream.reset();
-                inputStream.reset();
-                setControlsEnabled(false);
-                boolean unsafe = unsafeCheckBox.isSelected();
-                boolean abandon = abandonCheckBox.isSelected();
-                boolean binary = binaryCheckBox.isSelected();
-                boolean debug = Objects.requireNonNull(routine.getSelectedItem()).toString().equals("Debug");
-                int sleep = sleep_slider.getValue() * sleep_slider.getValue();
-                String inputFile = input.getText();
-                String outputFile = output.getText();
-                if(inputFile.isEmpty()) JOptionPane.showMessageDialog(null, "You must provide input file!");
-                else {
-                    Program program;
-                    try {
-                        program = binary ?
-                                Serializer.deserializeBinary(inputFile) : Parser.parse(inputFile);
-                    } catch (IOException | SerializationException | ParseException ex) {
-                        ex.printStackTrace();
-                        setControlsEnabled(true);
-                        running = false;
-                        return;
-                    }
-                    if(!outputFile.isEmpty()) {
-                        try {
-                            Serializer.serializeProgram(program, outputFile);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    Machine m = new Machine(debug, unsafe);
-                    m.loadProgram(program);
-                    if(!abandon)
-                        try { m.runProgram(sleep); }
-                        catch (Exception ex){
-                            ex.printStackTrace();
-                        }
-                    m.free();
-                }
-                outputStream.flush();
-                setControlsEnabled(true);
-                running = false;
-            });
-            if(!running)
-                t.start();
-            else JOptionPane.showMessageDialog(null, "Some program is already running!");
-        });
+        return terminal;
     }
 
     private void setSignalHandling(){
@@ -179,8 +179,8 @@ public class Form {
     private void setControlsEnabled(boolean enable){
         run_button.setEnabled(enable);
         sleep_slider.setEnabled(enable);
-        select_input.setEnabled(enable);
-        selectOutputFileButton.setEnabled(enable);
+        select_input_button.setEnabled(enable);
+        select_output_button.setEnabled(enable);
         input.setEnabled(enable);
         output.setEnabled(enable);
         routine.setEnabled(enable);
@@ -200,6 +200,73 @@ public class Form {
     public JPanel getMain(){
         return main;
     }
+
+    private Program getProgram(Options options){
+        try {
+            return options.binary ?
+                    Serializer.deserializeBinary(options.input) : Parser.parse(options.input);
+        } catch (IOException | SerializationException | ParseException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    private void serializeProgram(Program program, String output){
+        try {
+            Serializer.serializeProgram(program, output);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void prepare(){
+        terminal.setText("");
+        outputStream.reset();
+        inputStream.reset();
+        setControlsEnabled(false);
+    }
+
+    private void stop(){
+        outputStream.flush();
+        setControlsEnabled(true);
+        running = false;
+    }
+
+    private void run() {
+        running = true;
+        prepare();
+        Options options = getOptions();
+        if (options.input.isEmpty()) JOptionPane.showMessageDialog(null, "You must provide input file!");
+        else {
+            Program program = getProgram(options);
+            if(program == null){
+                stop();
+                return;
+            }
+            if (!options.output.isEmpty()) serializeProgram(program, options.output);
+            Machine m = new Machine(options.debug, options.unsafe);
+            m.loadProgram(program);
+            if (!options.abandon)
+                try {
+                    m.runProgram(options.sleep);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            m.free();
+        }
+        stop();
+    }
+
+    private static class Options{
+        boolean debug;
+        boolean unsafe;
+        boolean binary;
+        boolean abandon;
+        int sleep;
+        String input;
+        String output;
+    }
+
 
     private static class Combo{
         private final int value;
