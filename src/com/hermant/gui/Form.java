@@ -46,9 +46,12 @@ public class Form {
             "performance. It should only be used when you are sure the program only reads/writes\n" +
             "to it's own memory. The option \"abandon\" causes the program to assemble, but\n" +
             "run/debug part is skipped. Sleep slider allows to slow down the program, by sleeping\n" +
-            "specified amount of milliseconds in between executing instructions.\n" +
+            "specified amount of milliseconds in between executing instructions. In run mode Ctrl + C\n" +
+            "stops the program immediately, in debug mode Ctrl + C pauses the program that might be\n" +
+            "resumed with Enter key, second Ctrl + C stops the program. If this text isn't monospaced,\n" +
+            "please install \"DejaVu Sans Mono\" font(for now it's fixed).\n" +
             "\n" +
-            "The project is open sourced, available under MIT Licence provided below. The source\n" +
+            "The project is open source, available under MIT Licence provided below. The source\n" +
             "code is available at: \"https://github.com/tomasz-herman/PseudoAssemblerEmulator\".\n" +
             "Documentation of the language should be bundled with this program.\n" +
             "Feel free to report noticed issues. Good luck and have fun learning.";

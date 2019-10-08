@@ -6,12 +6,23 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.InputStream;
 
+
+/**
+ * Class that may be added as key listener to some {@link javax.swing.JComponent JComponent}
+ * and will convert input taken from it into stream that might be read later by calling
+ * {@link CustomInputStream#read()}. It's main purpose is to replace {@link System#in} with
+ * this class, so gui application will mimic behaviour of cli interface.
+ */
 class CustomInputStream extends InputStream implements KeyListener {
 
     private String str = "";
     private StringBuilder buffer = new StringBuilder();
     private int pos = 0;
 
+    /**
+     * The stream is reset to initial state. After this call no bytes are available
+     * to read.
+     */
     @Override
     public void reset(){
         str = "";
