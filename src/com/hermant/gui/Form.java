@@ -11,6 +11,7 @@ import sun.misc.Signal;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Form {
@@ -48,8 +49,7 @@ public class Form {
             "run/debug part is skipped. Sleep slider allows to slow down the program, by sleeping\n" +
             "specified amount of milliseconds in between executing instructions. In run mode Ctrl + C\n" +
             "stops the program immediately, in debug mode Ctrl + C pauses the program that might be\n" +
-            "resumed with Enter key, second Ctrl + C stops the program. If this text isn't monospaced,\n" +
-            "please install \"DejaVu Sans Mono\" font(for now it's fixed).\n" +
+            "resumed with Enter key, second Ctrl + C stops the program.\n" +
             "\n" +
             "The project is open source, available under MIT Licence provided below. The source\n" +
             "code is available at: \"https://github.com/tomasz-herman/PseudoAssemblerEmulator\".\n" +
@@ -78,6 +78,12 @@ public class Form {
             "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n" +
             "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n" +
             "SOFTWARE.";
+
+    private String[] monospaced = new String[]{
+            "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Noto Sans Mono", "Droid Sans Mono",
+            "Fira Code", "FreeMono", "Hack", "Liberation Mono", "Source Code Pro", "Lucida Console",
+            "Courier New", "Consolas", "Noto Sans Mono Condensed"
+    };
 
     private volatile boolean running = false;
 
@@ -165,11 +171,21 @@ public class Form {
     private JTextArea createTerminal(){
         JTextArea terminal = new JTextArea();
         disableArrowKeys(terminal.getInputMap());
-        terminal.setFont(new Font("DejaVu Sans Mono", Font.PLAIN, 20));
+        terminal.setFont(new Font(chooseMonospacedFont(), Font.PLAIN, 20));
         terminal.setEditable(false);
         scroll.setViewportView(terminal);
         terminal.setText(HELP + "\n\n" + LICENSE);
         return terminal;
+    }
+
+    private String chooseMonospacedFont(){
+        var fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+        fonts.forEach(System.out::println);
+        for (String mono : monospaced) {
+            if(fonts.contains(mono))
+               return mono;
+        }
+        return "Monospaced";
     }
 
     private void setSignalHandling(){
