@@ -80,7 +80,7 @@ public class Form {
             "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n" +
             "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n" +
             "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n" +
-            "SOFTWARE.";
+            "SOFTWARE.\n";
 
     private String[] monospaced = new String[]{
             "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Noto Sans Mono", "Droid Sans Mono",

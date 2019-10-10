@@ -69,9 +69,9 @@ class CustomInputStream extends InputStream implements KeyListener {
         if(e.getKeyCode() == KeyEvent.VK_ENTER){
             str = str.substring(pos);
             pos = 0;
-            System.out.print('\n');
             buffer.append('\n');
             str += buffer.toString();
+            System.out.print(buffer.toString());
             buffer = new StringBuilder();
             synchronized (this) {
                 this.notifyAll();
