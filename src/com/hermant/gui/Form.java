@@ -218,7 +218,6 @@ public class Form {
     private void chooseMonospacedFonts(){
         var fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         var available = new ArrayList<String>();
-        fonts.forEach(System.out::println);
         for (String mono : monospaced) {
             if(fonts.contains(mono))
                available.add(mono);
@@ -242,6 +241,8 @@ public class Form {
         abandonCheckBox.setEnabled(enable);
         binaryCheckBox.setEnabled(enable);
         unsafeCheckBox.setEnabled(enable);
+        font_size.setEnabled(enable);
+        font_name.setEnabled(enable);
     }
 
     private void disableArrowKeys(InputMap inputMap) {
