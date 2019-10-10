@@ -11,6 +11,7 @@ import sun.misc.Signal;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -28,6 +29,8 @@ public class Form {
     private JLabel output;
     private JLabel sleep;
     private JScrollPane scroll;
+    private JComboBox<ComboItem>  font_name;
+    private JComboBox<ComboItem>  font_size;
     private JFileChooser inputChooser = new JFileChooser();
     private JFileChooser outputChooser = new JFileChooser();
     private JTextArea terminal;
@@ -85,9 +88,15 @@ public class Form {
             "Courier New", "Consolas", "Noto Sans Mono Condensed"
     };
 
+    private String[] sizes = new String[]{
+            "8", "9", "10", "11", "12", "13", "14", "15", "16", "18", "20",
+            "22", "24", "26", "28", "32", "36", "40", "48", "56", "64", "72"
+    };
+
     private volatile boolean running = false;
 
     Form() {
+        chooseMonospacedFonts();
         setupInputOutputButtons();
         setupComboBox();
         setupSleepSlider();
@@ -96,6 +105,7 @@ public class Form {
         outputStream = (CustomOutputStream)createOutputStream(terminal);
         setSignalHandling();
         setupRunButton();
+        setupFontBoxes();
     }
 
     private Options getOptions(){
@@ -153,6 +163,34 @@ public class Form {
         routine.addActionListener(e -> run_button.setText(Objects.requireNonNull(routine.getSelectedItem()).toString()));
     }
 
+    private void setupFontBoxes(){
+        for (int i = 0; i < monospaced.length; i++) {
+            font_name.addItem(new ComboItem(i, monospaced[i]));
+        }
+        for (int i = 0; i < sizes.length; i++) {
+            font_size.addItem(new ComboItem(i, sizes[i]));
+        }
+        font_name.addActionListener(e ->
+                terminal.setFont(
+                        new Font(
+                                Objects.requireNonNull(font_name.getSelectedItem()).toString(),
+                                Font.PLAIN,
+                                Integer.parseInt(Objects.requireNonNull(font_size.getSelectedItem()).toString())
+                        )
+                )
+        );
+        font_size.addActionListener(e ->
+                terminal.setFont(
+                        new Font(
+                                Objects.requireNonNull(font_name.getSelectedItem()).toString(),
+                                Font.PLAIN,
+                                Integer.parseInt(Objects.requireNonNull(font_size.getSelectedItem()).toString())
+                        )
+                )
+        );
+        font_size.setSelectedIndex(10);
+    }
+
     private InputStream createInputStream(JTextArea terminal){
         CustomInputStream inputStream = new CustomInputStream();
         terminal.addKeyListener(inputStream);
@@ -171,21 +209,21 @@ public class Form {
     private JTextArea createTerminal(){
         JTextArea terminal = new JTextArea();
         disableArrowKeys(terminal.getInputMap());
-        terminal.setFont(new Font(chooseMonospacedFont(), Font.PLAIN, 20));
         terminal.setEditable(false);
         scroll.setViewportView(terminal);
         terminal.setText(HELP + "\n\n" + LICENSE);
         return terminal;
     }
 
-    private String chooseMonospacedFont(){
+    private void chooseMonospacedFonts(){
         var fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+        var available = new ArrayList<String>();
         fonts.forEach(System.out::println);
         for (String mono : monospaced) {
             if(fonts.contains(mono))
-               return mono;
+               available.add(mono);
         }
-        return "Monospaced";
+        monospaced = available.toArray(new String[0]);
     }
 
     private void setSignalHandling(){
