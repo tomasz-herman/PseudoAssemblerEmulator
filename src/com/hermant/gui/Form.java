@@ -206,7 +206,15 @@ public class Form {
         return outputStream;
     }
 
+    private int verticalScrollBarMaximumValue;
+
     private JTextArea createTerminal(){
+        verticalScrollBarMaximumValue = scroll.getVerticalScrollBar().getMaximum();
+        scroll.getVerticalScrollBar().addAdjustmentListener(e -> {
+            if ((verticalScrollBarMaximumValue - e.getAdjustable().getMaximum()) == 0) return;
+            e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+            verticalScrollBarMaximumValue = scroll.getVerticalScrollBar().getMaximum();
+        });
         JTextArea terminal = new JTextArea();
         disableArrowKeys(terminal.getInputMap());
         terminal.setEditable(false);

@@ -6,56 +6,82 @@ import java.io.OutputStream;
 
 class CustomOutputStream extends OutputStream {
 
-    private JTextArea area;
     private StringBuilder line = new StringBuilder();
+    private final StringBuilder buffer = new StringBuilder();
+
     private int lines = 0;
+    private int bufferedLines = 0;
+
     private static final int MAX_LINES = 32000;
     private static final int TRUNK = 4000;
 
+    private final int FRAMES_PER_SECOND = 25;
+    private final long SKIP_TICKS = 1000000000 / FRAMES_PER_SECOND;
+
     CustomOutputStream(JTextArea area) {
-        this.area = area;
+        Thread updater = new Thread(() -> {
+            long lastUpdate = System.nanoTime();
+            while(true){
+                long now = System.nanoTime();
+                long elapsed = now - lastUpdate;
+                if(elapsed > SKIP_TICKS || bufferedLines > TRUNK){
+                    lastUpdate = now;
+                    if(lines > MAX_LINES) {
+                        try {
+                            area.getDocument().remove(0, area.getLineEndOffset(TRUNK - 1));
+                            lines -= TRUNK;
+                        } catch (BadLocationException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    synchronized (buffer){
+                        if(buffer.capacity() != 0){
+                            try {
+                                area.append(buffer.toString());
+                                buffer.delete(0, buffer.length());
+                                lines += bufferedLines;
+                                bufferedLines = 0;
+                            } catch (Error ignored) {}
+                        }
+                    }
+                }
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ignored) { }
+            }
+        });
+        updater.start();
     }
 
     void reset(){
-        lines = 0;
+        synchronized (buffer){
+            buffer.delete(0, buffer.length());
+            buffer.setLength(0);
+            bufferedLines = 0;
+            line.setLength(0);
+            lines = 0;
+        }
     }
 
     @Override
     public void write(int b) {
         line.append((char)b);
-        if(b==10){
-            try {
-                if(lines > MAX_LINES) {
-                    area.replaceRange("", 0, area.getLineEndOffset(TRUNK - 1));
-                    lines -= TRUNK;
-                    Thread.sleep(1);
-                } else if((lines & 0xff) == 0)Thread.sleep(0, 1);
-                area.append(line.toString());
-                area.setCaretPosition(area.getDocument().getLength());
-                line = new StringBuilder();
-                lines++;
-            } catch (BadLocationException e){
-                e.printStackTrace();
-            } catch (InterruptedException | Error ignored) {}
+        if(b=='\n'){
+            synchronized (buffer){
+                bufferedLines++;
+                buffer.append(line.toString());
+                line.setLength(0);
+            }
         }
     }
 
     @Override
     public void flush() {
-        try {
-            if(lines > MAX_LINES) {
-                area.replaceRange("", 0, area.getLineEndOffset(TRUNK - 1));
-                lines -= TRUNK;
-                Thread.sleep(1);
-            } else if((lines & 0xff) == 0)Thread.sleep(0, 1);
+        synchronized (buffer){
             String s = line.toString();
-            area.append(line.toString());
-            area.setCaretPosition(area.getDocument().getLength());
-            line = new StringBuilder();
-            if(s.contains("\n"))
-                lines++;
-        } catch (BadLocationException e){
-            e.printStackTrace();
-        } catch (InterruptedException | Error ignored){}
+            buffer.append(s);
+            if(s.contains("\n"))bufferedLines++;
+            line.setLength(0);
+        }
     }
 }
