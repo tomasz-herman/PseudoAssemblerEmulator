@@ -12,8 +12,8 @@ class CustomOutputStream extends OutputStream {
     private int lines = 0;
     private int bufferedLines = 0;
 
-    private static final int MAX_LINES = 32000;
-    private static final int TRUNK = 4000;
+    private static final int MAX_LINES = 16384;
+    private static final int TRUNK = 4096;
 
     private final int FRAMES_PER_SECOND = 25;
     private final long SKIP_TICKS = 1000000000 / FRAMES_PER_SECOND;
@@ -22,18 +22,18 @@ class CustomOutputStream extends OutputStream {
         Thread updater = new Thread(() -> {
             long lastUpdate = System.nanoTime();
             while(true){
+                if(lines > MAX_LINES) {
+                    try {
+                        area.getDocument().remove(0, area.getLineEndOffset(TRUNK - 1));
+                        lines -= TRUNK;
+                    } catch (BadLocationException e) {
+                        e.printStackTrace();
+                    }
+                }
                 long now = System.nanoTime();
                 long elapsed = now - lastUpdate;
-                if(elapsed > SKIP_TICKS || bufferedLines > TRUNK){
+                if(elapsed > SKIP_TICKS || bufferedLines > MAX_LINES / 2){
                     lastUpdate = now;
-                    if(lines > MAX_LINES) {
-                        try {
-                            area.getDocument().remove(0, area.getLineEndOffset(TRUNK - 1));
-                            lines -= TRUNK;
-                        } catch (BadLocationException e) {
-                            e.printStackTrace();
-                        }
-                    }
                     synchronized (buffer){
                         if(buffer.capacity() != 0){
                             try {
@@ -56,7 +56,6 @@ class CustomOutputStream extends OutputStream {
     void reset(){
         synchronized (buffer){
             buffer.delete(0, buffer.length());
-            buffer.setLength(0);
             bufferedLines = 0;
             line.setLength(0);
             lines = 0;
