@@ -19,7 +19,12 @@ class CustomOutputStream extends OutputStream {
     private final long SKIP_TICKS = 1000000000 / FRAMES_PER_SECOND;
 
     CustomOutputStream(JTextArea area) {
-        Thread updater = new Thread(() -> {
+        Thread updater = getUpdaterThread(area);
+        updater.start();
+    }
+
+    private Thread getUpdaterThread(JTextArea area){
+        return new Thread(() -> {
             long lastUpdate = System.nanoTime();
             while(true){
                 if(lines > MAX_LINES) {
@@ -50,7 +55,6 @@ class CustomOutputStream extends OutputStream {
                 } catch (InterruptedException ignored) { }
             }
         });
-        updater.start();
     }
 
     void reset(){

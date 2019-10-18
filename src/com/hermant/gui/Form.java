@@ -10,6 +10,8 @@ import sun.misc.Signal;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,9 +33,17 @@ public class Form {
     private JScrollPane scroll;
     private JComboBox<ComboItem>  font_name;
     private JComboBox<ComboItem>  font_size;
+    private JPanel font_color;
+    private JPanel background_color;
+    private JPanel font_color_chooser;
+    private JPanel background_color_chooser;
+    private JPanel color_chooser;
     private JFileChooser inputChooser = new JFileChooser();
     private JFileChooser outputChooser = new JFileChooser();
     private JTextArea terminal;
+    private MouseListener font_color_listener;
+    private MouseListener background_color_listener;
+
 
     private CustomInputStream inputStream;
     private CustomOutputStream outputStream;
@@ -106,6 +116,46 @@ public class Form {
         setSignalHandling();
         setupRunButton();
         setupFontBoxes();
+        setupColorChoosers();
+    }
+
+    private void setupColorChoosers(){
+        background_color.setBackground(terminal.getBackground());
+        font_color.setBackground(terminal.getForeground());
+        background_color_listener = new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) { }
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                Color color = JColorChooser.showDialog(null, "Choose background color", background_color.getBackground());
+                background_color.setBackground(color);
+                terminal.setBackground(color);
+            }
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) { }
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) { }
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) { }
+        };
+        background_color_chooser.addMouseListener(background_color_listener);
+        font_color_listener = new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) { }
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                Color color = JColorChooser.showDialog(null, "Choose font color", font_color.getBackground());
+                font_color.setBackground(color);
+                terminal.setForeground(color);
+            }
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) { }
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) { }
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) { }
+        };
+        font_color_chooser.addMouseListener(font_color_listener);
     }
 
     private Options getOptions(){
@@ -251,6 +301,16 @@ public class Form {
         unsafeCheckBox.setEnabled(enable);
         font_size.setEnabled(enable);
         font_name.setEnabled(enable);
+        color_chooser.setEnabled(enable);
+        background_color_chooser.setEnabled(enable);
+        font_color_chooser.setEnabled(enable);
+        if(enable){
+            font_color_chooser.addMouseListener(font_color_listener);
+            background_color_chooser.addMouseListener(background_color_listener);
+        } else {
+            font_color_chooser.removeMouseListener(font_color_listener);
+            background_color_chooser.removeMouseListener(background_color_listener);
+        }
     }
 
     private void disableArrowKeys(InputMap inputMap) {
