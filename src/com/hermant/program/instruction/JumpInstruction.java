@@ -2,7 +2,7 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 
-public class JumpInstruction extends Instruction implements JumpOperation {
+public class JumpInstruction extends Instruction implements JumpOperation, MemoryOperation {
 
     @Override
     public final void run(Machine m){
