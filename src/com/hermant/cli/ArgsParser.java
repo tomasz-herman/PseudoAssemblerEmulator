@@ -74,10 +74,12 @@ public class ArgsParser {
 
     static final class Option {
 
+        @FunctionalInterface
         public interface Setter {
             void apply(OptionsBuilder builder, String value);
         }
 
+        @FunctionalInterface
         public interface Switcher{
             void apply(OptionsBuilder builder);
         }

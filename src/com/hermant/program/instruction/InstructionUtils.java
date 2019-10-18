@@ -8,6 +8,7 @@ public final class InstructionUtils {
 
     private InstructionUtils() {}
 
+    @FunctionalInterface
     public interface Supplier{ Instruction get(); }
 
     private static int BYTE_TO_UNSIGNED = 0xff;
