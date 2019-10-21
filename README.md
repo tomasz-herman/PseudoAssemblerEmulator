@@ -13,7 +13,7 @@ String support, physical stack, byte manipulation, logical instructions, and man
 Also many functions was simplified for easier use, got more obvious names and instructions with register/memory version was merged into one instruction.
 # How to use?
 Since program was designed for beginner programmers helper scripts was provided to make easier access to it's functionality.
-Java 12+ is required to run emulator.
+Java 11+ is required to run emulator.
 Since version 3.1.0 graphical interface is provided.
 On Windows double-click run.bat to run a program or debug.bat to debug or gui.bat to run emulator in graphical mode.
 On Linux/MacOS/Windows(with bash installed) run run.sh/debug.sh/gui.sh in terminal to get started(remember to make it executable).
