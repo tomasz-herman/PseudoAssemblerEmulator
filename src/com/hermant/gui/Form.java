@@ -40,57 +40,9 @@ public class Form {
     private JPanel color_chooser;
     private JFileChooser inputChooser = new JFileChooser();
     private JFileChooser outputChooser = new JFileChooser();
-    private JTextArea terminal;
+    private Terminal terminal;
     private MouseListener font_color_listener;
     private MouseListener background_color_listener;
-
-
-    private CustomInputStream inputStream;
-    private CustomOutputStream outputStream;
-
-    private static final String HELP =
-            "This is an emulation environment for Pseudo-Assembler programs. Select input file\n" +
-            "containing your program, choose if it should be run/debugged and click run/debug\n" +
-            "to start your program. Selecting output file is optional. It will save assembled\n" +
-            "program to specified file in machine code, allowing for later use. It may be used\n" +
-            "as an input file later, but \"binary\" box must be checked, so instead of assembling\n" +
-            "your program will be directly loaded into memory. The option \"unsafe\" allows the\n" +
-            "program to read/write memory freely, but it may also read/write other program's\n" +
-            "memory witch may result in an unexpected crash for the price of 10-20% of improved\n" +
-            "performance. It should only be used when you are sure the program only reads/writes\n" +
-            "to it's own memory. The option \"abandon\" causes the program to assemble, but\n" +
-            "run/debug part is skipped. Sleep slider allows to slow down the program, by sleeping\n" +
-            "specified amount of milliseconds in between executing instructions. In run mode Ctrl + C\n" +
-            "stops the program immediately, in debug mode Ctrl + C pauses the program that might be\n" +
-            "resumed with Enter key, second Ctrl + C stops the program.\n" +
-            "\n" +
-            "The project is open source, available under MIT Licence provided below. The source\n" +
-            "code is available at: \"https://github.com/tomasz-herman/PseudoAssemblerEmulator\".\n" +
-            "Documentation of the language should be bundled with this program.\n" +
-            "Feel free to report noticed issues. Good luck and have fun learning.";
-
-    private static final String LICENSE =
-            "MIT License\n" +
-            "\n" +
-            "Copyright (c) 2019 Tomasz Herman\n" +
-            "\n" +
-            "Permission is hereby granted, free of charge, to any person obtaining a copy\n" +
-            "of this software and associated documentation files (the \"Software\"), to deal\n" +
-            "in the Software without restriction, including without limitation the rights\n" +
-            "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n" +
-            "copies of the Software, and to permit persons to whom the Software is\n" +
-            "furnished to do so, subject to the following conditions:\n" +
-            "\n" +
-            "The above copyright notice and this permission notice shall be included in all\n" +
-            "copies or substantial portions of the Software.\n" +
-            "\n" +
-            "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
-            "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n" +
-            "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
-            "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n" +
-            "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n" +
-            "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n" +
-            "SOFTWARE.\n";
 
     private String[] monospaced = new String[]{
             "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Noto Sans Mono", "Droid Sans Mono",
@@ -110,9 +62,7 @@ public class Form {
         setupInputOutputButtons();
         setupComboBox();
         setupSleepSlider();
-        terminal = createTerminal();
-        inputStream = (CustomInputStream)createInputStream(terminal);
-        outputStream = (CustomOutputStream)createOutputStream(terminal);
+        terminal = new Terminal(scroll);
         setSignalHandling();
         setupRunButton();
         setupFontBoxes();
@@ -120,8 +70,8 @@ public class Form {
     }
 
     private void setupColorChoosers(){
-        background_color.setBackground(terminal.getBackground());
-        font_color.setBackground(terminal.getForeground());
+        background_color.setBackground(terminal.getBackgroundColor());
+        font_color.setBackground(terminal.getTextColor());
         background_color_listener = new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) { }
@@ -129,7 +79,7 @@ public class Form {
             public void mousePressed(MouseEvent mouseEvent) {
                 Color color = JColorChooser.showDialog(null, "Choose background color", background_color.getBackground());
                 background_color.setBackground(color);
-                terminal.setBackground(color);
+                terminal.setBackgroundColor(color);
             }
             @Override
             public void mouseReleased(MouseEvent mouseEvent) { }
@@ -146,7 +96,7 @@ public class Form {
             public void mousePressed(MouseEvent mouseEvent) {
                 Color color = JColorChooser.showDialog(null, "Choose font color", font_color.getBackground());
                 font_color.setBackground(color);
-                terminal.setForeground(color);
+                terminal.setTextColor(color);
             }
             @Override
             public void mouseReleased(MouseEvent mouseEvent) { }
@@ -241,38 +191,6 @@ public class Form {
         font_size.setSelectedIndex(10);
     }
 
-    private InputStream createInputStream(JTextArea terminal){
-        CustomInputStream inputStream = new CustomInputStream();
-        terminal.addKeyListener(inputStream);
-        System.setIn(inputStream);
-        return inputStream;
-    }
-
-    private OutputStream createOutputStream(JTextArea terminal){
-        CustomOutputStream outputStream = new CustomOutputStream(terminal);
-        PrintStream printStream = new PrintStream(outputStream);
-        System.setOut(printStream);
-        System.setErr(printStream);
-        return outputStream;
-    }
-
-    private int verticalScrollBarMaximumValue;
-
-    private JTextArea createTerminal(){
-        verticalScrollBarMaximumValue = scroll.getVerticalScrollBar().getMaximum();
-        scroll.getVerticalScrollBar().addAdjustmentListener(e -> {
-            if ((verticalScrollBarMaximumValue - e.getAdjustable().getMaximum()) == 0) return;
-            e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-            verticalScrollBarMaximumValue = scroll.getVerticalScrollBar().getMaximum();
-        });
-        JTextArea terminal = new JTextArea();
-        disableArrowKeys(terminal.getInputMap());
-        terminal.setEditable(false);
-        scroll.setViewportView(terminal);
-        terminal.setText(HELP + "\n\n" + LICENSE);
-        return terminal;
-    }
-
     private void chooseMonospacedFonts(){
         var fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         var available = new ArrayList<String>();
@@ -313,13 +231,6 @@ public class Form {
         }
     }
 
-    private void disableArrowKeys(InputMap inputMap) {
-        String[] keys = {"UP", "DOWN", "LEFT", "RIGHT", "HOME", "ENTER"};
-        for (String key : keys) {
-            inputMap.put(KeyStroke.getKeyStroke(key), "none");
-        }
-    }
-
     public JPanel getMain(){
         return main;
     }
@@ -343,14 +254,12 @@ public class Form {
     }
 
     private void prepare(){
-        terminal.setText("");
-        outputStream.reset();
-        inputStream.reset();
+        terminal.clear();
         setControlsEnabled(false);
     }
 
     private void stop(){
-        outputStream.flush();
+        terminal.flush();
         setControlsEnabled(true);
         running = false;
     }
