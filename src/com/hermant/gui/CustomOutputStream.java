@@ -14,6 +14,7 @@ class CustomOutputStream extends OutputStream {
 
     private static final int MAX_LINES = 16384;
     private static final int TRUNK = 4096;
+    private static final int BUFFER_FLUSH_SIZE = 16384;
 
     private final int FRAMES_PER_SECOND = 25;
     private final long SKIP_TICKS = 1000000000 / FRAMES_PER_SECOND;
@@ -27,34 +28,41 @@ class CustomOutputStream extends OutputStream {
         return new Thread(() -> {
             long lastUpdate = System.nanoTime();
             while(true){
-                if(lines > MAX_LINES) {
-                    try {
-                        area.getDocument().remove(0, area.getLineEndOffset(TRUNK - 1));
-                        lines -= TRUNK;
-                    } catch (BadLocationException e) {
-                        e.printStackTrace();
-                    }
-                }
                 long now = System.nanoTime();
                 long elapsed = now - lastUpdate;
-                if(elapsed > SKIP_TICKS || bufferedLines > MAX_LINES / 2){
+                if(elapsed > SKIP_TICKS || buffer.length() > BUFFER_FLUSH_SIZE){
+                    //update text area
                     lastUpdate = now;
                     synchronized (buffer){
-                        if(buffer.capacity() != 0){
-                            try {
-                                area.append(buffer.toString());
-                                buffer.delete(0, buffer.length());
-                                lines += bufferedLines;
-                                bufferedLines = 0;
-                            } catch (Error ignored) {}
-                        }
+                        appendArea(area);
+                        while(lines > MAX_LINES) cleanArea(area);
                     }
                 }
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(0, 10);
                 } catch (InterruptedException ignored) { }
             }
         });
+    }
+
+    private void cleanArea(JTextArea area){
+        try {
+            area.getDocument().remove(0, area.getLineEndOffset(TRUNK - 1));
+            lines -= TRUNK;
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void appendArea(JTextArea area){
+        if(buffer.length() != 0){
+            try {
+                area.append(buffer.toString());
+                buffer.delete(0, buffer.length());
+                lines += bufferedLines;
+                bufferedLines = 0;
+            } catch (Error ignored) {}
+        }
     }
 
     void reset(){
@@ -75,6 +83,10 @@ class CustomOutputStream extends OutputStream {
                 buffer.append(line.toString());
                 line.setLength(0);
             }
+            //if the updater thread is clogged slow down
+            if(lines > MAX_LINES + TRUNK || buffer.length() > BUFFER_FLUSH_SIZE + TRUNK) try {
+                Thread.sleep(1);
+            } catch (InterruptedException ignored) { }
         }
     }
 
