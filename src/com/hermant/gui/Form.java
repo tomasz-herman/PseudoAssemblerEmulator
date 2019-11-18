@@ -31,15 +31,15 @@ public class Form {
     private JLabel output;
     private JLabel sleep;
     private JScrollPane scroll;
-    private JComboBox<ComboItem>  font_name;
-    private JComboBox<ComboItem>  font_size;
+    private JComboBox<ComboItem> font_name;
+    private JComboBox<ComboItem> font_size;
     private JPanel font_color;
     private JPanel background_color;
     private JPanel font_color_chooser;
     private JPanel background_color_chooser;
     private JPanel color_chooser;
-    private JFileChooser inputChooser = new JFileChooser();
-    private JFileChooser outputChooser = new JFileChooser();
+    private JFileChooser inputChooser;
+    private JFileChooser outputChooser;
     private Terminal terminal;
     private MouseListener font_color_listener;
     private MouseListener background_color_listener;
@@ -58,6 +58,7 @@ public class Form {
     private volatile boolean running = false;
 
     Form() {
+        setupFileChoosers();
         chooseMonospacedFonts();
         setupInputOutputButtons();
         setupComboBox();
@@ -67,6 +68,14 @@ public class Form {
         setupRunButton();
         setupFontBoxes();
         setupColorChoosers();
+    }
+
+    private void setupFileChoosers(){
+        File workingDirectory = new File(System.getProperty("user.dir"));
+        inputChooser = new JFileChooser();
+        outputChooser = new JFileChooser();
+        inputChooser.setCurrentDirectory(workingDirectory);
+        outputChooser.setCurrentDirectory(workingDirectory);
     }
 
     private void setupColorChoosers(){
