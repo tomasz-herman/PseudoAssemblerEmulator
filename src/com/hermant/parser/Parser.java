@@ -5,12 +5,13 @@ import com.hermant.program.declaration.*;
 import com.hermant.program.instruction.LoadableInstruction;
 import com.hermant.program.instruction.Instruction;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static com.hermant.machine.Machine.SECTION_SIZE;
 import static com.hermant.machine.register.GeneralPurposeRegister.DATA_SECTION;
@@ -373,7 +374,7 @@ public class Parser {
         instructionTypes.put(DECLARE_SPACE, InstructionType.declaration);
     }
 
-    public enum InstructionType {
+    enum InstructionType {
         declaration{
             @Override
             int analyze(String[] words, Stack<String> labels, Map<String, String> labelMemoryTranslation, int programSection, int dataSection, int lineNum) throws ParseException {
@@ -483,15 +484,19 @@ public class Parser {
     }
 
     public static Program parse(String path, boolean verbose) throws IOException, ParseException {
-        return parse(path, analyzeLabels(path, verbose));
+        return parse(Files.lines(Paths.get(path)), analyzeLabels(Files.lines(Paths.get(path)), verbose));
     }
 
-    private static Program parse(String path, Map<String, String> labelMemoryTranslation) throws ParseException, IOException {
+    public static Program parse(Stream<String> lines, boolean verbose) throws ParseException {
+        return parse(lines, analyzeLabels(lines, verbose));
+    }
+
+    private static Program parse(Stream<String> lines, Map<String, String> labelMemoryTranslation) throws ParseException {
         Program program = new Program();
         int lineNum = 0;
-        String line;
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        while ((line = reader.readLine()) != null) {
+        var iterator = lines.iterator();
+        while (iterator.hasNext()) {
+            String line = iterator.next();
             lineNum++;
             line = removeLabels(removeComment(line));
             if(line.isBlank())continue;
@@ -500,21 +505,19 @@ public class Parser {
             if(method==null) throw new ParseException("unknown token: " + words[0], lineNum);
             method.parse(words, labelMemoryTranslation, program, lineNum);
         }
-        reader.close();
         return program;
     }
 
-    private static LinkedHashMap<String, String> analyzeLabels(String path, boolean verbose) throws ParseException, IOException{
+    private static LinkedHashMap<String, String> analyzeLabels(Stream<String> lines, boolean verbose) throws ParseException {
         //Linked Hash Map to preserve insertion order
         LinkedHashMap<String, String> labelMemoryTranslation = new LinkedHashMap<>();
         Stack<String> labels = new Stack<>();
         int programSection = 0;
         int dataSection = 0;
-        BufferedReader reader = new BufferedReader(new FileReader(path));
         int lineNum = 0;
-        String line;
-        while ((line = reader.readLine()) != null) {
-            lineNum++;
+        var iterator = lines.iterator();
+        while (iterator.hasNext()) {
+            String line = iterator.next();
             line = removeComment(line);
             line = processLabels(line, labels, lineNum);
             if(line.isBlank())continue;
@@ -529,7 +532,6 @@ public class Parser {
             if(programSection > SECTION_SIZE) throw new ParseException("exceeded maximum instruction section size", lineNum);
         }
         storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
-        reader.close();
         if(verbose) printLabelsInfo(labelMemoryTranslation, programSection, dataSection);
         return labelMemoryTranslation;
     }
