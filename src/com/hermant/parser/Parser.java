@@ -443,7 +443,7 @@ public class Parser {
     enum DeclarationType {
         anInteger{
             @Override
-            public Declaration create(int count, String value) {
+            public Declaration<Integer> create(int count, String value) {
                 return (value == null) ?
                         new IntegerDeclaration(count, null) :
                         new IntegerDeclaration(count, parseInt(value));
@@ -451,7 +451,7 @@ public class Parser {
         },
         aFloat {
             @Override
-            public Declaration create(int count, String value) {
+            public Declaration<Float> create(int count, String value) {
                 return (value == null) ?
                         new FloatDeclaration(count, null) :
                         new FloatDeclaration(count, parseFloat(value));
@@ -459,7 +459,7 @@ public class Parser {
         },
         aByte {
             @Override
-            public Declaration create(int count, String value) {
+            public Declaration<Byte> create(int count, String value) {
                 return (value == null) ?
                         new ByteDeclaration(count, null) :
                         new ByteDeclaration(count, (byte)parseInt(value));
@@ -467,7 +467,7 @@ public class Parser {
         },
         aChar {
             @Override
-            public Declaration create(int count, String value) {
+            public Declaration<Character> create(int count, String value) {
                 return (value == null) ?
                         new CharDeclaration(count, null) :
                         new CharDeclaration(count, processCharValue(value));
@@ -475,15 +475,15 @@ public class Parser {
         },
         aString {
             @Override
-            public Declaration create(int count, String value) {
+            public Declaration<String> create(int count, String value) {
                 return new StringDeclaration(value);
             }
         };
-        public abstract Declaration create(int count, String value);
+        public abstract Declaration<?> create(int count, String value);
     }
 
-    public static Program parse(String path) throws IOException, ParseException {
-        return parse(path, analyzeLabels(path));
+    public static Program parse(String path, boolean verbose) throws IOException, ParseException {
+        return parse(path, analyzeLabels(path, verbose));
     }
 
     private static Program parse(String path, Map<String, String> labelMemoryTranslation) throws ParseException, IOException {
@@ -504,7 +504,7 @@ public class Parser {
         return program;
     }
 
-    private static LinkedHashMap<String, String> analyzeLabels(String path) throws ParseException, IOException{
+    private static LinkedHashMap<String, String> analyzeLabels(String path, boolean verbose) throws ParseException, IOException{
         //Linked Hash Map to preserve insertion order
         LinkedHashMap<String, String> labelMemoryTranslation = new LinkedHashMap<>();
         Stack<String> labels = new Stack<>();
@@ -530,12 +530,11 @@ public class Parser {
         }
         storeLabels(labels, labelMemoryTranslation, PROGRAM_SECTION, programSection, lineNum);
         reader.close();
-        printLabelsInfo(labelMemoryTranslation, programSection, dataSection);
+        if(verbose) printLabelsInfo(labelMemoryTranslation, programSection, dataSection);
         return labelMemoryTranslation;
     }
 
     private static void printLabelsInfo(Map<String, String> labelMemoryTranslation, int programSectionSize, int dataSectionSize){
-        System.out.println();
         System.out.println("Labels: ");
         for(var entry : labelMemoryTranslation.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue());
@@ -543,7 +542,6 @@ public class Parser {
         System.out.println();
         System.out.println("Program section: " + programSectionSize + " bytes");
         System.out.println("Data section: " + dataSectionSize + " bytes");
-        System.out.println();
     }
 
     private static int getDeclarationSize(String declaration, int lineNum) throws ParseException {
@@ -886,7 +884,7 @@ public class Parser {
      * @return if s was a byte value returns char from byte value, otherwise returns char or escaped char.
      */
     private static char processCharValue(String s){
-        if(s.startsWith("\'"))
+        if(s.startsWith("'"))
             return processEscapedCharacters(removeFirstAndLastChar(s), '\'').charAt(0);
         else
             return (char)parseInt(s);

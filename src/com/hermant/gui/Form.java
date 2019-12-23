@@ -247,7 +247,7 @@ public class Form {
     private Program getProgram(Options options){
         try {
             return options.binary ?
-                    Serializer.deserializeBinary(options.input) : Parser.parse(options.input);
+                    Serializer.deserializeBinary(options.input) : Parser.parse(options.input, true);
         } catch (IOException | SerializationException | ParseException ex) {
             ex.printStackTrace();
             return null;

@@ -22,7 +22,7 @@ public class Main {
             Program program = null;
             try {
                 program = options.binary() ?
-                        Serializer.deserializeBinary(options.input()) : Parser.parse(options.input());
+                        Serializer.deserializeBinary(options.input()) : Parser.parse(options.input(), true);
             } catch (IOException | SerializationException | ParseException e) {
                 e.printStackTrace();
                 System.exit(-1);
