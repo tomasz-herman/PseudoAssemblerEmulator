@@ -64,7 +64,7 @@ public class Machine {
     /**
      * If true debug info will be printed during execution of command at cost of performance.
      */
-    private final boolean debug;
+    private boolean debug;
     /**
      * Counts how many instructions were executed during run of a program.
      */
@@ -98,6 +98,7 @@ public class Machine {
         instructionPointer = new InstructionPointer(0);
         stack = new Stack(ram, register);
         this.debug = debug;
+        ignoreSigint();
     }
 
     /**
@@ -164,7 +165,7 @@ public class Machine {
      * @param sleep time in milliseconds to sleep in between instructions
      */
     public void runProgram(int sleep){
-        System.out.print("Program has started\n");
+        System.out.println("Program has started.");
         running = true;
         if(debug) setDebugSignalHandling(); else setSignalHandling();
         long millis;
@@ -381,6 +382,14 @@ public class Machine {
 
     public InputBuffer getBuffer(){
         return buffer;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug){
+        this.debug = debug;
     }
 
     public static class InputBuffer {
