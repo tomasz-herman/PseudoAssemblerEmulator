@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -487,8 +488,8 @@ public class Parser {
         return parse(Files.lines(Paths.get(path)), analyzeLabels(Files.lines(Paths.get(path)), verbose));
     }
 
-    public static Program parse(Stream<String> lines, boolean verbose) throws ParseException {
-        return parse(lines, analyzeLabels(lines, verbose));
+    public static Program parse(Supplier<Stream<String>> supplier, boolean verbose) throws ParseException {
+        return parse(supplier.get(), analyzeLabels(supplier.get(), verbose));
     }
 
     private static Program parse(Stream<String> lines, Map<String, String> labelMemoryTranslation) throws ParseException {
