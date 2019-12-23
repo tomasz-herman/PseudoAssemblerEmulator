@@ -165,6 +165,7 @@ public class Machine {
      * @param sleep time in milliseconds to sleep in between instructions
      */
     public void runProgram(int sleep){
+        executedCounter = 0;
         System.out.println("Program has started.");
         running = true;
         if(debug) setDebugSignalHandling(); else setSignalHandling();
@@ -174,7 +175,6 @@ public class Machine {
         else millis = run();
         System.out.printf("\nExecuted %s instructions in %dms.\n",
                 Long.toUnsignedString(executedCounter), millis);
-        executedCounter = 0;
     }
 
     /**
