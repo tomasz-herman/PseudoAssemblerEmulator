@@ -587,7 +587,7 @@ public class Parser {
             else throw new ParseException("illegal syntax: " + line, lineNum);
         else{
             words = splitByWhiteSpaces(line);
-            if(words.length > 2 && TOKENS.get(words[0]) != null) throw new ParseException("unknown token: " + words[0], lineNum);
+            if(words.length > 2 && TOKENS.get(words[0]) == null) throw new ParseException("unknown token: " + words[0], lineNum);
             if(words.length > 2) throw new ParseException("illegal syntax: " + line + "\n(missing comma?)", lineNum);
         }
         words[0] = words[0].toUpperCase(Locale.ROOT);
