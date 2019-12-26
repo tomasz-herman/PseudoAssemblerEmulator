@@ -26,13 +26,13 @@ public class Form {
     private JSlider sleep_slider;
     private JButton select_output_button;
     private JPanel main;
-    private JComboBox<ComboItem> routine;
+    private JComboBox<String> routine;
     private JLabel input;
     private JLabel output;
     private JLabel sleep;
     private JScrollPane scroll;
-    private JComboBox<ComboItem> font_name;
-    private JComboBox<ComboItem> font_size;
+    private JComboBox<String> font_name;
+    private JComboBox<String> font_size;
     private JPanel font_color;
     private JPanel background_color;
     private JPanel font_color_chooser;
@@ -167,18 +167,15 @@ public class Form {
     }
 
     private void setupComboBox(){
-        routine.addItem(new ComboItem(0, "Run"));
-        routine.addItem(new ComboItem(1, "Debug"));
+        routine.addItem("Run");
+        routine.addItem("Debug");
         routine.addActionListener(e -> run_button.setText(Objects.requireNonNull(routine.getSelectedItem()).toString()));
     }
 
     private void setupFontBoxes(){
-        for (int i = 0; i < monospaced.length; i++) {
-            font_name.addItem(new ComboItem(i, monospaced[i]));
-        }
-        for (int i = 0; i < sizes.length; i++) {
-            font_size.addItem(new ComboItem(i, sizes[i]));
-        }
+        font_name.setPrototypeDisplayValue("XXXXXXXXXXXXX");
+        for (String s : monospaced) font_name.addItem(s);
+        for (String size : sizes) font_size.addItem(size);
         font_name.addActionListener(e ->
                 terminal.setFont(
                         new Font(
