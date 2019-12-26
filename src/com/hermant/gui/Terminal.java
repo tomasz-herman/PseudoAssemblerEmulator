@@ -58,25 +58,21 @@ class Terminal {
     private CustomOutputStream outputStream;
 
     Terminal(JScrollPane scrollPane){
+        this();
         verticalScrollBarMaximumValue = scrollPane.getVerticalScrollBar().getMaximum();
         scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
             if ((verticalScrollBarMaximumValue - e.getAdjustable().getMaximum()) == 0) return;
             e.getAdjustable().setValue(e.getAdjustable().getMaximum());
             verticalScrollBarMaximumValue = scrollPane.getVerticalScrollBar().getMaximum();
         });
-        textArea = new JTextArea();
-        disableArrowKeys(textArea.getInputMap());
-        textArea.setEditable(false);
         scrollPane.setViewportView(textArea);
-        textArea.setText(HELP + "\n\n" + LICENSE);
-        inputStream = (CustomInputStream)createInputStream(textArea);
-        outputStream = (CustomOutputStream)createOutputStream(textArea);
     }
 
     Terminal(){
         textArea = new JTextArea();
         disableArrowKeys(textArea.getInputMap());
         textArea.setEditable(false);
+        textArea.setLineWrap(true);
         textArea.setText(HELP + "\n\n" + LICENSE);
         inputStream = (CustomInputStream)createInputStream(textArea);
         outputStream = (CustomOutputStream)createOutputStream(textArea);
