@@ -97,7 +97,7 @@ public class Form {
             @Override
             public void mouseExited(MouseEvent mouseEvent) { }
         };
-        background_color_chooser.addMouseListener(background_color_listener);
+        background_color.addMouseListener(background_color_listener);
         font_color_listener = new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) { }
@@ -114,7 +114,7 @@ public class Form {
             @Override
             public void mouseExited(MouseEvent mouseEvent) { }
         };
-        font_color_chooser.addMouseListener(font_color_listener);
+        font_color.addMouseListener(font_color_listener);
     }
 
     private Options getOptions(){
@@ -225,15 +225,14 @@ public class Form {
         unsafeCheckBox.setEnabled(enable);
         font_size.setEnabled(enable);
         font_name.setEnabled(enable);
-        color_chooser.setEnabled(enable);
-        background_color_chooser.setEnabled(enable);
-        font_color_chooser.setEnabled(enable);
+        background_color.setEnabled(enable);
+        font_color.setEnabled(enable);
         if(enable){
-            font_color_chooser.addMouseListener(font_color_listener);
-            background_color_chooser.addMouseListener(background_color_listener);
+            font_color.addMouseListener(font_color_listener);
+            background_color.addMouseListener(background_color_listener);
         } else {
-            font_color_chooser.removeMouseListener(font_color_listener);
-            background_color_chooser.removeMouseListener(background_color_listener);
+            font_color.removeMouseListener(font_color_listener);
+            background_color.removeMouseListener(background_color_listener);
         }
     }
 
