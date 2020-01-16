@@ -4,7 +4,7 @@ public class Version {
 
     private static final int MAJOR = 3;
     private static final int MINOR = 1;
-    private static final int REVISION = 5;
+    private static final int REVISION = 6;
 
     private static final String PROJECT_NAME = "PseudoAssembler Emulator";
     private static final String FULL = PROJECT_NAME + " " + MAJOR + "." + MINOR + "." + REVISION;
