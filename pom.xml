@@ -7,8 +7,17 @@
     <groupId>com.hermant</groupId>
     <artifactId>pseudo-assembler-emulator</artifactId>
     <version>3.1.6</version>
-    <url>https://github.com/tomasz-herman/PseudoAssemblerEmulator</url>
     <description>An emulation environment for Pseudo-Assembler programs. It allows to debug or run programs, run them at certain frequency or assemble them into binary form. Main goal is to provide environment to learn basic programming/assembly languages.</description>
+    <url>https://github.com/tomasz-herman/PseudoAssemblerEmulator</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.6.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -20,6 +29,11 @@
                     <source>11</source>
                     <target>11</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
             </plugin>
         </plugins>
     </build>
