@@ -7,173 +7,99 @@ import static org.junit.jupiter.api.Assertions.*;
 class RandomAccessMemoryTest {
 
     @Test
-    void unsafeSetAndGetInteger() {
-        UnsafeRAM ram = new UnsafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000004, 0x00000000C, 0x000000FF, 0x00000567, 0x00000EEE, 0x000000AA, 0x00000074};
-        int[] values = {3423, 65555, 19299292, -4354, 0, 12, 11111111, -1};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            int value = values[i];
-            int address = addresses[i];
-            ram.setInteger(address, value);
+    void littleEndianness() {
+        ArrayRAM ram = new ArrayRAM(Endianness.LittleEndian, 16);
+        byte[] values = {0, 0, 0, 2, 1, 0, 0, 0, -1, -1, 0, -1, 0, 15, 0, 0};
+        int[] intValues = {
+                0b00000010_00000000_00000000_00000000,
+                0b00000000_00000000_00000000_00000001,
+                0b11111111_00000000_11111111_11111111,
+                0b00000000_00000000_00001111_00000000
+        };
+        short[] shortValues = {
+                0b00000000_00000000, 0b00000010_00000000,
+                0b00000000_00000001, 0b00000000_00000000,
+                (short)0b11111111_11111111, (short)0b11111111_00000000,
+                0b00001111_00000000, 0b00000000_00000000
+        };
+        for (int i = 0; i < 16; i++) {
+            ram.setByte(i, values[i]);
         }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            int value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getInteger(address));
+        for (int i = 0; i < 16; i+=4) {
+            assertEquals(intValues[i>>2], ram.getInteger(i));
         }
-        ram.free();
+        for (int i = 0; i < 16; i+=2) {
+            assertEquals(shortValues[i>>1], ram.getShort(i));
+        }
     }
 
     @Test
-    void unsafeSetAndGetByte() {
-        UnsafeRAM ram = new UnsafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000001, 0x000000003, 0x00000004, 0x00000002, 0x00000EEE, 0x000000AA, 0x00000074};
-        byte[] values = {33, 65, 127, -128, 0, -0, -22, -1};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            byte value = values[i];
-            int address = addresses[i];
-            ram.setByte(address, value);
+    void bigEndianness() {
+        ArrayRAM ram = new ArrayRAM(Endianness.BigEndian, 16);
+        byte[] values = {0, 0, 0, 2, 1, 0, 0, 0, -1, -1, 0, -1, 0, 15, 0, 0};
+        int[] intValues = {
+                0b00000000_00000000_00000000_00000010,
+                0b00000001_00000000_00000000_00000000,
+                0b11111111_11111111_00000000_11111111,
+                0b00000000_00001111_00000000_00000000
+        };
+        short[] shortValues = {
+                0b00000000_00000000, 0b00000000_00000010,
+                0b00000001_00000000, 0b00000000_00000000,
+                (short)0b11111111_11111111, 0b00000000_11111111,
+                0b00000000_00001111, 0b00000000_00000000
+        };
+        for (int i = 0; i < 16; i++) {
+            ram.setByte(i, values[i]);
         }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            byte value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getByte(address));
+        for (int i = 0; i < 16; i+=4) {
+            assertEquals(ram.getInteger(i), intValues[i>>2]);
         }
-        ram.free();
+        for (int i = 0; i < 16; i+=2) {
+            assertEquals(shortValues[i>>1], ram.getShort(i));
+        }
     }
 
     @Test
-    void unsafeSetAndGetFloat() {
-        UnsafeRAM ram = new UnsafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000004, 0x00000000C, 0x000000FF, 0x00000567, 0x00000EEE, 0x000000AA, 0x00000074};
-        float[] values = {Float.POSITIVE_INFINITY, 0.0f, Float.NaN, -1e22f, 2.43e-2f, 1.0f, Float.MIN_VALUE, Float.MAX_VALUE};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            float value = values[i];
-            int address = addresses[i];
-            ram.setFloat(address, value);
+    void intToFloat() {
+        ArrayRAM ramLittle = new ArrayRAM(Endianness.LittleEndian, 64);
+        ArrayRAM ramBig = new ArrayRAM(Endianness.BigEndian, 64);
+        int[] values = {0x934FAB33, 0, -1,
+                Float.floatToIntBits(Float.NaN),
+                Float.floatToIntBits(Float.POSITIVE_INFINITY),
+                Float.floatToIntBits(Float.NEGATIVE_INFINITY),
+                Float.floatToIntBits(Float.MAX_VALUE),
+                Float.floatToIntBits(Float.MIN_NORMAL)
+        };
+        for (int i = 0; i < values.length; i++) {
+            ramBig.setInteger(i << 2, values[i]);
+            ramLittle.setInteger(i << 2, values[i]);
         }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            float value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getFloat(address));
+        for (int i = 0; i < values.length; i++) {
+            assertEquals(ramBig.getFloat(i << 2), Float.intBitsToFloat(values[i]));
+            assertEquals(ramLittle.getFloat(i << 2), Float.intBitsToFloat(values[i]));
         }
-        ram.free();
     }
 
     @Test
-    void unsafeSetAndGetShort() {
-        UnsafeRAM ram = new UnsafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000002, 0x000000004, 0x00000008, 0x00000567, 0x00000EEE, 0x000000AA, 0x00000074};
-        short[] values = {3423, 32767, -32768, -4354, 0, 12, 11111, -1};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            short value = values[i];
-            int address = addresses[i];
-            ram.setShort(address, value);
+    void floatToInt() {
+        ArrayRAM ramLittle = new ArrayRAM(Endianness.LittleEndian, 64);
+        ArrayRAM ramBig = new ArrayRAM(Endianness.BigEndian, 64);
+        float[] values = {0x934FAB33, 0f, -1f, 1f, 3.1415f,
+                Float.NaN,
+                Float.POSITIVE_INFINITY,
+                Float.NEGATIVE_INFINITY,
+                Float.MAX_VALUE,
+                Float.MIN_NORMAL
+        };
+        for (int i = 0; i < values.length; i++) {
+            ramBig.setFloat(i << 2, values[i]);
+            ramLittle.setFloat(i << 2, values[i]);
         }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            short value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getShort(address));
+        for (int i = 0; i < values.length; i++) {
+            assertEquals(ramBig.getInteger(i << 2), Float.floatToRawIntBits(values[i]));
+            assertEquals(ramLittle.getInteger(i << 2), Float.floatToRawIntBits(values[i]));
         }
-        ram.free();
     }
 
-    @Test
-    void safeSetAndGetInteger() {
-        SafeRAM ram = new SafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000004, 0x00000000C, 0x000000FF, 0x00000567, 0x00000EEE, 0x000000AA, 0x00000074};
-        int[] values = {3423, 65555, 19299292, -4354, 0, 12, 11111111, -1};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            int value = values[i];
-            int address = addresses[i];
-            ram.setInteger(address, value);
-        }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            int value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getInteger(address));
-        }
-        ram.free();
-    }
-
-    @Test
-    void safeSetAndGetByte() {
-        SafeRAM ram = new SafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000001, 0x000000003, 0x00000004, 0x00000002, 0x00000EEE, 0x000000AA, 0x00000074};
-        byte[] values = {33, 65, 127, -128, 0, -0, -22, -1};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            byte value = values[i];
-            int address = addresses[i];
-            ram.setByte(address, value);
-        }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            byte value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getByte(address));
-        }
-        ram.free();
-    }
-
-    @Test
-    void safeSetAndGetFloat() {
-        SafeRAM ram = new SafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000004, 0x00000000C, 0x000000FF, 0x00000567, 0x00000EEE, 0x000000AA, 0x00000074};
-        float[] values = {Float.POSITIVE_INFINITY, 0.0f, Float.NaN, -1e22f, 2.43e-2f, 1.0f, Float.MIN_VALUE, Float.MAX_VALUE};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            float value = values[i];
-            int address = addresses[i];
-            ram.setFloat(address, value);
-        }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            float value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getFloat(address));
-        }
-        ram.free();
-    }
-
-    @Test
-    void safeSetAndGetShort() {
-        SafeRAM ram = new SafeRAM(1024 * 1024);
-        int[] addresses = {0x00000000, 0x00000002, 0x000000004, 0x00000008, 0x00000567, 0x00000EEE, 0x000000AA, 0x00000074};
-        short[] values = {3423, 32767, -32768, -4354, 0, 12, 11111, -1};
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            short value = values[i];
-            int address = addresses[i];
-            ram.setShort(address, value);
-        }
-        for (int i = 0, valuesLength = values.length; i < valuesLength; i++) {
-            short value = values[i];
-            int address = addresses[i];
-            assertEquals(value, ram.getShort(address));
-        }
-        ram.free();
-    }
-
-    @Test
-    void safeIllegalAccess() {
-        SafeRAM ram = new SafeRAM(16);
-        int[] addresses4 = {0x0000000D, 0x0000000E, 0x00000000F, 0x00000010, 0x00000567, 0x00000EEE, 0x700F00AA, 0x00030074};
-        int intValue = 0xFFFFFFFF;
-        float floatValue = Float.intBitsToFloat(intValue);
-        for (int address : addresses4){
-            assertThrows(RuntimeException.class, () -> ram.setInteger(address, intValue), "Illegal access to memory at address " + address);
-            assertThrows(RuntimeException.class, () -> ram.setFloat(address, floatValue), "Illegal access to memory at address " + address);
-            assertThrows(RuntimeException.class, () -> ram.getInteger(address), "Illegal access to memory at address " + address);
-            assertThrows(RuntimeException.class, () -> ram.getFloat(address), "Illegal access to memory at address " + address);
-        }
-        int[] addresses2 = {0x0000450D, 0xF000000E, 0x00000000F, 0x00000010, 0x00000567, 0x00000EEE, 0x400F00AA, 0x00030074};
-        short shortValue = -32768;
-        for (int address : addresses2) {
-            assertThrows(RuntimeException.class, () -> ram.setShort(address, shortValue), "Illegal access to memory at address " + address);
-            assertThrows(RuntimeException.class, () -> ram.getShort(address), "Illegal access to memory at address " + address);
-        }
-        int[] addresses1 = {0x0000450D, 0xF000000E, 0x00006660F, 0x00000010, 0x00000567, 0x00000EEE, 0x400F00AA, 0x00030074};
-        byte byteValue = -128;
-        for (int address : addresses1) {
-            assertThrows(RuntimeException.class, () -> ram.setByte(address, byteValue), "Illegal access to memory at address " + address);
-            assertThrows(RuntimeException.class, () -> ram.getByte(address), "Illegal access to memory at address " + address);
-        }
-        ram.free();
-    }
 }
