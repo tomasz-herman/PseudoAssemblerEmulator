@@ -57,6 +57,10 @@ public class Stack {
         return result;
     }
 
+    public int size(){
+        return (0x10000 - pointer() & 0xFFFF - section() & 0xFFFF) >> 2;
+    }
+
     @Override
     public String toString() {
         if (((pointer() | section()) & 0b11) != 0 ||
