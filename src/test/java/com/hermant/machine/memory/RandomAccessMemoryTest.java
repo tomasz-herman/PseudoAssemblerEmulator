@@ -53,7 +53,7 @@ class RandomAccessMemoryTest {
             ram.setByte(i, values[i]);
         }
         for (int i = 0; i < 16; i+=4) {
-            assertEquals(ram.getInteger(i), intValues[i>>2]);
+            assertEquals(intValues[i>>2], ram.getInteger(i));
         }
         for (int i = 0; i < 16; i+=2) {
             assertEquals(shortValues[i>>1], ram.getShort(i));
@@ -76,8 +76,8 @@ class RandomAccessMemoryTest {
             ramLittle.setInteger(i << 2, values[i]);
         }
         for (int i = 0; i < values.length; i++) {
-            assertEquals(ramBig.getFloat(i << 2), Float.intBitsToFloat(values[i]));
-            assertEquals(ramLittle.getFloat(i << 2), Float.intBitsToFloat(values[i]));
+            assertEquals(Float.intBitsToFloat(values[i]), ramBig.getFloat(i << 2));
+            assertEquals(Float.intBitsToFloat(values[i]), ramLittle.getFloat(i << 2));
         }
     }
 
@@ -97,8 +97,8 @@ class RandomAccessMemoryTest {
             ramLittle.setFloat(i << 2, values[i]);
         }
         for (int i = 0; i < values.length; i++) {
-            assertEquals(ramBig.getInteger(i << 2), Float.floatToRawIntBits(values[i]));
-            assertEquals(ramLittle.getInteger(i << 2), Float.floatToRawIntBits(values[i]));
+            assertEquals(Float.floatToRawIntBits(values[i]), ramBig.getInteger(i << 2));
+            assertEquals(Float.floatToRawIntBits(values[i]), ramLittle.getInteger(i << 2));
         }
     }
 

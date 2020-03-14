@@ -14,7 +14,7 @@ class ArrayRAMTest {
             ram.setByte(i, values[i]);
         }
         for (int i = 0; i < 16; i++) {
-            assertEquals(ram.getByte(i), values[i]);
+            assertEquals(values[i], ram.getByte(i));
         }
     }
 

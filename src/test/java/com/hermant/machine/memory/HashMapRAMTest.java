@@ -15,7 +15,7 @@ class HashMapRAMTest {
             ram.setByte(addresses[i], values[i]);
         }
         for (int i = 0; i < addresses.length; i++) {
-            assertEquals(ram.getByte(addresses[i]), values[i]);
+            assertEquals(values[i], ram.getByte(addresses[i]));
         }
     }
 
