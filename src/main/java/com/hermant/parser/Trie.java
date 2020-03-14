@@ -103,12 +103,9 @@ public class Trie<V> extends AbstractMap<String, V> implements Map<String, V> {
             current.hasValue = false;
             while(!path.empty()){
                 Trie<V> trie = path.pop();
-                if(current.size == 0){
-                    trie.children.set(current.parent, null);
-                    trie.size--;
-                    current = trie;
-                }
-                else break;
+                if(current.size == 0) trie.children.set(current.parent, null);
+                trie.size--;
+                current = trie;
             }
             return old;
         }
