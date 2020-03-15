@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +13,16 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrieTest {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"})
+    public void allSupportedCharacters(String argument) {
+        Trie<Integer> trie = new Trie<>();
+        trie.put(argument, -1);
+        assertEquals(-1, trie.get(argument));
+        assertEquals(1, trie.size());
+    }
 
     @MethodSource("abcStringProvider")
     @ParameterizedTest
@@ -40,11 +51,12 @@ class TrieTest {
         assertEquals(list.size(), trie.size());
     }
 
-    @Test
-    public void removeElements() {
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8})
+    public void removeElements(int skip) {
         Trie<Integer> trie = new Trie<>();
         List<String> inserted = stringProvider().collect(Collectors.toList());
-        int skip = 3;
+
         int size = inserted.size();
         int limit = size / skip + Math.min(size % skip, 1);
 
