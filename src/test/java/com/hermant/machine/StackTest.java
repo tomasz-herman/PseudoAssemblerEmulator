@@ -1,7 +1,6 @@
 package com.hermant.machine;
 
 import com.hermant.machine.memory.ArrayRAM;
-import com.hermant.machine.memory.Endianness;
 import com.hermant.machine.memory.RandomAccessMemory;
 import com.hermant.machine.register.GeneralPurposeRegister;
 import com.hermant.program.instruction.MemoryOperation;
@@ -17,9 +16,9 @@ import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.hermant.machine.register.GeneralPurposeRegister.STACK_POINTER;
-import static com.hermant.machine.register.GeneralPurposeRegister.STACK_SECTION;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.hermant.machine.memory.Endianness.LittleEndian;
+import static com.hermant.machine.register.GeneralPurposeRegister.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StackTest {
 
@@ -30,9 +29,9 @@ class StackTest {
     @BeforeEach
     public void prepare() {
         gpr = new GeneralPurposeRegister();
-        ram = new ArrayRAM(Endianness.LittleEndian, 65536);
+        ram = new ArrayRAM(LittleEndian, 65536);
         gpr.set(STACK_POINTER, 0);
-        gpr.set(GeneralPurposeRegister.STACK_FRAME_POINTER, 0);
+        gpr.set(STACK_FRAME_POINTER, 0);
         gpr.set(STACK_SECTION, 0);
         s = new Stack(ram, gpr);
     }

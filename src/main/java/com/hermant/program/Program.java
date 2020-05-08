@@ -6,21 +6,43 @@ import com.hermant.serializer.Serializable;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Program implements Serializable {
 
-    private final ArrayList<Declaration> declarations = new ArrayList<>();
+    public static Program of(List<Declaration<?>> declarations, List<LoadableInstruction> instructions){
+        Program program = new Program();
+        program.declarations.addAll(declarations);
+        program.instructions.addAll(instructions);
+        return program;
+    }
+
+    public static Program of(Serializable... serializable){
+        Program program = new Program();
+        for (Serializable s : serializable) {
+            if(s instanceof Program){
+                program.declarations.addAll(((Program) s).declarations);
+                program.instructions.addAll(((Program) s).instructions);
+            } else if(s instanceof LoadableInstruction)
+                program.instructions.add((LoadableInstruction) s);
+            else if(s instanceof Declaration<?>)
+                program.declarations.add((Declaration<?>) s);
+        }
+        return program;
+    }
+
+    private final ArrayList<Declaration<?>> declarations = new ArrayList<>();
     private final ArrayList<LoadableInstruction> instructions = new ArrayList<>();
 
     public void addInstruction(LoadableInstruction ins){
         instructions.add(ins);
     }
 
-    public void addDeclaration(Declaration dec){
+    public void addDeclaration(Declaration<?> dec){
         declarations.add(dec);
     }
 
-    public ArrayList<Declaration> getDeclarations() {
+    public ArrayList<Declaration<?>> getDeclarations() {
         return declarations;
     }
 
@@ -34,7 +56,7 @@ public class Program implements Serializable {
         int declarationNum = declarations.size();
         buffer.write((byte)declarationNum);
         buffer.write(declarationNum >> 8);
-        for (Declaration d : declarations) buffer.writeBytes(d.serialize());
+        for (Declaration<?> d : declarations) buffer.writeBytes(d.serialize());
         for (LoadableInstruction inst : instructions) buffer.writeBytes(inst.serialize());
         return buffer.toByteArray();
     }
