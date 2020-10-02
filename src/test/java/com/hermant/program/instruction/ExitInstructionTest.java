@@ -2,23 +2,16 @@ package com.hermant.program.instruction;
 
 import com.hermant.machine.Machine;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Field;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.mockito.Mockito;
 
 class ExitInstructionTest {
 
     @Test
-    void run() throws NoSuchFieldException, IllegalAccessException {
-        Machine machine = new Machine(false, false);
-        Field running = Machine.class.getDeclaredField("running");
-        running.setAccessible(true);
-        running.set(machine, true);
-        ExitInstruction instruction = (ExitInstruction)InstructionUtils.getInstruction(Instruction.EXIT);
-        assertNotNull(instruction);
+    void run() {
+        Machine machine = Mockito.mock(Machine.class);
+        ExitInstruction instruction = new ExitInstruction();
         instruction.run(machine);
-        assertFalse(running.getBoolean(machine));
+        Mockito.verify(machine).stop();
     }
 
 }
