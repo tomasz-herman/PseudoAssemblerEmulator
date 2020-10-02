@@ -393,8 +393,8 @@ public class Machine {
     }
 
     public static class InputBuffer {
-        private int capacity = 8192;
-        private byte[] buffer = new byte[capacity];
+        private final int capacity = 8192;
+        private final byte[] buffer = new byte[capacity];
         private int available = 0;
 
         private int getter = 0;

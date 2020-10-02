@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'application'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2')
+    }
+}
+
+dependencies {
+    implementation 'com.intellij:forms_rt:7.0.3'
+    implementation 'org.jetbrains:annotations:19.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+}
+
+group = 'com.hermant'
+version = '3.1.7'
+sourceCompatibility = '11'
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/tomasz-herman/PseudoAssemblerEmulator")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            groupId 'com.hermant'
+            artifactId 'pseudo-assembler-emulator'
+            from(components.java)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = 'com.hermant.Main'
+}
+
