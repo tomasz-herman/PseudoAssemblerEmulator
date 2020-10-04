@@ -1,4 +1,7 @@
 grammar PseudoAssembler;
+@header {
+package com.hermant.parser.antlr;
+}
 
 prog
     :   line? (EOL line?)* EOF
@@ -75,23 +78,23 @@ string_declaration
 
 byte_val
     :   INT
-    |   BYTE_HEX
-    |   BYTE_BIN
+    |   BIN
+    |   HEX
     ;
 
 int_val
     :   SIGNED_INT
     |   INT
-    |   INT_BIN
-    |   INT_HEX
+    |   BIN
+    |   HEX
     ;
 
 float_val
     :   FLOAT
     |   SIGNED_INT
     |   INT
-    |   INT_BIN
-    |   INT_HEX
+    |   BIN
+    |   HEX
     ;
 
 reg
@@ -182,11 +185,9 @@ INT         :   [1-9][0-9]*|'0';
 SIGNED_INT  :   SIGN? INT;
 FLOAT       :   SIGN?( INT ('.'[0-9]*)? | '.'[0-9]+ );
 
-BYTE_HEX    :   '0x'[0-9a-fA-F]{1,2};
-INT_HEX     :   '0x'[0-9a-fA-F]{1,8};
+HEX         :   '0x'[0-9a-fA-F]*;
 
-BYTE_BIN    :   '0b'[01]{1,8};
-INT_BIN     :   '0b'[01]{1,32};
+BIN         :   '0b'[01]*;
 
 fragment SIGN:   [+-];
 

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'application'
+    id 'antlr'
 }
 
 repositories {
@@ -14,6 +15,7 @@ repositories {
 dependencies {
     implementation 'com.intellij:forms_rt:7.0.3'
     implementation 'org.jetbrains:annotations:19.0.0'
+    antlr 'org.antlr:antlr4:4.8-1'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
     testImplementation 'org.mockito:mockito-core:3.5.13'
     testImplementation 'org.mockito:mockito-inline:3.5.13'
@@ -53,5 +55,9 @@ test {
 
 application {
     mainClass = 'com.hermant.Main'
+}
+
+generateGrammarSource {
+    outputDirectory = file("src/main/java/com/hermant/parser/antlr")
 }
 
